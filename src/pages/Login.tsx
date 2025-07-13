@@ -5,11 +5,11 @@ import { Link } from "react-router";
 import { useForm } from "react-hook-form"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useState, type ChangeEvent } from "react";
-import { Loader2Icon } from "lucide-react"
+import { Eye, EyeOff, Loader2Icon } from "lucide-react"
 import { FcGoogle } from "react-icons/fc";
 import { useTranslation } from "react-i18next";
-import { ChangeLanguage } from "@/components/settings/change-language";
-import { ModeToggle } from "@/components/settings/theme-toggle";
+import { ChangeLanguage } from "@/components/settings/ChangeLanguage";
+import { ModeToggle } from "@/components/settings/ThemeToggle";
 
 const fieldNames: { [key: string]: string } = {
     email: "Email",
@@ -19,6 +19,7 @@ const fieldNames: { [key: string]: string } = {
 const Login = () => {
     const form = useForm();
     const [loading, setLoading] = useState<boolean>(false)
+    const [showPassword, setShowPassword] = useState<boolean>(false)
     const { t } = useTranslation()
 
     const setError = (field: string, message: string): void => {
@@ -119,12 +120,26 @@ const Login = () => {
                                         <FormItem>
                                             <FormLabel>{t('login.password')}</FormLabel>
                                             <FormControl>
-                                                <Input type="password" placeholder={t('login.password_placeholder')} {...field}
-                                                    value={field.value || ""}
-                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                        form.setValue('password', e.target.value)
-                                                        validatePassword(e.target.value)
-                                                    }} />
+                                                <div className="relative">
+                                                    <Input
+                                                        type={showPassword ? "text" : "password"}
+                                                        placeholder={t('login.password_placeholder')}
+                                                        {...field}
+                                                        value={field.value || ""}
+                                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                            form.setValue('password', e.target.value);
+                                                            validatePassword(e.target.value);
+                                                        }}
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground cursor-pointer"
+                                                        onClick={() => setShowPassword(prev => !prev)}
+                                                        tabIndex={-1}
+                                                    >
+                                                        {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                                                    </button>
+                                                </div>
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
