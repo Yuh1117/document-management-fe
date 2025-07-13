@@ -1,0 +1,27 @@
+{
+    "welcome": "Chào mừng đến với DMS",
+    "login": {
+        "label": "Đăng nhập",
+        "title": "Đăng nhập tài khoản của bạn",
+        "email": "Email",
+        "email_placeholder": "Nhập email",
+        "password": "Mật khẩu",
+        "password_placeholder": "Nhập mật khẩu",
+        "submit": "Đăng nhập",
+        "or_continue": "Hoặc tiếp tục với",
+        "google": "Đăng nhập với Google",
+        "no_account": "Chưa có tài khoản?",
+        "signup": "Đăng ký"
+    },
+    "signup": {
+        "title": "Đăng ký tài khoản",
+        "label": "Đăng ký",
+        "first_name": "Tên",
+        "first_name_placeholder": "Nhập tên",
+        "last_name": "Họ",
+        "last_name_placeholder": "Nhập họ",
+        "avatar": "Avatar",
+        "already_account": "Đã có tài khoản?"
+    },
+    "language": "Ngôn ngữ"
+}
