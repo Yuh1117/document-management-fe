@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
-import { ThemeProvider } from './components/settings/theme-provider'
+import { ThemeProvider } from './components/settings/ThemeProvider'
 
 function App() {
 
