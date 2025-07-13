@@ -1,0 +1,26 @@
+{
+    "welcome": "Welcome to DMS",
+    "login": {
+        "label": "Login",
+        "title": "Login to your account",
+        "email": "Email",
+        "email_placeholder": "Enter your email",
+        "password": "Password",
+        "password_placeholder": "Enter your password",
+        "or_continue": "Or continue with",
+        "google": "Login with Google",
+        "no_account": "Don't have an account?",
+        "signup": "Sign up"
+    },
+    "signup": {
+        "title": "Sign up for an account",
+        "label": "Sign up",
+        "first_name": "First Name",
+        "first_name_placeholder": "Enter your first name",
+        "last_name": "Last Name",
+        "last_name_placeholder": "Enter your last name",
+        "avatar": "Avatar",
+        "already_account": "Already have an account?"
+    },
+    "language": "Language"
+}
