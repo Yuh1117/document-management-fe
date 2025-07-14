@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 const languageOptions = [
     { code: "en", name: "English" },
@@ -16,12 +16,11 @@ const ChangeLanguage = () => {
 
     return (
         <Select value={i18n.language} onValueChange={handleLanguageChange}>
-            <SelectTrigger>
+            <SelectTrigger className="bg-white">
                 <SelectValue>{languageOptions.find(c => c['code'] === i18n.language)?.name}</SelectValue>
             </SelectTrigger>
             <SelectContent>
                 <SelectGroup>
-                    <SelectLabel>{t('language')}</SelectLabel>
                     {languageOptions.map((lang) => (
                         <SelectItem key={lang.code} value={lang.code}>
                             {lang.name}
