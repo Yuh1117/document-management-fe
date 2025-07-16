@@ -4,11 +4,18 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import { ThemeProvider } from './components/settings/ThemeProvider'
 import Header from './components/layout/Header'
+import { SidebarInset, SidebarProvider } from './components/ui/sidebar'
+import { AppSidebar } from './components/app-sidebar'
 
 const MainLayout = () => (
   <>
     <Header />
-    <Outlet />
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <Outlet />
+      </SidebarInset>
+    </SidebarProvider>
   </>
 );
 

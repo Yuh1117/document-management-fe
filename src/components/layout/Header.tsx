@@ -37,7 +37,7 @@ const SubMenuLink = React.memo(({ item }: { item: MenuItem }) => (
 ));
 
 const SearchInput = React.memo(() => (
-    <div className="relative w-full max-w-md">
+    <div className="relative w-full max-w-lg">
         <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
         <Input
             type="text"
@@ -55,7 +55,7 @@ const Account = React.memo(() => (
                 <AvatarFallback className="rounded-lg">a</AvatarFallback>
             </Avatar>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent className="mr-2">
             <DropdownMenuLabel>
                 <div className="flex flex-col">
                     <span>Huy</span>
@@ -87,7 +87,6 @@ const Header = React.memo(({
         title: "DMS",
     },
     menu = [
-        { title: "Home", url: "#" },
         {
             title: "Resources",
             url: "#",
@@ -149,8 +148,8 @@ const Header = React.memo(({
     ), [menu]);
 
     return (
-        <section className="py-4 sticky top-0 z-50 bg-background border-b">
-            <div className="container mx-auto px-4">
+        <section className="py-3 sticky top-0 z-50 bg-background border-b">
+            <div className="mx-auto px-4">
                 <nav className="hidden justify-between lg:flex items-center">
                     <div className="flex items-center gap-6">
                         <a href={logo.url} className="flex items-center gap-2">
