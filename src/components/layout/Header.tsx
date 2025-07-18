@@ -8,6 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Input } from "@/components/ui/input";
 import Setting from "../settings/Setting";
+import { Link } from "react-router";
 
 interface MenuItem {
     title: string;
@@ -83,7 +84,7 @@ const Account = React.memo(() => (
 
 const Header = React.memo(({
     logo = {
-        url: "#",
+        url: "",
         title: "DMS",
     },
     menu = [
@@ -148,15 +149,15 @@ const Header = React.memo(({
     ), [menu]);
 
     return (
-        <section className="py-3 sticky top-0 z-50 bg-background border-b">
+        <section className="py-3 sticky top-0 z-50 bg-background">
             <div className="mx-auto px-4">
                 <nav className="hidden justify-between lg:flex items-center">
                     <div className="flex items-center gap-6">
-                        <a href={logo.url} className="flex items-center gap-2">
+                        <Link to={logo.url} className="flex items-center gap-2">
                             <span className="text-lg font-semibold tracking-tighter">
                                 {logo.title}
                             </span>
-                        </a>
+                        </Link>
                         <div className="flex items-center">
                             <NavigationMenu>
                                 <NavigationMenuList>

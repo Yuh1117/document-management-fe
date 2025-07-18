@@ -10,26 +10,34 @@ import { FcGoogle } from "react-icons/fc";
 import { ChangeLanguage } from "@/components/settings/ChangeLanguage";
 import { useTranslation } from "react-i18next";
 import { ModeToggle } from "@/components/settings/ThemeToggle";
+import type { LoginFormValues } from "./Login";
+
+interface SignupFormValues extends LoginFormValues {
+    confirmPassword: string,
+    firstName: string,
+    lastName: string,
+    avatar: File | null | undefined
+}
 
 const fieldNames: { [key: string]: string } = {
     firstName: "Tên",
     lastName: "Họ",
     email: "Email",
     password: "Mật khẩu",
+    confirmPassword: "Xác nhận mật khẩu",
     avatar: "Avatar"
 };
 
 const Signup = () => {
-    const form = useForm();
+    const form = useForm<SignupFormValues>();
     const [loading, setLoading] = useState<boolean>(false)
-    const [avatar, setAvatar] = useState<File | null | undefined>(null)
     const { t } = useTranslation()
 
-    const setError = (field: string, message: string): void => {
+    const setError = (field: keyof SignupFormValues, message: string): void => {
         form.setError(field, { type: "manual", message: message })
     }
 
-    const validateEmpty = (field: string, value: string): boolean => {
+    const validateEmpty = (field: keyof SignupFormValues, value: string): boolean => {
         form.clearErrors(field)
         if (!value) {
             setError(field, `${fieldNames[field]} không được để trống`);
@@ -55,6 +63,16 @@ const Signup = () => {
         return true
     }
 
+    const validateConfirmPassword = (value: string): boolean => {
+        if (validateEmpty("confirmPassword", value) === false) return false;
+
+        if (value !== form.getValues("password")) {
+            setError("confirmPassword", "Mật khẩu không khớp");
+            return false;
+        }
+        return true;
+    }
+
     const validateImage = (file: File | null | undefined): boolean => {
         form.clearErrors('avatar')
         if (!file) return true;
@@ -68,29 +86,32 @@ const Signup = () => {
     };
 
 
-    const validate = (data: any): boolean => {
+    const validate = (data: SignupFormValues): boolean => {
         let flag: boolean = true;
-        if (!validateEmpty("lastName", data['lastName'])) {
+        if (!validateEmpty("lastName", data.lastName)) {
             flag = false;
         }
-        if (!validateEmpty("firstName", data['firstName'])) {
+        if (!validateEmpty("firstName", data.firstName)) {
             flag = false;
         }
-        if (!validateEmail(data['email'])) {
+        if (!validateEmail(data.email)) {
             flag = false
         }
-        if (!validatePassword(data['password'])) {
+        if (!validatePassword(data.password)) {
             flag = false
         }
-        if (avatar) {
-            if (!validateImage(avatar)) {
+        if (!validateConfirmPassword(data.confirmPassword)) {
+            flag = false
+        }
+        if (data.avatar) {
+            if (!validateImage(data.avatar)) {
                 flag = false;
             }
         }
         return flag
     }
 
-    const onSubmit = async (data: any) => {
+    const onSubmit = async (data: SignupFormValues) => {
         form.clearErrors()
         if (validate(data) === true) {
             try {
@@ -192,6 +213,34 @@ const Signup = () => {
                                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                         form.setValue('password', e.target.value);
                                                         validatePassword(e.target.value);
+
+                                                        const confirmPassword = form.getValues("confirmPassword");
+                                                        if (confirmPassword) {
+                                                            validateConfirmPassword(confirmPassword);
+                                                        }
+                                                    }}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="confirmPassword"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>{t('signup.confirm_password')}</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="password"
+                                                    placeholder={t('signup.confirm_password')}
+                                                    {...field}
+                                                    value={field.value || ""}
+                                                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                        form.setValue('confirmPassword', e.target.value);
+                                                        validateConfirmPassword(e.target.value);
                                                     }}
                                                 />
                                             </FormControl>
@@ -203,15 +252,14 @@ const Signup = () => {
                                 <FormField
                                     control={form.control}
                                     name="avatar"
-                                    render={({ field }) => (
+                                    render={() => (
                                         <FormItem>
                                             <FormLabel>Avatar</FormLabel>
                                             <FormControl>
-                                                <Input type="file" accept="image/*" {...field}
-                                                    value={field.value || ""}
+                                                <Input type="file" accept="image/*"
                                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                        form.setValue('avatar', e.target.value)
-                                                        setAvatar(e.target.files?.[0])
+                                                        const file = e.target.files?.[0];
+                                                        form.setValue('avatar', file)
                                                         validateImage(e.target.files?.[0]);
                                                     }} />
                                             </FormControl>

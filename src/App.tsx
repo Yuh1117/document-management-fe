@@ -5,7 +5,7 @@ import Signup from './pages/Signup'
 import { ThemeProvider } from './components/settings/ThemeProvider'
 import Header from './components/layout/Header'
 import { SidebarInset, SidebarProvider } from './components/ui/sidebar'
-import { AppSidebar } from './components/app-sidebar'
+import { AppSidebar } from './components/AppSideBar'
 
 const MainLayout = () => (
   <>
