@@ -11,21 +11,26 @@ import { useTranslation } from "react-i18next";
 import { ChangeLanguage } from "@/components/settings/ChangeLanguage";
 import { ModeToggle } from "@/components/settings/ThemeToggle";
 
+export interface LoginFormValues {
+    email: string;
+    password: string;
+}
+
 const fieldNames: { [key: string]: string } = {
     email: "Email",
     password: "Mật khẩu",
 };
 
 const Login = () => {
-    const form = useForm();
+    const form = useForm<LoginFormValues>();
     const [loading, setLoading] = useState<boolean>(false)
     const { t } = useTranslation()
 
-    const setError = (field: string, message: string): void => {
+    const setError = (field: keyof LoginFormValues, message: string): void => {
         form.setError(field, { type: "manual", message: message })
     }
 
-    const validateEmpty = (field: string, value: string): boolean => {
+    const validateEmpty = (field: keyof LoginFormValues, value: string): boolean => {
         form.clearErrors(field)
         if (!value) {
             setError(field, `${fieldNames[field]} không được để trống`);
@@ -51,19 +56,19 @@ const Login = () => {
         return true
     }
 
-    const validate = (data: any): boolean => {
+    const validate = (data: LoginFormValues): boolean => {
         let flag: boolean = true;
-        if (!validateEmail(data['email'])) {
+        if (!validateEmail(data.email)) {
             flag = false
         }
-        if (!validatePassword(data['password'])) {
+        if (!validatePassword(data.password)) {
             flag = false
         }
         return flag
     }
 
 
-    const onSubmit = async (data: any) => {
+    const onSubmit = async (data: LoginFormValues) => {
         form.clearErrors()
         if (validate(data) === true) {
             try {

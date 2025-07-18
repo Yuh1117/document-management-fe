@@ -20,7 +20,8 @@
         "last_name": "Last Name",
         "last_name_placeholder": "Enter your last name",
         "avatar": "Avatar",
-        "already_account": "Already have an account?"
+        "already_account": "Already have an account?",
+        "confirm_password": "Confirm password"
     },
     "language": "Language"
 }

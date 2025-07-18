@@ -21,7 +21,8 @@
         "last_name": "Họ",
         "last_name_placeholder": "Nhập họ",
         "avatar": "Avatar",
-        "already_account": "Đã có tài khoản?"
+        "already_account": "Đã có tài khoản?",
+        "confirm_password": "Xác nhận mật khẩu"
     },
     "language": "Ngôn ngữ"
 }
