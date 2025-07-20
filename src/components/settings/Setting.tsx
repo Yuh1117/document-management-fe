@@ -1,4 +1,3 @@
-import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { ChangeLanguage } from "./ChangeLanguage";
@@ -8,10 +7,10 @@ import { Settings } from "lucide-react";
 const Setting = () => {
     return (
         <Popover>
-            <PopoverTrigger asChild>
-                <Button variant="outline" size="icon">
-                    <Settings strokeWidth={2} />
-                </Button>
+            <PopoverTrigger>
+                <div className="cursor-pointer p-2 rounded-2xl hover:bg-accent dark:hover:bg-input/50">
+                    <Settings />
+                </div>
             </PopoverTrigger>
             <PopoverContent className="w-auto max-w-sm max-h-60 overflow-auto">
                 <div className="grid gap-4">
