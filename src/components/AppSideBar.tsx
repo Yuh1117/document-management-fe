@@ -43,7 +43,7 @@ const data = {
       isActive: true,
     },
     {
-      title: "Kho của tôi",
+      title: "Files của tôi",
       url: "#",
       icon: Box,
     },
@@ -62,8 +62,8 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" className="pt-16 border-none" {...props}>
-      <SidebarHeader className="pt-1">
+    <Sidebar collapsible="icon" className="pt-17 border-none" {...props}>
+      <SidebarHeader className="pt-1 md:pt-0">
         <NewDropDown items={data.new} />
         <NavMain items={data.navMain} />
       </SidebarHeader>

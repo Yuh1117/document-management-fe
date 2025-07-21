@@ -1,4 +1,4 @@
-import { BrowserRouter, Outlet, Route, Routes } from 'react-router'
+import { createBrowserRouter, Outlet, RouterProvider } from 'react-router'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
@@ -7,12 +7,16 @@ import Header from './components/layout/Header'
 import { SidebarInset, SidebarProvider } from './components/ui/sidebar'
 import { AppSidebar } from './components/AppSideBar'
 
+const homeLoader = async () => {
+  return { message: "Home page hehe" };
+};
+
 const MainLayout = () => (
   <>
     <Header />
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
+      <SidebarInset className="px-2">
         <Outlet />
       </SidebarInset>
     </SidebarProvider>
@@ -25,23 +29,44 @@ const AuthLayout = () => (
   </>
 );
 
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <MainLayout />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+        loader: homeLoader,
+      },
+    ],
+  },
+  {
+    path: "/login",
+    element: <AuthLayout />,
+    children: [
+      {
+        index: true,
+        element: <Login />,
+      },
+    ],
+  },
+  {
+    path: "/signup",
+    element: <AuthLayout />,
+    children: [
+      {
+        index: true,
+        element: <Signup />,
+      },
+    ],
+  },
+]);
+
 function App() {
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-      <BrowserRouter>
-        <Routes>
-
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<Home />} />
-          </Route>
-
-          <Route element={<AuthLayout />}>
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-          </Route>
-
-        </Routes>
-      </BrowserRouter>
+      <RouterProvider router={router} />
     </ThemeProvider>
   );
 }

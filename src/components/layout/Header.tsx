@@ -51,7 +51,7 @@ const SearchInput = React.memo(() => (
 const Account = React.memo(() => (
     <DropdownMenu>
         <DropdownMenuTrigger>
-            <Avatar className="w-9 h-9 cursor-pointer">
+            <Avatar className="w-10 h-10 cursor-pointer">
                 <AvatarImage src="/batman.png" alt="avatar" />
                 <AvatarFallback className="rounded-lg">a</AvatarFallback>
             </Avatar>
