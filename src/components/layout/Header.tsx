@@ -9,6 +9,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Input } from "@/components/ui/input";
 import Setting from "../settings/Setting";
 import { Link } from "react-router";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { logout } from "@/redux/reducers/UserReducer";
 
 interface MenuItem {
     title: string;
@@ -25,64 +27,74 @@ interface NavBarProps {
     menu?: MenuItem[];
 }
 
-const SubMenuLink = React.memo(({ item }: { item: MenuItem }) => (
-    <a
-        className="flex flex-row gap-2 rounded-md p-3 min-w-[150px] transition-colors hover:bg-muted hover:text-accent-foreground"
-        href={item.url}
-    >
-        <div className="text-foreground">{item.icon}</div>
-        <div className="flex flex-col">
-            <span className="text-sm font-medium">{item.title}</span>
+const SubMenuLink = ({ item }: { item: MenuItem }) => {
+    return (
+        <a
+            className="flex flex-row gap-2 rounded-md p-3 min-w-[150px] transition-colors hover:bg-muted hover:text-accent-foreground"
+            href={item.url}
+        >
+            <div className="text-foreground">{item.icon}</div>
+            <div className="flex flex-col">
+                <span className="text-sm font-medium">{item.title}</span>
+            </div>
+        </a>
+    )
+};
+
+const SearchInput = () => {
+    return (
+        <div className="relative w-full max-w-lg">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+                type="text"
+                placeholder="Tìm kiếm"
+                className="pl-9 py-5"
+            />
         </div>
-    </a>
-));
+    )
+};
 
-const SearchInput = React.memo(() => (
-    <div className="relative w-full max-w-lg">
-        <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-        <Input
-            type="text"
-            placeholder="Tìm kiếm"
-            className="pl-9 py-5"
-        />
-    </div>
-));
+const Account = ({ user }: { user: any }) => {
+    const dispatch = useAppDispatch();
 
-const Account = React.memo(() => (
-    <DropdownMenu>
-        <DropdownMenuTrigger>
-            <Avatar className="w-10 h-10 cursor-pointer">
-                <AvatarImage src="/batman.png" alt="avatar" />
-                <AvatarFallback className="rounded-lg">a</AvatarFallback>
-            </Avatar>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="mr-2">
-            <DropdownMenuLabel>
-                <div className="flex flex-col">
-                    <span>Huy</span>
-                    <span className="text-muted-foreground truncate text-xs">
-                        huy@gmail.com
-                    </span>
-                </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-                <DropdownMenuItem className="font-medium">
-                    Tài khoản
-                </DropdownMenuItem>
-                <DropdownMenuItem className="font-medium">
-                    Thông báo
-                </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="font-medium">
-                <span className="text-red-500">Đăng xuất</span>
-            </DropdownMenuItem>
-        </DropdownMenuContent>
-    </DropdownMenu>
-));
+    if (user) {
+        return (
+            <DropdownMenu>
+                <DropdownMenuTrigger>
+                    <Avatar className="w-10 h-10 cursor-pointer">
+                        <AvatarImage src={user.avatar} alt="avatar" />
+                        <AvatarFallback className="rounded-lg">a</AvatarFallback>
+                    </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="mr-2">
+                    <DropdownMenuLabel>
+                        <div className="flex flex-col">
+                            <span>{`${user.lastName} ${user.firstName}`}</span>
+                            <span className="text-muted-foreground truncate text-xs">
+                                {user.email}
+                            </span>
+                        </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuGroup>
+                        <DropdownMenuItem className="font-medium">
+                            Tài khoản
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="font-medium">
+                            Thông báo
+                        </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => dispatch(logout())} className="font-medium">
+                        <span className="text-red-500">Đăng xuất</span>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        )
+    }
+};
 
-const Header = React.memo(({
+const Header = ({
     logo = {
         url: "",
         title: "DMS",
@@ -100,6 +112,7 @@ const Header = React.memo(({
         },
     ],
 }: NavBarProps) => {
+    const user = useAppSelector(state => state.users.user);
 
     const desktopMenu = useMemo(() => (
         menu.map((item) =>
@@ -173,7 +186,7 @@ const Header = React.memo(({
 
                     <div className="flex gap-3">
                         <Setting />
-                        <Account />
+                        <Account user={user} />
                     </div>
                 </nav>
 
@@ -213,7 +226,7 @@ const Header = React.memo(({
 
                                     <div className="flex gap-3">
                                         <Setting />
-                                        <Account />
+                                        <Account user={user} />
                                     </div>
                                 </div>
                             </SheetContent>
@@ -223,6 +236,6 @@ const Header = React.memo(({
             </div>
         </section>
     );
-});
+};
 
 export default Header;

@@ -1,16 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useState, type ChangeEvent } from "react";
-import { Loader2Icon } from "lucide-react"
+import { AlertCircleIcon, Loader2Icon } from "lucide-react"
 import { FcGoogle } from "react-icons/fc";
 import { ChangeLanguage } from "@/components/settings/ChangeLanguage";
 import { useTranslation } from "react-i18next";
 import { ModeToggle } from "@/components/settings/ThemeToggle";
 import type { LoginFormValues } from "./Login";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import Api, { endpoints } from "@/config/Api";
 
 interface SignupFormValues extends LoginFormValues {
     confirmPassword: string,
@@ -32,6 +34,8 @@ const Signup = () => {
     const form = useForm<SignupFormValues>();
     const [loading, setLoading] = useState<boolean>(false)
     const { t } = useTranslation()
+    const [msg, setMsg] = useState<string>()
+    const nav = useNavigate()
 
     const setError = (field: keyof SignupFormValues, message: string): void => {
         form.setError(field, { type: "manual", message: message })
@@ -113,13 +117,42 @@ const Signup = () => {
 
     const onSubmit = async (data: SignupFormValues) => {
         form.clearErrors()
+        setMsg("")
+
         if (validate(data) === true) {
             try {
                 setLoading(true);
 
-                console.log(data)
-            } catch (error) {
-                console.error(error);
+                let form = new FormData();
+                Object.entries(data).forEach(([key, value]) => {
+                    if (key !== "confirmPassword" && value != null) {
+                        if (value instanceof File) {
+                            form.append("file", value);
+                        } else {
+                            form.append(key, value);
+                        }
+                    }
+                });
+
+                await Api.post(endpoints["signup"], form, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+
+                nav("/login", {state : {
+                    success: "Đăng ký tài khoản thành công."
+                }})
+                
+            } catch (error: any) {
+                if (error.response?.status === 400 && Array.isArray(error.response.data.error)) {
+                    const errors = error.response.data.error;
+                    errors.forEach((err: any) => {
+                        setError(err.field, err.message);
+                    });
+                } else {
+                    setMsg("Lỗi hệ thống hoặc kết nối.");
+                }
             } finally {
                 setLoading(false);
             }
@@ -140,6 +173,15 @@ const Signup = () => {
                                         {t('signup.title')}
                                     </p>
                                 </div>
+
+                                {msg &&
+                                    <Alert className="border-red-500" variant="destructive">
+                                        <AlertCircleIcon />
+                                        <AlertDescription>
+                                            {msg}
+                                        </AlertDescription>
+                                    </Alert>
+                                }
 
                                 <FormField
                                     control={form.control}

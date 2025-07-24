@@ -7,7 +7,7 @@ const languageOptions = [
 ]
 
 const ChangeLanguage = () => {
-    const { i18n, t } = useTranslation();
+    const { i18n } = useTranslation();
 
     const handleLanguageChange = (value: string) => {
         i18n.changeLanguage(value);

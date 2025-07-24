@@ -6,6 +6,10 @@ import { ThemeProvider } from './components/settings/ThemeProvider'
 import Header from './components/layout/Header'
 import { SidebarInset, SidebarProvider } from './components/ui/sidebar'
 import { AppSidebar } from './components/AppSideBar'
+import { AuthRoute, ProtectedRoute } from './components/protected-route/ProtectedRoute'
+import { useAppDispatch } from './redux/hooks'
+import { useEffect } from 'react'
+import { getProfile } from './redux/reducers/UserReducer'
 
 const homeLoader = async () => {
   return { message: "Home page hehe" };
@@ -23,16 +27,12 @@ const MainLayout = () => (
   </>
 );
 
-const AuthLayout = () => (
-  <>
-    <Outlet />
-  </>
-);
-
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <MainLayout />,
+    element: <ProtectedRoute>
+      <MainLayout />
+    </ProtectedRoute>,
     children: [
       {
         index: true,
@@ -43,27 +43,25 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <AuthLayout />,
-    children: [
-      {
-        index: true,
-        element: <Login />,
-      },
-    ],
+    element: <AuthRoute>
+      <Login />
+    </AuthRoute>,
   },
   {
     path: "/signup",
-    element: <AuthLayout />,
-    children: [
-      {
-        index: true,
-        element: <Signup />,
-      },
-    ],
+    element: <AuthRoute>
+      <Signup />
+    </AuthRoute>,
   },
 ]);
 
 function App() {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(getProfile())
+  }, [])
+
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <RouterProvider router={router} />
