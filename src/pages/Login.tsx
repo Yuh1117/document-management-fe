@@ -1,15 +1,21 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { useForm } from "react-hook-form"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useState, type ChangeEvent } from "react";
-import { Loader2Icon } from "lucide-react"
+import { useEffect, useState, type ChangeEvent } from "react";
+import { AlertCircleIcon, CircleCheck, Loader2Icon } from "lucide-react"
 import { FcGoogle } from "react-icons/fc";
 import { useTranslation } from "react-i18next";
 import { ChangeLanguage } from "@/components/settings/ChangeLanguage";
 import { ModeToggle } from "@/components/settings/ThemeToggle";
+import Api, { endpoints } from "@/config/Api";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import cookies from 'react-cookies';
+import { useAppDispatch } from "@/redux/hooks";
+import { login } from "@/redux/reducers/UserReducer";
+import { toast, Toaster } from "sonner";
 
 export interface LoginFormValues {
     email: string;
@@ -25,6 +31,11 @@ const Login = () => {
     const form = useForm<LoginFormValues>();
     const [loading, setLoading] = useState<boolean>(false)
     const { t } = useTranslation()
+    const [msg, setMsg] = useState<string>();
+    const nav = useNavigate();
+    const dispatch = useAppDispatch();
+    const location = useLocation();
+    const successMsg = location.state?.success;
 
     const setError = (field: keyof LoginFormValues, message: string): void => {
         form.setError(field, { type: "manual", message: message })
@@ -70,21 +81,41 @@ const Login = () => {
 
     const onSubmit = async (data: LoginFormValues) => {
         form.clearErrors()
+        setMsg("")
+
         if (validate(data) === true) {
             try {
                 setLoading(true);
+                const res = await Api.post(endpoints["login"], data)
+                cookies.save('token', res.data.data.accessToken, { path: "/" });
 
-                console.log(data)
-            } catch (error) {
-                console.error(error);
+                dispatch(login(res.data.data.user))
+
+                nav("/")
+            } catch (error: any) {
+                if (error.response?.status === 401) {
+                    setMsg("Tài khoản hoặc mật khẩu không chính xác");
+                } else {
+                    setMsg("Lỗi hệ thống hoặc kết nối.");
+                }
             } finally {
                 setLoading(false);
             }
         }
     };
 
+    useEffect(() => {
+        if (successMsg) {
+            toast(successMsg, {
+                duration: 3000,
+                icon: <CircleCheck />
+            })
+        }
+    }, [successMsg])
+
     return (
         <div className="bg-muted flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
+            <Toaster position="top-center" />
 
             <Card className="w-full md:max-w-sm">
                 <CardContent >
@@ -97,6 +128,15 @@ const Login = () => {
                                         {t('login.title')}
                                     </p>
                                 </div>
+
+                                {msg &&
+                                    <Alert className="border-red-500" variant="destructive">
+                                        <AlertCircleIcon />
+                                        <AlertDescription>
+                                            {msg}
+                                        </AlertDescription>
+                                    </Alert>
+                                }
 
                                 <FormField
                                     control={form.control}
