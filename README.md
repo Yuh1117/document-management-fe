@@ -1,1 +1,1 @@
-# School-DMS-fe
+# document-management-fe
