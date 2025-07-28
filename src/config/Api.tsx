@@ -4,9 +4,9 @@ import cookie from "react-cookies"
 const BASE_URL = 'http://localhost:8080/';
 
 export const endpoints = {
-    "login": "/login",
-    "signup": "/signup",
-    'profile': '/secure/profile'
+    "login": "/api/login",
+    "signup": "/api/signup",
+    'profile': '/api/secure/profile'
 }
 
 export const authApis = () => {
