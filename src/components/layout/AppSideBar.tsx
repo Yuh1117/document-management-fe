@@ -17,7 +17,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { NewDropDown } from "./NewDropDown"
+import { NewDropDown } from "../NewDropDown"
 
 const data = {
   new: [

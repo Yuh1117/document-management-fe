@@ -5,8 +5,11 @@ import cookies from "react-cookies";
 export const getProfile = createAsyncThunk(
     'users/profile',
     async () => {
-        const res = await authApis().get(endpoints["profile"])
-        return res.data.data;
+        if (cookies.load('token')) {
+            const res = await authApis().get(endpoints["profile"])
+            return res.data.data;
+        }
+        return null;
     }
 )
 

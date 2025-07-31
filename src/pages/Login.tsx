@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useEffect, useState, type ChangeEvent } from "react";
 import { AlertCircleIcon, CircleCheck, Loader2Icon } from "lucide-react"
-import { FcGoogle } from "react-icons/fc";
 import { useTranslation } from "react-i18next";
 import { ChangeLanguage } from "@/components/settings/ChangeLanguage";
 import { ModeToggle } from "@/components/settings/ThemeToggle";
@@ -16,6 +15,7 @@ import cookies from 'react-cookies';
 import { useAppDispatch } from "@/redux/hooks";
 import { login } from "@/redux/reducers/UserReducer";
 import { toast, Toaster } from "sonner";
+import GoogleLoginButton from "@/components/GoogleLoginButton";
 
 export interface LoginFormValues {
     email: string;
@@ -31,7 +31,7 @@ const Login = () => {
     const form = useForm<LoginFormValues>();
     const [loading, setLoading] = useState<boolean>(false)
     const { t } = useTranslation()
-    const [msg, setMsg] = useState<string>();
+    const [msg, setMsg] = useState<string>("");
     const nav = useNavigate();
     const dispatch = useAppDispatch();
     const location = useLocation();
@@ -90,7 +90,6 @@ const Login = () => {
                 cookies.save('token', res.data.data.accessToken, { path: "/" });
 
                 dispatch(login(res.data.data.user))
-
                 nav("/")
             } catch (error: any) {
                 if (error.response?.status === 401) {
@@ -191,10 +190,7 @@ const Login = () => {
                                 </div>
 
                                 <div className="grid grid-cols-1 gap-4">
-                                    <Button variant="outline" type="button" className="w-full">
-                                        <FcGoogle />
-                                        {t('login.google')}
-                                    </Button>
+                                    <GoogleLoginButton setMsg={setMsg} />
                                 </div>
 
                                 <div className="text-center text-sm">

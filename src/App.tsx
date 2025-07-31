@@ -5,11 +5,11 @@ import Signup from './pages/Signup'
 import { ThemeProvider } from './components/settings/ThemeProvider'
 import Header from './components/layout/Header'
 import { SidebarInset, SidebarProvider } from './components/ui/sidebar'
-import { AppSidebar } from './components/AppSideBar'
 import { AuthRoute, ProtectedRoute } from './components/protected-route/ProtectedRoute'
 import { useAppDispatch } from './redux/hooks'
 import { useEffect } from 'react'
 import { getProfile } from './redux/reducers/UserReducer'
+import { AppSidebar } from './components/layout/AppSideBar'
 
 const homeLoader = async () => {
   return { message: "Home page hehe" };
