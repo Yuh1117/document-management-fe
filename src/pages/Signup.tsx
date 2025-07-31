@@ -1,18 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { useForm } from "react-hook-form"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useState, type ChangeEvent } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import { AlertCircleIcon, Loader2Icon } from "lucide-react"
-import { FcGoogle } from "react-icons/fc";
 import { ChangeLanguage } from "@/components/settings/ChangeLanguage";
 import { useTranslation } from "react-i18next";
 import { ModeToggle } from "@/components/settings/ThemeToggle";
 import type { LoginFormValues } from "./Login";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import Api, { endpoints } from "@/config/Api";
+import { toast, Toaster } from "sonner";
+import GoogleLoginButton from "@/components/GoogleLoginButton";
 
 interface SignupFormValues extends LoginFormValues {
     confirmPassword: string,
@@ -34,8 +35,10 @@ const Signup = () => {
     const form = useForm<SignupFormValues>();
     const [loading, setLoading] = useState<boolean>(false)
     const { t } = useTranslation()
-    const [msg, setMsg] = useState<string>()
+    const [msg, setMsg] = useState<string>("")
     const nav = useNavigate()
+    const location = useLocation()
+    const isGoogleAuth = !!location.state?.newUser;
 
     const setError = (field: keyof SignupFormValues, message: string): void => {
         form.setError(field, { type: "manual", message: message })
@@ -140,10 +143,12 @@ const Signup = () => {
                     }
                 });
 
-                nav("/login", {state : {
-                    success: "Đăng ký tài khoản thành công."
-                }})
-                
+                nav("/login", {
+                    state: {
+                        success: "Đăng ký tài khoản thành công."
+                    }
+                })
+
             } catch (error: any) {
                 if (error.response?.status === 400 && Array.isArray(error.response.data.error)) {
                     const errors = error.response.data.error;
@@ -159,8 +164,19 @@ const Signup = () => {
         }
     };
 
+    useEffect(() => {
+        if (location.state?.newUser) {
+            const user = location.state.newUser
+            form.setValue("email", user.email)
+            form.setValue("firstName", user.firstName)
+            form.setValue("lastName", user.lastName)
+            toast("Cần đăng ký tài khoản để dự phòng.", { duration: 5000 })
+        }
+    }, [location.state?.newUser]);
+
     return (
         <div className="bg-muted flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
+            <Toaster position="top-center" />
 
             <Card className="w-full md:max-w-sm">
                 <CardContent >
@@ -170,7 +186,7 @@ const Signup = () => {
                                 <div className="flex flex-col items-center text-center gap-1">
                                     <h1 className="text-2xl font-bold">DMS</h1>
                                     <p className="text-muted-foreground text-balance">
-                                        {t('signup.title')}
+                                        {isGoogleAuth ? "Hoàn tất đăng nhập bằng Google" : t('signup.title')}
                                     </p>
                                 </div>
 
@@ -233,7 +249,8 @@ const Signup = () => {
                                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                         form.setValue('email', e.target.value)
                                                         validateEmail(e.target.value)
-                                                    }} />
+                                                    }}
+                                                    disabled={isGoogleAuth} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -314,23 +331,22 @@ const Signup = () => {
                                     {loading ? <Loader2Icon className="animate-spin" /> : t('signup.label')}
                                 </Button>
 
-                                <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
-                                    <span className="bg-card text-muted-foreground relative z-10 px-2">
-                                        {t('login.or_continue')}
-                                    </span>
-                                </div>
+                                {!isGoogleAuth && <>
+                                    <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+                                        <span className="bg-card text-muted-foreground relative z-10 px-2">
+                                            {t('login.or_continue')}
+                                        </span>
+                                    </div>
 
-                                <div className="grid grid-cols-1 gap-4">
-                                    <Button variant="outline" type="button" className="w-full">
-                                        <FcGoogle />
-                                        {t('login.google')}
-                                    </Button>
-                                </div>
+                                    <div className="grid grid-cols-1 gap-4">
+                                        <GoogleLoginButton setMsg={setMsg} />
+                                    </div>
 
-                                <div className="text-center text-sm">
-                                    {t('signup.already_account') + " "}
-                                    <Link to={"/login"}><span className="underline underline-offset-4">{t('login.label')}</span></Link>
-                                </div>
+                                    <div className="text-center text-sm">
+                                        {t('signup.already_account') + " "}
+                                        <Link to={"/login"}><span className="underline underline-offset-4">{t('login.label')}</span></Link>
+                                    </div>
+                                </>}
                             </div>
                         </form>
                     </Form>
