@@ -1,45 +1,51 @@
-import { GoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router";
 import cookies from "react-cookies";
 import { useAppDispatch } from "@/redux/hooks";
 import Api, { endpoints } from "@/config/Api";
 import type { Dispatch, SetStateAction } from "react";
 import { login } from "@/redux/reducers/UserReducer";
+import { Button } from "./ui/button";
+import { useTranslation } from "react-i18next";
+import { FcGoogle } from "react-icons/fc";
 
 const GoogleLoginButton = ({ setMsg }: { setMsg: Dispatch<SetStateAction<string>> }) => {
     const dispatch = useAppDispatch()
     const nav = useNavigate();
+    const { t } = useTranslation();
 
-    const handleLoginGoogle = async (credentialResponse: any) => {
-        try {
-            const res = await Api.post(endpoints["google-login"], {
-                token: credentialResponse.credential,
-            });
+    const handleLoginGoogle = useGoogleLogin({
+        onSuccess: async (response: any) => {
+            try {
+                const res = await Api.post(endpoints["google-login"], {
+                    code: response.code,
+                });
 
-            if (res.data.data.accessToken) {
-                cookies.save('token', res.data.data.accessToken, { path: "/" });
+                if (res.data.data.accessToken) {
+                    cookies.save('token', res.data.data.accessToken, { path: "/" });
 
-                dispatch(login(res.data.data.user))
-                nav("/");
-            } else {
-                nav("/signup", { state: { newUser: res.data.data } });
+                    dispatch(login(res.data.data.user))
+                    nav("/");
+                } else {
+                    nav("/signup", { state: { newUser: res.data.data } });
+                }
+            } catch (error: any) {
+                if (error.response?.status === 401) {
+                    setMsg(error.response.data);
+                } else {
+                    setMsg("Lỗi hệ thống hoặc kết nối.");
+                }
             }
-        } catch (error: any) {
-            if (error.response?.status === 401) {
-                setMsg(error.response.data);
-            } else {
-                setMsg("Lỗi hệ thống hoặc kết nối.");
-            }
-        }
-    };
+        },
+        onError: () => setMsg("Đăng nhập thất bại."),
+        flow: "auth-code"
+    })
 
     return (
-        <GoogleLogin
-            onSuccess={handleLoginGoogle}
-            onError={() => setMsg("Login Failed")}
-            logo_alignment="center"
-            shape="circle"
-        />
+        <Button variant="outline" type="button" className="w-full" onClick={handleLoginGoogle}>
+            <FcGoogle />
+            {t('login.google')}
+        </Button>
     );
 };
 
