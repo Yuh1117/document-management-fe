@@ -1,24 +1,24 @@
 import { Link } from 'react-router';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
-import { ChangeLanguage } from '../settings/ChangeLanguage';
-import { ModeToggle } from '../settings/ThemeToggle';
-import { UserRoundCheck } from 'lucide-react';
+import { ChangeLanguage } from '../settings/change-language';
+import { ModeToggle } from '../settings/theme-toggle';
+import { ShieldAlert } from 'lucide-react';
 
-const NotLogin = () => {
+const NotPermitted = () => {
     return (
         <div className="bg-muted flex min-h-screen flex-col items-center justify-center p-6 md:p-10">
-            <Card className="w-full md:max-w-sm">
+            <Card className="w-full md:max-w-sm ">
                 <CardContent className="text-center">
                     <div className="mb-4 flex justify-center">
-                        <UserRoundCheck strokeWidth={1} size={128} />
+                        <ShieldAlert strokeWidth={1} size={128}/>
                     </div>
                     <h2 className="text-xl font-semibold mb-3">
-                        Bạn cần đăng nhập để tiếp tục.
+                        Bạn không có quyền truy cập trang này!
                     </h2>
-                    <Link to="/login">
+                    <Link to="/">
                         <Button variant="secondary" className="w-full">
-                            Đăng nhập
+                            Quay về trang chủ
                         </Button>
                     </Link>
                 </CardContent>
@@ -32,4 +32,4 @@ const NotLogin = () => {
     );
 };
 
-export default NotLogin;
+export default NotPermitted;

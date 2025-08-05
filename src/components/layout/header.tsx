@@ -7,10 +7,10 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, } from "@/c
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Input } from "@/components/ui/input";
-import Setting from "../settings/Setting";
+import Setting from "../settings/setting";
 import { Link } from "react-router";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { logout } from "@/redux/reducers/UserReducer";
+import { logout } from "@/redux/reducers/userSlide";
 
 interface MenuItem {
     title: string;

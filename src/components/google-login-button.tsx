@@ -4,7 +4,7 @@ import cookies from "react-cookies";
 import { useAppDispatch } from "@/redux/hooks";
 import Api, { endpoints } from "@/config/Api";
 import type { Dispatch, SetStateAction } from "react";
-import { login } from "@/redux/reducers/UserReducer";
+import { login } from "@/redux/reducers/userSlide";
 import { Button } from "./ui/button";
 import { useTranslation } from "react-i18next";
 import { FcGoogle } from "react-icons/fc";

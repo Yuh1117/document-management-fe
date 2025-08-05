@@ -1,15 +1,15 @@
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router'
-import Home from './pages/Home'
-import Login from './pages/Login'
-import Signup from './pages/Signup'
-import { ThemeProvider } from './components/settings/ThemeProvider'
-import Header from './components/layout/Header'
+import Home from './pages/home'
+import Login from './pages/login'
+import Signup from './pages/signup'
+import { ThemeProvider } from './components/settings/theme-provider'
+import Header from './components/layout/header'
 import { SidebarInset, SidebarProvider } from './components/ui/sidebar'
-import { AuthRoute, ProtectedRoute } from './components/protected-route/ProtectedRoute'
+import { AuthRoute, ProtectedRoute } from './components/protected-route/protected-route'
 import { useAppDispatch } from './redux/hooks'
 import { useEffect } from 'react'
-import { getProfile } from './redux/reducers/UserReducer'
-import { AppSidebar } from './components/layout/AppSideBar'
+import { getProfile } from './redux/reducers/userSlide'
+import { AppSidebar } from './components/layout/app-sidebar'
 
 const homeLoader = async () => {
   return { message: "Home page hehe" };
@@ -30,28 +30,34 @@ const MainLayout = () => (
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <ProtectedRoute>
-      <MainLayout />
-    </ProtectedRoute>,
+    element: (
+      <ProtectedRoute>
+        <MainLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         index: true,
-        element: <Home />,
+        Component: Home,
         loader: homeLoader,
       },
     ],
   },
   {
     path: "/login",
-    element: <AuthRoute>
-      <Login />
-    </AuthRoute>,
+    element: (
+      <AuthRoute>
+        <Login />
+      </AuthRoute>
+    ),
   },
   {
     path: "/signup",
-    element: <AuthRoute>
-      <Signup />
-    </AuthRoute>,
+    element: (
+      <AuthRoute>
+        <Signup />
+      </AuthRoute>
+    ),
   },
 ]);
 
