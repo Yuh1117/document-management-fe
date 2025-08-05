@@ -7,15 +7,15 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useEffect, useState, type ChangeEvent } from "react";
 import { AlertCircleIcon, CircleCheck, Loader2Icon } from "lucide-react"
 import { useTranslation } from "react-i18next";
-import { ChangeLanguage } from "@/components/settings/ChangeLanguage";
-import { ModeToggle } from "@/components/settings/ThemeToggle";
+import { ChangeLanguage } from "@/components/settings/change-language";
+import { ModeToggle } from "@/components/settings/theme-toggle";
 import Api, { endpoints } from "@/config/Api";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import cookies from 'react-cookies';
 import { useAppDispatch } from "@/redux/hooks";
-import { login } from "@/redux/reducers/UserReducer";
+import { login } from "@/redux/reducers/userSlide";
 import { toast, Toaster } from "sonner";
-import GoogleLoginButton from "@/components/GoogleLoginButton";
+import GoogleLoginButton from "@/components/google-login-button";
 
 export interface LoginFormValues {
     email: string;

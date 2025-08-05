@@ -11,13 +11,13 @@ import {
   Users,
 } from "lucide-react"
 
-import { NavMain } from "@/components/NavMain"
+import { NavMain } from "@/components/nav-main"
 import {
   Sidebar,
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { NewDropDown } from "../NewDropDown"
+import { NewDropDown } from "../new-dropdown"
 
 const data = {
   new: [

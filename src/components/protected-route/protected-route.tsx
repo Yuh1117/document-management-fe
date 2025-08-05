@@ -1,6 +1,6 @@
 import { useAppSelector } from "@/redux/hooks";
-import NotLogin from "./NotLogin";
-import NotPermitted from "./NotPermitted";
+import NotLogin from "./not-login";
+import NotPermitted from "./not-permitted";
 import { Navigate } from "react-router";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {

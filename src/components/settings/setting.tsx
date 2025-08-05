@@ -1,7 +1,7 @@
 import { Label } from "../ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { ChangeLanguage } from "./ChangeLanguage";
-import { ModeToggle } from "./ThemeToggle";
+import { ChangeLanguage } from "./change-language";
+import { ModeToggle } from "./theme-toggle";
 import { Settings } from "lucide-react";
 
 const Setting = () => {
