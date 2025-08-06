@@ -7,7 +7,9 @@ export const endpoints = {
     "login": "/api/login",
     "signup": "/api/signup",
     'profile': '/api/secure/profile',
-    "google-login": "/api/auth/google"
+    "google-login": "/api/auth/google",
+    "settings": "/api/secure/settings",
+    "settings-details": (id: number) => `/api/secure/settings/${id}`
 }
 
 export const authApis = () => {

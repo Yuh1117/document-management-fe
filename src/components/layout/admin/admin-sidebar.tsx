@@ -20,13 +20,9 @@ import {
 } from "@/components/ui/sidebar"
 import { NavUser } from "./nav-user"
 import { NavMain } from "./admin-nav-main"
+import { useAppSelector } from "@/redux/hooks"
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Trang chủ",
@@ -57,6 +53,8 @@ const data = {
 }
 
 export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const user = useAppSelector(state => state.users.user);
+
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
@@ -77,7 +75,7 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   )

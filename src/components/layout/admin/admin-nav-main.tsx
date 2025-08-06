@@ -17,7 +17,6 @@ export function NavMain({
         title: string
         url: string
         icon: LucideIcon
-        isActive?: boolean
     }[]
 }) {
     const location = useLocation();
@@ -26,8 +25,8 @@ export function NavMain({
         <SidebarGroup>
             <SidebarMenu>
                 {items.map((item) => (
-                    <SidebarMenuItem>
-                        <SidebarMenuButton asChild tooltip={item.title} isActive={location.pathname === item.url}>
+                    <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton asChild tooltip={item.title} isActive={location.pathname === item.url} className="py-5">
                             <Link to={item.url}>
                                 <item.icon />
                                 <span>{item.title}</span>

@@ -22,8 +22,8 @@ const NewDropDown = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="rounded-2xl" size={"lg"}>
-          <Plus /> {state === "collapsed" ? '' : "Mới"}
+        <Button className={`rounded-xl ${state !== "collapsed" && "w-30  h-13"}`} size="icon">
+          <Plus strokeWidth={3}/> {state === "collapsed" ? '' : "Mới"}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-50" align="start">
