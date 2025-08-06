@@ -15,7 +15,7 @@ import cookies from 'react-cookies';
 import { useAppDispatch } from "@/redux/hooks";
 import { login } from "@/redux/reducers/userSlide";
 import { toast, Toaster } from "sonner";
-import GoogleLoginButton from "@/components/google-login-button";
+import GoogleLoginButton from "@/components/layout/client/google-login-button";
 
 export interface LoginFormValues {
     email: string;

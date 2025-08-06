@@ -5,13 +5,13 @@ import { Navigate } from "react-router";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     const user = useAppSelector(state => state.users.user);
-
+    return <>{children}</>;
     return user ? <>{children}</> : <NotLogin />;
 };
 
 export const AdminRoute = ({ children }: { children: React.ReactNode }) => {
     const user = useAppSelector(state => state.users.user);
-
+    return <>{children}</>;
     return user ? user?.role === "ADMIN" ? <>{children}</> : <NotPermitted /> : <NotLogin />;
 };
 

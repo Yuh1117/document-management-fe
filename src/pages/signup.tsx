@@ -13,7 +13,7 @@ import type { LoginFormValues } from "./login";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import Api, { endpoints } from "@/config/Api";
 import { toast, Toaster } from "sonner";
-import GoogleLoginButton from "@/components/google-login-button";
+import GoogleLoginButton from "@/components/layout/client/google-login-button";
 
 interface SignupFormValues extends LoginFormValues {
     confirmPassword: string,
