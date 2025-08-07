@@ -27,7 +27,7 @@ type Props = {
     loadSettings: () => void
 };
 
-const SettingFormModal = ({
+const SettingModal = ({
     open,
     onOpenChange,
     isEditing,
@@ -72,7 +72,7 @@ const SettingFormModal = ({
             try {
                 setLoading(true);
                 if (isEditing) {
-                    await authApis().patch(endpoints["settings-details"](data.id), data);
+                    await authApis().patch(endpoints["settings-detail"](data.id), data);
                     onOpenChange(false)
                     loadSettings()
                 } else {
@@ -207,4 +207,4 @@ const SettingFormModal = ({
     );
 };
 
-export default SettingFormModal;
+export default SettingModal;

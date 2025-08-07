@@ -4,10 +4,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Button } from "../../ui/button"
+import { Button } from "../ui/button"
 import { DropdownMenuGroup } from "@radix-ui/react-dropdown-menu"
 import { Plus, type LucideIcon } from "lucide-react"
-import { useSidebar } from "../../ui/sidebar"
+import { useSidebar } from "../ui/sidebar"
 
 const NewDropDown = ({
   items

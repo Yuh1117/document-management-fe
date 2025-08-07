@@ -8,8 +8,18 @@ export const endpoints = {
     "signup": "/api/signup",
     'profile': '/api/secure/profile',
     "google-login": "/api/auth/google",
+    
     "settings": "/api/secure/settings",
-    "settings-details": (id: number) => `/api/secure/settings/${id}`
+    "settings-detail": (id: number) => `/api/secure/settings/${id}`,
+    
+    "users": "/api/secure/users",
+    "users-detail": (id: number) => `/api/secure/users/${id}`,
+    
+    "roles": "/api/secure/roles",
+    "roles-detail": (id: number) => `/api/secure/roles/${id}`,
+    
+    "permissions": "/api/secure/permissions",
+    "permissions-detail": (id: number) => `/api/secure/permissions/${id}`,
 }
 
 export const authApis = () => {

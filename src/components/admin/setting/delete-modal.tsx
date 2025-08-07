@@ -11,14 +11,14 @@ type Props = {
     loadSettings: () => void
 };
 
-const DeleteDialog = ({ open, deletingId, onCancel, loadSettings }: Props) => {
+const DeleteModal = ({ open, deletingId, onCancel, loadSettings }: Props) => {
     const [loading, setLoading] = useState<boolean>(false);
 
     const onConfirm = async () => {
         try {
             setLoading(true);
             if (deletingId !== null) {
-                await authApis().delete(endpoints["settings-details"](deletingId));
+                await authApis().delete(endpoints["settings-detail"](deletingId));
                 onCancel()
                 loadSettings()
             }
@@ -48,4 +48,4 @@ const DeleteDialog = ({ open, deletingId, onCancel, loadSettings }: Props) => {
     );
 };
 
-export default DeleteDialog;
+export default DeleteModal;

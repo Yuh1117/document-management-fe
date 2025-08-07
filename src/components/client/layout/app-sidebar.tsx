@@ -12,14 +12,14 @@ import {
   Trash,
 } from "lucide-react"
 
-import { NavMain } from "@/components/layout/client/nav-main"
+import { NavMain } from "@/components/client/layout/nav-main"
 import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { NewDropDown } from "./new-dropdown"
+import { NewDropDown } from "../new-dropdown"
 
 const data = {
   new: [

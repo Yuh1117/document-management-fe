@@ -262,14 +262,14 @@ function SidebarTrigger({
     <button
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
-      className={cn("cursor-pointer p-2 rounded-2xl hover:bg-input/50 dark:hover:bg-input/50", className)}
+      className={cn("cursor-pointer p-2 rounded-xl hover:bg-input/50 dark:hover:bg-input/50", className)}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
       }}
       {...props}
     >
-      <PanelLeftIcon />
+      <PanelLeftIcon size={20}/>
       <span className="sr-only">Toggle Sidebar</span>
     </button>
   )

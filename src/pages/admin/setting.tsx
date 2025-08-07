@@ -1,5 +1,5 @@
-import DeleteDialog from "@/components/layout/admin/setting/delete-dialog";
-import SettingFormModal from "@/components/layout/admin/setting/modal";
+import DeleteModal from "@/components/admin/setting/delete-modal";
+import SettingModal from "@/components/admin/setting/modal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -97,7 +97,7 @@ const AdminSettingPage = () => {
                 </div>
             </header>
             <div className="mx-5">
-                <div className="flex items-center gap-2 border rounded-xl p-5">
+                <div className="flex items-center gap-2 border rounded-xl p-5  shadow-xs">
                     <Label>Key:</Label>
                     <Input
                         className="w-sm"
@@ -110,11 +110,11 @@ const AdminSettingPage = () => {
                     />
                     <Button variant="secondary" onClick={handleSearch}>Tìm kiếm</Button>
                 </div>
-                <div className="border rounded-xl mt-5 p-5">
+                <div className="border rounded-xl mt-5 p-5 shadow-xs">
                     <div className="flex justify-between items-center mb-3">
                         <span className="font-medium">Danh sách cài đặt</span>
                         <Button className="bg-blue-500 dark:bg-blue-500 hover:bg-blue-500/90 dark:hover:bg-blue-500/90" onClick={handleOpenAdd}>
-                            <Plus strokeWidth={3}/> Thêm mới
+                            <Plus strokeWidth={3} /> Thêm mới
                         </Button>
                     </div>
                     <Table>
@@ -157,11 +157,11 @@ const AdminSettingPage = () => {
                                         <TableCell>{s.description}</TableCell>
                                         <TableCell className="gap-2 flex justify-end">
                                             <PencilLine
-                                                className="text-yellow-500 cursor-pointer me-1"
+                                                className="text-yellow-500 hover:text-yellow-500/50 cursor-pointer me-1"
                                                 onClick={() => handleOpenEdit(s)}
                                             />
                                             <Trash2
-                                                className="text-red-500 cursor-pointer"
+                                                className="text-red-500 hover:text-red-500/50 cursor-pointer"
                                                 onClick={() => handleDelete(s.id)}
                                             />
                                         </TableCell>
@@ -202,7 +202,7 @@ const AdminSettingPage = () => {
                 }
             </div>
 
-            <SettingFormModal
+            <SettingModal
                 open={showModal}
                 onOpenChange={setShowModal}
                 isEditing={isEditing}
@@ -210,7 +210,7 @@ const AdminSettingPage = () => {
                 loadSettings={loadSettings}
             />
 
-            <DeleteDialog
+            <DeleteModal
                 open={!!deletingId}
                 deletingId={deletingId}
                 onCancel={() => setDeletingId(null)}

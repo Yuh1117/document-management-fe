@@ -1,9 +1,9 @@
 import { Link } from 'react-router';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
-import { ChangeLanguage } from '../settings/change-language';
-import { ModeToggle } from '../settings/theme-toggle';
 import { UserRoundCheck } from 'lucide-react';
+import { ChangeLanguage } from '../shared/settings/change-language';
+import { ModeToggle } from '../shared/settings/theme-toggle';
 
 const NotLogin = () => {
     return (
