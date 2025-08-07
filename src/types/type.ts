@@ -3,23 +3,41 @@ export interface IPermission {
     name: string,
     apiPath: string,
     method: string,
-    module: string
+    module: string,
+    createdAt?: string,
+    updatedAt?: string,
 }
 
 export interface IRole {
     id: number,
     name: string,
     description: string
-    permissions: IPermission[]
+    permissions: IPermission[],
+    createdAt?: string,
+    updatedAt?: string,
 }
 
-export interface IUser {
+export interface IAccount {
     id: number;
     email: string,
     firstName: string,
     lastName: string,
     avatar: string,
-    role: IRole
+    role: IRole,
+    createdAt?: string,
+    updatedAt?: string,
+}
+
+export interface IUser {
+    id: number;
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+    avatar: string | File,
+    role: IRole,
+    createdAt?: string,
+    updatedAt?: string,
 }
 
 export interface ISetting {

@@ -1,5 +1,5 @@
 import { authApis, endpoints } from '@/config/Api';
-import type { IUser } from '@/types/type';
+import type { IAccount } from '@/types/type';
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import cookies from "react-cookies";
 
@@ -15,7 +15,7 @@ export const getProfile = createAsyncThunk(
 )
 
 interface UsersState {
-    user: IUser | null;
+    user: IAccount | null;
 }
 
 const initialState: UsersState = {
@@ -26,7 +26,7 @@ const userSlice = createSlice({
     name: 'users',
     initialState,
     reducers: {
-        login: (state, action: PayloadAction<IUser>) => {
+        login: (state, action: PayloadAction<IAccount>) => {
             state.user = action.payload;
         },
         logout: (state) => {

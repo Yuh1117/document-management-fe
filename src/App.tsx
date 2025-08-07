@@ -10,9 +10,10 @@ import { useEffect } from 'react'
 import { getProfile } from './redux/reducers/userSlide'
 import { AppSidebar } from './components/client/layout/app-sidebar'
 import DashBoard from './pages/admin/dashboard'
-import AdminSettingPage from './pages/admin/setting'
 import { ThemeProvider } from './components/shared/settings/theme-provider'
 import { AdminSidebar } from './components/admin/layout/admin-sidebar'
+import SettingAdminPage from './pages/admin/setting'
+import UserAdminPage from './pages/admin/user'
 
 const homeLoader = async () => {
   return { message: "Home page hehe" };
@@ -72,11 +73,11 @@ const router = createBrowserRouter([
       },
       {
         path: "settings",
-        Component: AdminSettingPage,
+        Component: SettingAdminPage,
       },
       {
         path: "users",
-        Component: null,
+        Component: UserAdminPage,
       },
       {
         path: "roles",

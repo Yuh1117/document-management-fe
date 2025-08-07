@@ -25,9 +25,9 @@ import {
 } from "@/components/ui/sidebar"
 import { useAppDispatch } from "@/redux/hooks"
 import { logout } from "@/redux/reducers/userSlide"
-import type { IUser } from "@/types/type"
+import type { IAccount } from "@/types/type"
 
-export function NavUser({ user }: { user: IUser | null }) {
+export function NavUser({ user }: { user: IAccount | null }) {
   const { isMobile } = useSidebar()
   const dispatch = useAppDispatch();
 

@@ -11,7 +11,7 @@ import { Link } from "react-router";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { logout } from "@/redux/reducers/userSlide";
 import logoImg from "@/assets/react.svg";
-import Setting from "@/components/shared/settings/setting";
+import Setting from "@/components/shared/settings/setting-button";
 
 interface MenuItem {
     title: string;
