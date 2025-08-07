@@ -6,14 +6,14 @@ import { useForm } from "react-hook-form"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useEffect, useState, type ChangeEvent } from "react";
 import { AlertCircleIcon, Loader2Icon } from "lucide-react"
-import { ChangeLanguage } from "@/components/settings/change-language";
 import { useTranslation } from "react-i18next";
-import { ModeToggle } from "@/components/settings/theme-toggle";
 import type { LoginFormValues } from "./login";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import Api, { endpoints } from "@/config/Api";
 import { toast, Toaster } from "sonner";
-import GoogleLoginButton from "@/components/google-login-button";
+import GoogleLoginButton from "@/components/client/google-login-button";
+import { ChangeLanguage } from "@/components/shared/settings/change-language";
+import { ModeToggle } from "@/components/shared/settings/theme-toggle";
 
 interface SignupFormValues extends LoginFormValues {
     confirmPassword: string,

@@ -9,11 +9,13 @@ import {
   FileUp,
   Box,
   Users,
+  Trash,
 } from "lucide-react"
 
-import { NavMain } from "@/components/nav-main"
+import { NavMain } from "@/components/client/layout/nav-main"
 import {
   Sidebar,
+  SidebarContent,
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
@@ -57,17 +59,24 @@ const data = {
       url: "#",
       icon: Users,
     },
+    {
+      title: "Thùng rác",
+      url: "#",
+      icon: Trash,
+    },
   ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" className="pt-17 border-none" {...props}>
+    <Sidebar collapsible="icon" {...props}>
+      <SidebarRail />
       <SidebarHeader className="pt-1 md:pt-0">
         <NewDropDown items={data.new} />
-        <NavMain items={data.navMain} />
       </SidebarHeader>
-      <SidebarRail />
+      <SidebarContent>
+        <NavMain items={data.navMain} />
+      </SidebarContent>
     </Sidebar>
   )
 }

@@ -5,7 +5,7 @@ const Home = () => {
     const loaderData = useLoaderData()
 
     return (
-        <div className="bg-muted flex flex-col min-h-svh rounded-2xl">
+        <div className="bg-muted dark:bg-sidebar flex flex-col min-h-svh rounded-2xl">
             <div className="flex items-center p-1 rounded-2xl">
                 <SidebarTrigger />
                 <div>Trang chủ</div>

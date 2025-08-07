@@ -4,13 +4,14 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, } from "@
 import { Button } from "@/components/ui/button";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, } from "@/components/ui/navigation-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, } from "@/components/ui/sheet";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "../ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "../../ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Input } from "@/components/ui/input";
-import Setting from "../settings/setting";
 import { Link } from "react-router";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { logout } from "@/redux/reducers/userSlide";
+import logoImg from "@/assets/react.svg";
+import Setting from "@/components/shared/settings/setting";
 
 interface MenuItem {
     title: string;
@@ -23,6 +24,7 @@ interface NavBarProps {
     logo?: {
         url: string;
         title: string;
+        icon?: React.ReactNode;
     };
     menu?: MenuItem[];
 }
@@ -98,6 +100,7 @@ const Header = ({
     logo = {
         url: "",
         title: "DMS",
+        icon: <img src={logoImg} alt="Logo" />
     },
     menu = [
         {
@@ -167,7 +170,8 @@ const Header = ({
                 <nav className="hidden justify-between lg:flex items-center">
                     <div className="flex items-center gap-6">
                         <Link to={logo.url} className="flex items-center gap-2">
-                            <span className="text-lg font-semibold tracking-tighter">
+                            <span className="flex items-center gap-3 text-xl font-semibold tracking-tighter">
+                                {logo.icon}
                                 {logo.title}
                             </span>
                         </Link>
