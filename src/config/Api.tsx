@@ -20,6 +20,7 @@ export const endpoints = {
     
     "permissions": "/api/secure/permissions",
     "permissions-detail": (id: number) => `/api/secure/permissions/${id}`,
+    "permissions-all": "/api/secure/permissions-all",
 }
 
 export const authApis = () => {

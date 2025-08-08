@@ -2,11 +2,11 @@
 
 import * as React from "react"
 import {
-  Home,
+  ChartPie,
   Settings2,
   ShieldUser,
-  UserLock,
-  Users,
+  User,
+  UserLock
 } from "lucide-react"
 
 import {
@@ -25,9 +25,9 @@ import { useAppSelector } from "@/redux/hooks"
 const data = {
   navMain: [
     {
-      title: "Trang chủ",
+      title: "Bảng điều khiển",
       url: "/admin",
-      icon: Home,
+      icon: ChartPie,
     },
     {
       title: "Cài đặt",
@@ -37,7 +37,7 @@ const data = {
     {
       title: "Người dùng",
       url: "/admin/users",
-      icon: Users,
+      icon: User,
     },
     {
       title: "Vai trò",
@@ -64,7 +64,7 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
               <a href="#">
                 <div className="grid flex-1 text-left text-lg leading-tight">
                   <span className="truncate font-medium">DMS</span>
-                  <span className="truncate text-xs">Dashboard</span>
+                  <span className="truncate text-xs">ADMIN</span>
                 </div>
               </a>
             </SidebarMenuButton>

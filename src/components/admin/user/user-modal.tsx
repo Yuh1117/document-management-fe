@@ -12,7 +12,7 @@ import { AlertCircleIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { formatVietnameTime } from "@/config/utils";
+import { formatTime } from "@/config/utils";
 
 const fieldNames: { [key: string]: string } = {
     firstName: "Họ",
@@ -287,34 +287,34 @@ const UserModal = ({
                                     render={({ field }) => (
                                         <FormItem  >
                                             <FormLabel>Vai trò</FormLabel>
-                                            <FormControl>
-                                                <Select
-                                                    value={field.value?.id.toString() || ""}
-                                                    onValueChange={(v: string) => {
-                                                        const selectedRole = roles?.find(r => r.id === parseInt(v));
-                                                        if (selectedRole) {
-                                                            form.setValue("role", selectedRole);
-                                                        }
-                                                    }}
-                                                >
+                                            <Select
+                                                value={field.value?.id.toString() || ""}
+                                                onValueChange={(v: string) => {
+                                                    const selectedRole = roles?.find(r => r.id === parseInt(v));
+                                                    if (selectedRole) {
+                                                        form.setValue("role", selectedRole);
+                                                    }
+                                                }}
+                                            >
+                                                <FormControl>
                                                     <SelectTrigger className={`w-full ${form.formState.errors.role ? "border-red-500" : ""}`}>
                                                         <SelectValue placeholder="Chọn vai trò">
                                                             {field.value?.name || ""}
                                                         </SelectValue>
                                                     </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectGroup>
-                                                            <SelectLabel>Vai trò</SelectLabel>
-                                                            {roles &&
-                                                                roles.map(role => (
-                                                                    <SelectItem key={role.id} value={role.id.toString()}>
-                                                                        {role.name}
-                                                                    </SelectItem>
-                                                                ))}
-                                                        </SelectGroup>
-                                                    </SelectContent>
-                                                </Select>
-                                            </FormControl>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectGroup>
+                                                        <SelectLabel>Vai trò</SelectLabel>
+                                                        {roles &&
+                                                            roles.map(role => (
+                                                                <SelectItem key={role.id} value={role.id.toString()}>
+                                                                    {role.name}
+                                                                </SelectItem>
+                                                            ))}
+                                                    </SelectGroup>
+                                                </SelectContent>
+                                            </Select>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -347,12 +347,12 @@ const UserModal = ({
                             {isEditing && <>
                                 <div className="flex items-center">
                                     <Label className="me-2">Tạo lúc</Label>
-                                    <Badge variant="secondary">{formatVietnameTime(data?.createdAt || "")}</Badge>
+                                    <Badge variant="secondary">{formatTime(data?.createdAt || "")}</Badge>
                                 </div>
 
                                 <div className="flex items-center">
                                     <Label className="me-2">Cập nhật lúc</Label>
-                                    <Badge variant="secondary">{formatVietnameTime(data?.updatedAt || "")}</Badge>
+                                    <Badge variant="secondary">{formatTime(data?.updatedAt || "")}</Badge>
                                 </div>
                             </>}
                         </div>

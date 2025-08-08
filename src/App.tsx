@@ -14,6 +14,8 @@ import { ThemeProvider } from './components/shared/settings/theme-provider'
 import { AdminSidebar } from './components/admin/layout/admin-sidebar'
 import SettingAdminPage from './pages/admin/setting'
 import UserAdminPage from './pages/admin/user'
+import PermissionAdminPage from './pages/admin/permission'
+import RoleAdminPage from './pages/admin/role'
 
 const homeLoader = async () => {
   return { message: "Home page hehe" };
@@ -81,11 +83,11 @@ const router = createBrowserRouter([
       },
       {
         path: "roles",
-        Component: null,
+        Component: RoleAdminPage,
       },
       {
         path: "permissions",
-        Component: null,
+        Component: PermissionAdminPage,
       },
     ],
   },
