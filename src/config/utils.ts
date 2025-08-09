@@ -1,6 +1,6 @@
 import type { IPermission } from "@/types/type";
 
-export function formatTime(time: string): string {
+export function formatTime(time: string | undefined): string {
     if (!time) return "";
 
     const cleanedDateStr = time.replace(/\.\d+Z$/, 'Z');
@@ -51,5 +51,44 @@ export function groupedPermissions(permissions: IPermission[]) {
         return acc;
     }, {} as Record<string, { module: string, permissions: IPermission[] }>);
 
-    return Object.values(groupedPermissions);
+    return groupedPermissions;
 }
+
+// function transformPermissions(groupedPermissions: Record<string, { module: string, permissions: IPermission[] }>) {
+//     const transformedPermissions: Record<string, Record<string, { method: string, apiPath: string, module: string }>> = {};
+
+//     for (const module in groupedPermissions) {
+//         const modulePermissions = groupedPermissions[module].permissions;
+
+//         transformedPermissions[module] = {};
+
+//         modulePermissions.forEach((permission) => {
+//             const { method, apiPath, name } = permission;
+
+//             let action: string;
+//             if (method === 'POST') {
+//                 if (apiPath.endsWith('/{id}')) {
+//                     action = 'CREATE';
+//                 } else {
+//                     action = 'CREATE';
+//                 }
+//             } else if (method === 'GET') {
+//                 if (apiPath.endsWith('/{id}')) {
+//                     action = 'GET';
+//                 } else {
+//                     action = 'GET_PAGINATE';
+//                 }
+//             } else if (method === 'PATCH') {
+//                 action = 'UPDATE';
+//             } else if (method === 'DELETE') {
+//                 action = 'DELETE';
+//             } else {
+//                 action = 'UNKNOWN';
+//             }
+
+//             transformedPermissions[module][action] = { method, apiPath, module };
+//         });
+//     }
+
+//     return transformedPermissions;
+// }

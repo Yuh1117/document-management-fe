@@ -12,6 +12,7 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -26,10 +27,12 @@ import {
 import { useAppDispatch } from "@/redux/hooks"
 import { logout } from "@/redux/reducers/userSlide"
 import type { IAccount } from "@/types/type"
+import { useNavigate } from "react-router"
 
 export function NavUser({ user }: { user: IAccount | null }) {
   const { isMobile } = useSidebar()
   const dispatch = useAppDispatch();
+  const nav = useNavigate();
 
   return (
     <SidebarMenu>
@@ -57,13 +60,19 @@ export function NavUser({ user }: { user: IAccount | null }) {
             sideOffset={4}
           >
             <DropdownMenuLabel>
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{`${user?.lastName} ${user?.firstName}`}</span>
-                  <span className="truncate text-xs">{user?.email}</span>
-                </div>
+              <div className="flex flex-col">
+                <span>{`${user?.lastName} ${user?.firstName}`}</span>
+                <span className="text-muted-foreground truncate text-xs">
+                  {user?.email}
+                </span>
               </div>
             </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem className="font-medium" onClick={() => nav("/")}>
+                Trang chủ
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => dispatch(logout())} className="font-medium">
               <span className="text-red-500">Đăng xuất</span>

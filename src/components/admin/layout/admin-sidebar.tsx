@@ -3,10 +3,10 @@
 import * as React from "react"
 import {
   ChartPie,
+  Lock,
   Settings2,
-  ShieldUser,
+  Shield,
   User,
-  UserLock
 } from "lucide-react"
 
 import {
@@ -21,39 +21,50 @@ import {
 import { NavUser } from "./nav-user"
 import { NavMain } from "./admin-nav-main"
 import { useAppSelector } from "@/redux/hooks"
-
-const data = {
-  navMain: [
-    {
-      title: "Bảng điều khiển",
-      url: "/admin",
-      icon: ChartPie,
-    },
-    {
-      title: "Cài đặt",
-      url: "/admin/settings",
-      icon: Settings2,
-    },
-    {
-      title: "Người dùng",
-      url: "/admin/users",
-      icon: User,
-    },
-    {
-      title: "Vai trò",
-      url: "/admin/roles",
-      icon: ShieldUser,
-    },
-    {
-      title: "Quyền",
-      url: "/admin/permissions",
-      icon: UserLock,
-    },
-  ],
-}
+import { ALL_PERMISSIONS } from "@/config/permissions"
 
 export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const user = useAppSelector(state => state.users.user);
+  const permissions = useAppSelector(state => state.users.user?.role.permissions)
+
+  const data = {
+    navMain: [
+      {
+        title: "Bảng điều khiển",
+        url: "/admin",
+        icon: ChartPie,
+        access: true
+      },
+      {
+        title: "Cài đặt",
+        url: "/admin/settings",
+        icon: Settings2,
+        access: permissions?.some(item => item.apiPath === ALL_PERMISSIONS.SETTINGS.LIST.apiPath &&
+          item.method === ALL_PERMISSIONS.SETTINGS.LIST.method) ?? false
+      },
+      {
+        title: "Người dùng",
+        url: "/admin/users",
+        icon: User,
+        access: permissions?.some(item => item.apiPath === ALL_PERMISSIONS.USERS.LIST.apiPath &&
+          item.method === ALL_PERMISSIONS.USERS.LIST.method) ?? false
+      },
+      {
+        title: "Vai trò",
+        url: "/admin/roles",
+        icon: Shield,
+        access: permissions?.some(item => item.apiPath === ALL_PERMISSIONS.ROLES.LIST.apiPath &&
+          item.method === ALL_PERMISSIONS.ROLES.LIST.method) ?? false
+      },
+      {
+        title: "Quyền",
+        url: "/admin/permissions",
+        icon: Lock,
+        access: permissions?.some(item => item.apiPath === ALL_PERMISSIONS.PERMISSIONS.LIST.apiPath &&
+          item.method === ALL_PERMISSIONS.PERMISSIONS.LIST.method) ?? false
+      },
+    ],
+  }
 
   return (
     <Sidebar variant="inset" {...props}>

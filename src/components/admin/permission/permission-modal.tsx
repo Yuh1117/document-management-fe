@@ -201,7 +201,7 @@ const PermissionModal = ({
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className={`w-full ${form.formState.errors.method ? "border-red-500" : ""}`}>
-                                                        <SelectValue placeholder="Chọn vai trò">
+                                                        <SelectValue placeholder="Chọn method">
                                                             {field.value || ""}
                                                         </SelectValue>
                                                     </SelectTrigger>
@@ -247,12 +247,12 @@ const PermissionModal = ({
                             {isEditing && <>
                                 <div className="flex items-center">
                                     <Label className="me-2">Tạo lúc</Label>
-                                    <Badge variant="secondary">{formatTime(data?.createdAt || "")}</Badge>
+                                    <Badge variant="secondary">{formatTime(data?.createdAt)}</Badge>
                                 </div>
 
                                 <div className="flex items-center">
                                     <Label className="me-2">Cập nhật lúc</Label>
-                                    <Badge variant="secondary">{formatTime(data?.updatedAt || "")}</Badge>
+                                    <Badge variant="secondary">{formatTime(data?.updatedAt)}</Badge>
                                 </div>
                             </>}
                         </div>

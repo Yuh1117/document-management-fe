@@ -12,6 +12,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { formatTime } from "@/config/utils";
 
 const fieldNames: { [key: string]: string } = {
     key: "Key",
@@ -189,6 +190,16 @@ const SettingModal = ({
                                 <div className="flex items-center">
                                     <Label className="me-2">Cập nhật bởi</Label>
                                     <Badge variant="secondary">{data?.updatedBy?.email}</Badge>
+                                </div>
+
+                                <div className="flex items-center">
+                                    <Label className="me-2">Tạo lúc</Label>
+                                    <Badge variant="secondary">{formatTime(data?.createdAt)}</Badge>
+                                </div>
+
+                                <div className="flex items-center">
+                                    <Label className="me-2">Cập nhật lúc</Label>
+                                    <Badge variant="secondary">{formatTime(data?.updatedAt)}</Badge>
                                 </div>
                             </>}
                         </div>
