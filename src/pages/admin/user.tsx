@@ -1,7 +1,6 @@
 import DeleteModal from "@/components/admin/delete-modal";
-import SettingModal from "@/components/admin/setting/setting-modal";
+import UserModal from "@/components/admin/user/user-modal";
 import Access from "@/components/protected-route/access";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,13 +9,14 @@ import { Spinner } from "@/components/ui/spinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { authApis, endpoints } from "@/config/Api";
 import { ALL_PERMISSIONS } from "@/config/permissions";
-import type { ISetting } from "@/types/type";
+import type { IUser } from "@/types/type";
+import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { PencilLine, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 
-const SettingAdminPage = () => {
-    const [settings, setSettings] = useState<ISetting[]>([])
+const UserAdminPage = () => {
+    const [users, setUsers] = useState<IUser[]>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [q, setQ] = useSearchParams();
     const page = parseInt(q.get("page") || "1");
@@ -24,21 +24,21 @@ const SettingAdminPage = () => {
     const [totalPages, setTotalPages] = useState<number>(1);
     const [showModal, setShowModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [data, setData] = useState<ISetting | null>()
+    const [data, setData] = useState<IUser | null>()
     const [deletingId, setDeletingId] = useState<number | null>(null);
 
-    const loadSettings = async () => {
+    const loadUsers = async () => {
         try {
             setLoading(true)
 
-            let url = `${endpoints['settings']}?page=${page}`;
+            let url = `${endpoints['users']}?page=${page}`;
 
             if (kwInput) {
                 url = `${url}&kw=${kwInput}`;
             }
 
             const res = await authApis().get(url);
-            setSettings(res.data.data.result);
+            setUsers(res.data.data.result);
             setTotalPages(res.data.data.totalPages)
 
         } catch (error) {
@@ -75,10 +75,10 @@ const SettingAdminPage = () => {
         setData(null)
     };
 
-    const handleOpenEdit = (setting: ISetting) => {
+    const handleOpenEdit = (users: IUser) => {
         setIsEditing(true);
         setShowModal(true);
-        setData(setting)
+        setData(users)
     };
 
     const handleDelete = (id: number) => {
@@ -87,7 +87,7 @@ const SettingAdminPage = () => {
 
     useEffect(() => {
         if (page > 0) {
-            loadSettings();
+            loadUsers();
         }
     }, [q]);
 
@@ -95,18 +95,18 @@ const SettingAdminPage = () => {
         <div className="px-4">
             <header className="flex h-16 shrink-0 items-center gap-2">
                 <div className="flex items-center gap-2">
-                    <span>Cài đặt</span>
+                    <span>Người dùng</span>
                 </div>
             </header>
-            <Access permission={ALL_PERMISSIONS.SETTINGS.LIST}>
+            <Access permission={ALL_PERMISSIONS.USERS.LIST}>
                 <div className="mx-5">
                     <div className="flex items-center gap-2 border rounded-xl p-5  shadow-xs">
-                        <Label>Key:</Label>
+                        <Label>Tên:</Label>
                         <Input
                             className="w-sm"
                             type="text"
-                            placeholder="Nhập key"
-                            id="key"
+                            placeholder="Nhập tên"
+                            id="name"
                             value={kwInput}
                             onChange={(e) => setKwInput(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -115,8 +115,8 @@ const SettingAdminPage = () => {
                     </div>
                     <div className="border rounded-xl mt-5 p-5 shadow-xs">
                         <div className="flex justify-between items-center mb-3">
-                            <span className="font-medium">Danh sách cài đặt</span>
-                            <Access permission={ALL_PERMISSIONS.SETTINGS.CREATE} hideChildren>
+                            <span className="font-medium">Danh sách người dùng</span>
+                            <Access permission={ALL_PERMISSIONS.USERS.CREATE} hideChildren>
                                 <Button className="bg-blue-500 dark:bg-blue-500 hover:bg-blue-500/90 dark:hover:bg-blue-500/90" onClick={handleOpenAdd}>
                                     <Plus strokeWidth={3} /> Thêm mới
                                 </Button>
@@ -126,9 +126,10 @@ const SettingAdminPage = () => {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Id</TableHead>
-                                    <TableHead>Key</TableHead>
-                                    <TableHead>Value</TableHead>
-                                    <TableHead>Mô tả</TableHead>
+                                    <TableHead>Avatar</TableHead>
+                                    <TableHead>Họ và tên</TableHead>
+                                    <TableHead>Email</TableHead>
+                                    <TableHead>Vai trò</TableHead>
                                     <TableHead></TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -141,36 +142,38 @@ const SettingAdminPage = () => {
                                             </div>
                                         </TableCell>
                                     </TableRow>
-                                ) : settings.length === 0 ? (
+                                ) : users.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={5} className="text-center text-sm text-muted-foreground py-10">
                                             Không có dữ liệu
                                         </TableCell>
                                     </TableRow>
                                 ) : (
-                                    settings.map(s => (
-                                        <TableRow key={s.id}>
-                                            <TableCell className="font-medium">{s.id}</TableCell>
-                                            <TableCell>{s.key}</TableCell>
-                                            <TableCell className="whitespace-normal break-words max-w-xs">
-                                                {s.key === "allowedFileType" ? <>{s.value.split(";").map((type, index) => (
-                                                    <Badge key={index} variant="secondary" className="my-1 me-1">
-                                                        {type}
-                                                    </Badge>
-                                                ))}</> : <>{s.value}</>}
+                                    users.map(u => (
+                                        <TableRow key={u.id}>
+                                            <TableCell className="font-medium">{u.id}</TableCell>
+                                            <TableCell>
+                                                <div className="flex items-center">
+                                                    <Avatar className="h-10 w-10">
+                                                        <AvatarImage src={u.avatar as string} alt="avatar" />
+                                                        <AvatarFallback className="rounded-lg">-</AvatarFallback>
+                                                    </Avatar>
+                                                </div>
                                             </TableCell>
-                                            <TableCell>{s.description}</TableCell>
+                                            <TableCell>{`${u.lastName} ${u.firstName}`}</TableCell>
+                                            <TableCell>{u.email}</TableCell>
+                                            <TableCell>{u.role.name}</TableCell>
                                             <TableCell className="gap-2 flex justify-end">
-                                                <Access permission={ALL_PERMISSIONS.SETTINGS.UPDATE} hideChildren>
+                                                <Access permission={ALL_PERMISSIONS.USERS.UPDATE} hideChildren>
                                                     <PencilLine
                                                         className="text-yellow-500 hover:text-yellow-500/50 cursor-pointer me-1"
-                                                        onClick={() => handleOpenEdit(s)}
+                                                        onClick={() => handleOpenEdit(u)}
                                                     />
                                                 </Access>
-                                                <Access permission={ALL_PERMISSIONS.SETTINGS.DELETE} hideChildren>
+                                                <Access permission={ALL_PERMISSIONS.USERS.DELETE} hideChildren>
                                                     <Trash2
                                                         className="text-red-500 hover:text-red-500/50 cursor-pointer"
-                                                        onClick={() => handleDelete(s.id)}
+                                                        onClick={() => handleDelete(u.id)}
                                                     />
                                                 </Access>
                                             </TableCell>
@@ -181,7 +184,7 @@ const SettingAdminPage = () => {
 
                         </Table>
                     </div>
-                    {settings.length !== 0 &&
+                    {users.length !== 0 &&
                         <Pagination className="mt-3">
                             <PaginationContent>
                                 <PaginationItem>
@@ -211,21 +214,21 @@ const SettingAdminPage = () => {
                     }
                 </div>
 
-                <SettingModal
+                <UserModal
                     open={showModal}
                     onOpenChange={setShowModal}
                     isEditing={isEditing}
                     data={data}
-                    loadSettings={loadSettings}
+                    loadUsers={loadUsers}
                 />
 
                 <DeleteModal
                     open={!!deletingId}
                     deletingId={deletingId}
                     onCancel={() => setDeletingId(null)}
-                    name={"cài đặt"}
-                    load={loadSettings}
-                    endpoint={endpoints["settings-detail"]}
+                    name={"người dùng"}
+                    load={loadUsers}
+                    endpoint={endpoints["users-detail"]}
                 />
             </Access>
 
@@ -233,4 +236,4 @@ const SettingAdminPage = () => {
     )
 }
 
-export default SettingAdminPage;
+export default UserAdminPage;

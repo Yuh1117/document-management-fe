@@ -80,7 +80,7 @@ const Signup = () => {
         return true;
     }
 
-    const validateImage = (file: File | null | undefined): boolean => {
+    const validateImage = (file: File): boolean => {
         form.clearErrors('avatar')
         if (!file) return true;
 
@@ -318,8 +318,10 @@ const Signup = () => {
                                                 <Input type="file" accept="image/*"
                                                     onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                         const file = e.target.files?.[0];
-                                                        form.setValue('avatar', file)
-                                                        validateImage(e.target.files?.[0]);
+                                                        if (file) {
+                                                            form.setValue("avatar", file);
+                                                            validateImage(file);
+                                                        }
                                                     }} />
                                             </FormControl>
                                             <FormMessage />

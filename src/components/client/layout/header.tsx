@@ -7,27 +7,38 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, } from "@/c
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "../../ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { logout } from "@/redux/reducers/userSlide";
 import logoImg from "@/assets/react.svg";
-import Setting from "@/components/shared/settings/setting";
+import Setting from "@/components/shared/settings/setting-button";
+import type { IAccount } from "@/types/type";
 
-interface MenuItem {
+type MenuItem = {
     title: string;
     url: string;
     icon?: React.ReactNode;
     items?: MenuItem[];
 }
 
-interface NavBarProps {
-    logo?: {
-        url: string;
-        title: string;
-        icon?: React.ReactNode;
-    };
-    menu?: MenuItem[];
+const logo = {
+    url: "",
+    title: "DMS",
+    icon: <img src={logoImg} alt="Logo" />
 }
+
+const menu: MenuItem[] = [
+    {
+        title: "Resources",
+        url: "#",
+        items: [
+            { title: "Help Center", url: "#" },
+            { title: "Contact Us", url: "#" },
+            { title: "Status", url: "#" },
+            { title: "Terms of Service", url: "#" },
+        ],
+    }
+]
 
 const SubMenuLink = ({ item }: { item: MenuItem }) => {
     return (
@@ -56,8 +67,9 @@ const SearchInput = () => {
     )
 };
 
-const Account = ({ user }: { user: any }) => {
+const Account = ({ user }: { user: IAccount | null }) => {
     const dispatch = useAppDispatch();
+    const nav = useNavigate();
 
     if (user) {
         return (
@@ -79,6 +91,11 @@ const Account = ({ user }: { user: any }) => {
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
+                        {user.role.name.startsWith("ADMIN") &&
+                            <DropdownMenuItem className="font-medium" onClick={() => nav("/admin")}>
+                                Admin
+                            </DropdownMenuItem>
+                        }
                         <DropdownMenuItem className="font-medium">
                             Tài khoản
                         </DropdownMenuItem>
@@ -96,25 +113,7 @@ const Account = ({ user }: { user: any }) => {
     }
 };
 
-const Header = ({
-    logo = {
-        url: "",
-        title: "DMS",
-        icon: <img src={logoImg} alt="Logo" />
-    },
-    menu = [
-        {
-            title: "Resources",
-            url: "#",
-            items: [
-                { title: "Help Center", url: "#" },
-                { title: "Contact Us", url: "#" },
-                { title: "Status", url: "#" },
-                { title: "Terms of Service", url: "#" },
-            ],
-        },
-    ],
-}: NavBarProps) => {
+const Header = () => {
     const user = useAppSelector(state => state.users.user);
 
     const desktopMenu = useMemo(() => (
@@ -141,6 +140,7 @@ const Header = ({
                 </NavigationMenuItem>
             )
         )
+
     ), [menu]);
 
     const mobileMenu = useMemo(() => (

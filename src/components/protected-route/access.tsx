@@ -18,7 +18,6 @@ const Access = ({ children, permission, hideChildren = false }: Props) => {
             const check = permissions.find(item =>
                 item.apiPath === permission.apiPath
                 && item.method === permission.method
-                && item.module === permission.module
             )
             if (check) {
                 setAllow(true)
@@ -34,8 +33,8 @@ const Access = ({ children, permission, hideChildren = false }: Props) => {
                 :
                 <>
                     {hideChildren === false ?
-                        <>
-                            <Card className="w-full md:max-w-sm ">
+                        <div className="flex flex-col items-center justify-center">
+                            <Card className="w-full md:max-w-sm">
                                 <CardContent className="text-center">
                                     <div className="mb-4 flex justify-center">
                                         <ShieldAlert strokeWidth={1} size={128} />
@@ -45,7 +44,7 @@ const Access = ({ children, permission, hideChildren = false }: Props) => {
                                     </h2>
                                 </CardContent>
                             </Card>
-                        </>
+                        </div>
                         :
                         <>
                             {/* render nothing */}
