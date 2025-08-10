@@ -31,11 +31,11 @@ const Folder = () => {
                         <DropdownMenuContent align="start">
                             <DropdownMenuGroup>
                                 <DropdownMenuItem>
-                                    <Download />
+                                    <Download className="text-black-900"/>
                                     Tải xuống
                                 </DropdownMenuItem>
                                 <DropdownMenuItem>
-                                    <PenLine />
+                                    <PenLine className="text-black-900"/>
                                     Đổi tên
                                 </DropdownMenuItem>
                             </DropdownMenuGroup>
@@ -49,11 +49,11 @@ const Folder = () => {
                                     <DropdownMenuPortal>
                                         <DropdownMenuSubContent>
                                             <DropdownMenuItem>
-                                                <UserRoundPlus />
+                                                <UserRoundPlus className="text-black-900"/>
                                                 Chia sẻ
                                             </DropdownMenuItem>
                                             <DropdownMenuItem>
-                                                <Link2 />
+                                                <Link2 className="text-black-900"/>
                                                 URL
                                             </DropdownMenuItem>
                                         </DropdownMenuSubContent>
@@ -67,7 +67,7 @@ const Folder = () => {
                                     <DropdownMenuPortal>
                                         <DropdownMenuSubContent>
                                             <DropdownMenuItem>
-                                                <FolderSymlink />
+                                                <FolderSymlink className="text-black-900"/>
                                                 Di chuyển
                                             </DropdownMenuItem>
                                             <DropdownMenuItem>...</DropdownMenuItem>
@@ -75,13 +75,13 @@ const Folder = () => {
                                     </DropdownMenuPortal>
                                 </DropdownMenuSub>
                                 <DropdownMenuItem>
-                                    <Info />
+                                    <Info className="text-black-900"/>
                                     Chi tiết
                                 </DropdownMenuItem>
                             </DropdownMenuGroup>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem>
-                                <Trash />
+                                <Trash className="text-black-900"/>
                                 Chuyển vào thùng rác
                             </DropdownMenuItem>
                         </DropdownMenuContent>

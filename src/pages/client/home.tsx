@@ -16,7 +16,7 @@ const Home = () => {
             <div className="p-2">
                 <div>
                     <div>Thư mục</div>
-                    <div className="grid grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] gap-4 px-2 py-4">
+                    <div className="grid grid-cols-[repeat(auto-fill,_minmax(220px,_1fr))] gap-4 px-2 py-4">
                         {Array.from({ length: 10 }).map((_, index) => (
                             <Folder key={index} />
                         ))}
@@ -25,7 +25,7 @@ const Home = () => {
 
                 <div>
                     <div>Tài liệu</div>
-                    <div className="grid grid-cols-[repeat(auto-fill,_minmax(200px,_1fr))] gap-4 px-2 py-4">
+                    <div className="grid grid-cols-[repeat(auto-fill,_minmax(220px,_1fr))] gap-4 px-2 py-4">
                         {Array.from({ length: 6 }).map((_, index) => (
                             <Document key={index} />
                         ))}
