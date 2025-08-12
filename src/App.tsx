@@ -25,7 +25,7 @@ const MainLayout = () => (
   <>
     <Header />
     <SidebarProvider>
-      <AppSidebar className="border-none pt-17" />
+      <AppSidebar className="border-none pt-18" />
       <SidebarInset className="pe-2">
         <Outlet />
       </SidebarInset>
@@ -58,6 +58,22 @@ const router = createBrowserRouter([
         Component: Home,
         loader: homeLoader,
       },
+      {
+        path: "/my-files",
+        Component: null,
+      },
+      {
+        path: "/recent",
+        Component: null,
+      },
+      {
+        path: "/shared",
+        Component: null,
+      },
+      {
+        path: "/trash",
+        Component: null,
+      }
     ],
   },
   {

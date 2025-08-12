@@ -8,6 +8,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { Link, useLocation } from "react-router"
 
 export function NavMain({
   items,
@@ -16,19 +17,20 @@ export function NavMain({
     title: string
     url: string
     icon: LucideIcon
-    isActive?: boolean
   }[]
 }) {
+  const location = useLocation();
+
   return (
     <SidebarGroup>
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton asChild isActive={item.isActive} className="p-5">
-              <a href={item.url}>
+            <SidebarMenuButton asChild isActive={location.pathname === item.url} className="p-5">
+              <Link to={item.url}>
                 <item.icon />
                 <span>{item.title}</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}

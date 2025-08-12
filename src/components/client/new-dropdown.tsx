@@ -30,7 +30,7 @@ const NewDropDown = ({
         <DropdownMenuGroup>
           {items.map(i => (
             <DropdownMenuItem key={i.name}>
-              <i.icon />
+              <i.icon className="text-black-900"/>
               {i.name}
             </DropdownMenuItem>
           ))}

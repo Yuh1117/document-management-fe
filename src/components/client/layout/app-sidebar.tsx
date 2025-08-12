@@ -40,28 +40,27 @@ const data = {
   navMain: [
     {
       title: "Trang chủ",
-      url: "#",
+      url: "/",
       icon: Home,
-      isActive: true,
     },
     {
       title: "Files của tôi",
-      url: "#",
+      url: "/my-files",
       icon: Box,
     },
     {
       title: "Gần đây",
-      url: "#",
+      url: "/recent",
       icon: Clock,
     },
     {
       title: "Được chia sẻ",
-      url: "#",
+      url: "/shared",
       icon: Users,
     },
     {
       title: "Thùng rác",
-      url: "#",
+      url: "/trash",
       icon: Trash,
     },
   ],

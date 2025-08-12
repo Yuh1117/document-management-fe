@@ -1,18 +1,18 @@
 import React, { useMemo } from "react";
-import { Menu, Search } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, } from "@/components/ui/navigation-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, } from "@/components/ui/sheet";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "../../ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
-import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { logout } from "@/redux/reducers/userSlide";
 import logoImg from "@/assets/react.svg";
 import Setting from "@/components/shared/settings/setting-button";
 import type { IAccount } from "@/types/type";
+import SearchBar from "./search";
 
 type MenuItem = {
     title: string;
@@ -51,19 +51,6 @@ const SubMenuLink = ({ item }: { item: MenuItem }) => {
                 <span className="text-sm font-medium">{item.title}</span>
             </div>
         </a>
-    )
-};
-
-const SearchInput = () => {
-    return (
-        <div className="relative w-full max-w-lg">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-            <Input
-                type="text"
-                placeholder="Tìm kiếm"
-                className="pl-9 py-5"
-            />
-        </div>
     )
 };
 
@@ -185,7 +172,7 @@ const Header = () => {
                     </div>
 
                     <div className="flex-1 flex justify-center">
-                        <SearchInput />
+                        <SearchBar />
                     </div>
 
                     <div className="flex gap-3">
@@ -226,7 +213,7 @@ const Header = () => {
                                         {mobileMenu}
                                     </Accordion>
 
-                                    <SearchInput />
+                                    <SearchBar />
 
                                     <div className="flex gap-3">
                                         <Setting />
