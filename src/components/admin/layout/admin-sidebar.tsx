@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import {
   ChartPie,
@@ -8,6 +6,7 @@ import {
   Shield,
   User,
 } from "lucide-react"
+import { type LucideIcon } from "lucide-react"
 
 import {
   Sidebar,
@@ -20,51 +19,85 @@ import {
 } from "@/components/ui/sidebar"
 import { NavUser } from "./nav-user"
 import { NavMain } from "./admin-nav-main"
-import { useAppSelector } from "@/redux/hooks"
+import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import { ALL_PERMISSIONS } from "@/config/permissions"
+import { fetchPermissions } from "@/redux/reducers/permissionSlice"
 
-export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const user = useAppSelector(state => state.users.user);
-  const permissions = useAppSelector(state => state.users.user?.role.permissions)
-
-  const data = {
-    navMain: [
-      {
-        title: "Bảng điều khiển",
-        url: "/admin",
-        icon: ChartPie,
-        access: true
-      },
-      {
-        title: "Cài đặt",
-        url: "/admin/settings",
-        icon: Settings2,
-        access: permissions?.some(item => item.apiPath === ALL_PERMISSIONS.SETTINGS.LIST.apiPath &&
-          item.method === ALL_PERMISSIONS.SETTINGS.LIST.method) ?? false
-      },
-      {
-        title: "Người dùng",
-        url: "/admin/users",
-        icon: User,
-        access: permissions?.some(item => item.apiPath === ALL_PERMISSIONS.USERS.LIST.apiPath &&
-          item.method === ALL_PERMISSIONS.USERS.LIST.method) ?? false
-      },
-      {
-        title: "Vai trò",
-        url: "/admin/roles",
-        icon: Shield,
-        access: permissions?.some(item => item.apiPath === ALL_PERMISSIONS.ROLES.LIST.apiPath &&
-          item.method === ALL_PERMISSIONS.ROLES.LIST.method) ?? false
-      },
-      {
-        title: "Quyền",
-        url: "/admin/permissions",
-        icon: Lock,
-        access: permissions?.some(item => item.apiPath === ALL_PERMISSIONS.PERMISSIONS.LIST.apiPath &&
-          item.method === ALL_PERMISSIONS.PERMISSIONS.LIST.method) ?? false
-      },
-    ],
+export type NavItem = {
+  title: string,
+  url: string,
+  icon: LucideIcon,
+  access: boolean,
+  permission?: {
+    name: string,
+    apiPath: string,
+    method: string,
+    module: string
   }
+}
+
+const navMainItems: NavItem[] = [
+  {
+    title: "Bảng điều khiển",
+    url: "/admin",
+    icon: ChartPie,
+    access: true
+  },
+  {
+    title: "Cài đặt",
+    url: "/admin/settings",
+    icon: Settings2,
+    access: false,
+    permission: ALL_PERMISSIONS.SETTINGS.LIST
+  },
+  {
+    title: "Người dùng",
+    url: "/admin/users",
+    icon: User,
+    access: false,
+    permission: ALL_PERMISSIONS.USERS.LIST
+  },
+  {
+    title: "Vai trò",
+    url: "/admin/roles",
+    icon: Shield,
+    access: false,
+    permission: ALL_PERMISSIONS.ROLES.LIST
+  },
+  {
+    title: "Quyền",
+    url: "/admin/permissions",
+    icon: Lock,
+    access: false,
+    permission: ALL_PERMISSIONS.PERMISSIONS.LIST
+  },
+]
+
+export function AdminSidebar(props: React.ComponentProps<typeof Sidebar>) {
+  const user = useAppSelector((state) => state.users.user);
+  const permissions = useAppSelector((state) => state.permissions.permissionsMap);
+  const dispatch = useAppDispatch();
+  const [navItems, setNavItems] = React.useState<NavItem[]>(navMainItems);
+
+  React.useEffect(() => {
+    const permissionsToCheck = navMainItems.flatMap(item =>
+      item.permission ? [{ apiPath: item.permission.apiPath, method: item.permission.method }] : []
+    );
+
+    dispatch(fetchPermissions(permissionsToCheck));
+  }, [dispatch]);
+
+  React.useEffect(() => {
+    const updatedNav = navMainItems.map((item) => {
+      if (!item.permission) return { ...item, access: true };
+      const key = `${item.permission.apiPath}|${item.permission.method.toUpperCase()}`;
+      return {
+        ...item,
+        access: permissions?.[key] === true,
+      };
+    });
+    setNavItems(updatedNav);
+  }, [permissions]);
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -83,7 +116,7 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navItems} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />

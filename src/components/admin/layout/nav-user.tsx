@@ -25,7 +25,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useAppDispatch } from "@/redux/hooks"
-import { logout } from "@/redux/reducers/userSlide"
+import { logout } from "@/redux/reducers/userSlice"
 import type { IAccount } from "@/types/type"
 import { useNavigate } from "react-router"
 

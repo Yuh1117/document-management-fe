@@ -125,7 +125,6 @@ const RoleModal = ({
         loadPermissions();
     }, [])
 
-
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="w-full md:max-w-2xl" aria-describedby={undefined}>

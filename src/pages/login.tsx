@@ -11,7 +11,7 @@ import Api, { endpoints } from "@/config/Api";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import cookies from 'react-cookies';
 import { useAppDispatch } from "@/redux/hooks";
-import { login } from "@/redux/reducers/userSlide";
+import { login } from "@/redux/reducers/userSlice";
 import { toast, Toaster } from "sonner";
 import GoogleLoginButton from "@/components/client/google-login-button";
 import { ChangeLanguage } from "@/components/shared/settings/change-language";

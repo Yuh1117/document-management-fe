@@ -10,6 +10,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { authApis, endpoints } from "@/config/Api";
 import { ALL_PERMISSIONS } from "@/config/permissions";
 import { getMethodColor } from "@/config/utils";
+import { useAppDispatch } from "@/redux/hooks";
+import { fetchPermissions } from "@/redux/reducers/permissionSlice";
 import type { IPermission } from "@/types/type";
 import { PencilLine, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -26,6 +28,7 @@ const PermissionAdminPage = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [data, setData] = useState<IPermission | null>()
     const [deletingId, setDeletingId] = useState<number | null>(null);
+    const dispatch = useAppDispatch();
 
     const loadPermissions = async () => {
         try {
@@ -90,6 +93,17 @@ const PermissionAdminPage = () => {
             loadPermissions();
         }
     }, [q]);
+
+    useEffect(() => {
+        const permissionsToCheck = [
+            ALL_PERMISSIONS.PERMISSIONS.LIST,
+            ALL_PERMISSIONS.PERMISSIONS.CREATE,
+            ALL_PERMISSIONS.PERMISSIONS.UPDATE,
+            ALL_PERMISSIONS.PERMISSIONS.DELETE,
+        ].map(({ apiPath, method }) => ({ apiPath, method }));
+
+        dispatch(fetchPermissions(permissionsToCheck));
+    }, [dispatch]);
 
     return (
         <div className="px-4">

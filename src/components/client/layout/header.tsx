@@ -8,7 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Link, useNavigate } from "react-router";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { logout } from "@/redux/reducers/userSlide";
+import { logout } from "@/redux/reducers/userSlice";
 import logoImg from "@/assets/react.svg";
 import Setting from "@/components/shared/settings/setting-button";
 import type { IAccount } from "@/types/type";

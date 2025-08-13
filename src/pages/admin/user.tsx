@@ -9,6 +9,8 @@ import { Spinner } from "@/components/ui/spinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { authApis, endpoints } from "@/config/Api";
 import { ALL_PERMISSIONS } from "@/config/permissions";
+import { useAppDispatch } from "@/redux/hooks";
+import { fetchPermissions } from "@/redux/reducers/permissionSlice";
 import type { IUser } from "@/types/type";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { PencilLine, Plus, Trash2 } from "lucide-react";
@@ -26,6 +28,7 @@ const UserAdminPage = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [data, setData] = useState<IUser | null>()
     const [deletingId, setDeletingId] = useState<number | null>(null);
+    const dispatch = useAppDispatch();
 
     const loadUsers = async () => {
         try {
@@ -90,6 +93,18 @@ const UserAdminPage = () => {
             loadUsers();
         }
     }, [q]);
+
+
+    useEffect(() => {
+        const permissionsToCheck = [
+            ALL_PERMISSIONS.USERS.LIST,
+            ALL_PERMISSIONS.USERS.CREATE,
+            ALL_PERMISSIONS.USERS.UPDATE,
+            ALL_PERMISSIONS.USERS.DELETE,
+        ].map(({ apiPath, method }) => ({ apiPath, method }));
+
+        dispatch(fetchPermissions(permissionsToCheck));
+    }, [dispatch]);
 
     return (
         <div className="px-4">
