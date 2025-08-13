@@ -10,6 +10,8 @@ import { Spinner } from "@/components/ui/spinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { authApis, endpoints } from "@/config/Api";
 import { ALL_PERMISSIONS } from "@/config/permissions";
+import { useAppDispatch } from "@/redux/hooks";
+import { fetchPermissions } from "@/redux/reducers/permissionSlice";
 import type { ISetting } from "@/types/type";
 import { PencilLine, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -26,11 +28,12 @@ const SettingAdminPage = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [data, setData] = useState<ISetting | null>()
     const [deletingId, setDeletingId] = useState<number | null>(null);
+    const dispatch = useAppDispatch()
 
     const loadSettings = async () => {
         try {
             setLoading(true)
-
+            
             let url = `${endpoints['settings']}?page=${page}`;
 
             if (kwInput) {
@@ -90,6 +93,17 @@ const SettingAdminPage = () => {
             loadSettings();
         }
     }, [q]);
+
+    useEffect(() => {
+        const permissionsToCheck = [
+            ALL_PERMISSIONS.SETTINGS.LIST,
+            ALL_PERMISSIONS.SETTINGS.CREATE,
+            ALL_PERMISSIONS.SETTINGS.UPDATE,
+            ALL_PERMISSIONS.SETTINGS.DELETE,
+        ].map(({ apiPath, method }) => ({ apiPath, method }));
+
+        dispatch(fetchPermissions(permissionsToCheck));
+    }, [dispatch]);
 
     return (
         <div className="px-4">

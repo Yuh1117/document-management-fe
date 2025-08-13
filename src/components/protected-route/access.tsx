@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { useAppSelector } from '@/redux/hooks';
 import { Card, CardContent } from '@/components/ui/card';
 import { ShieldAlert } from 'lucide-react';
+import { Spinner } from '../ui/spinner';
+import { useAppSelector } from '@/redux/hooks';
 
 type Props = {
     children: React.ReactNode;
@@ -10,21 +10,11 @@ type Props = {
 }
 
 const Access = ({ children, permission, hideChildren = false }: Props) => {
-    const [allow, setAllow] = useState<boolean>(false);
-    const permissions = useAppSelector(state => state?.users?.user?.role.permissions);
+    const { permissionsMap, loading } = useAppSelector((state) => state.permissions);
+    const key = `${permission.apiPath}|${permission.method.toUpperCase()}`;
+    const allow = permissionsMap[key] === true;
 
-    useEffect(() => {
-        if (permissions?.length) {
-            const check = permissions.find(item =>
-                item.apiPath === permission.apiPath
-                && item.method === permission.method
-            )
-            if (check) {
-                setAllow(true)
-            } else
-                setAllow(false);
-        }
-    }, [permissions])
+    if (loading) return <Spinner />;
 
     return (
         <>

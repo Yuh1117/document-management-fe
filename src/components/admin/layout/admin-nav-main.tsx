@@ -1,7 +1,3 @@
-"use client"
-
-import { type LucideIcon } from "lucide-react"
-
 import {
     SidebarGroup,
     SidebarMenu,
@@ -9,17 +5,9 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { Link, useLocation } from "react-router"
+import type { NavItem } from "./admin-sidebar";
 
-export function NavMain({
-    items,
-}: {
-    items: {
-        title: string
-        url: string
-        icon: LucideIcon,
-        access: boolean
-    }[]
-}) {
+export function NavMain({ items }: { items: NavItem[] }) {
     const location = useLocation();
 
     return (

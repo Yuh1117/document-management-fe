@@ -9,6 +9,8 @@ import { Spinner } from "@/components/ui/spinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { authApis, endpoints } from "@/config/Api";
 import { ALL_PERMISSIONS } from "@/config/permissions";
+import { useAppDispatch } from "@/redux/hooks";
+import { fetchPermissions } from "@/redux/reducers/permissionSlice";
 import type { IRole } from "@/types/type";
 import { PencilLine, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -25,6 +27,7 @@ const RoleAdminPage = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [data, setData] = useState<IRole | null>()
     const [deletingId, setDeletingId] = useState<number | null>(null);
+    const dispatch = useAppDispatch();
 
     const loadRoles = async () => {
         try {
@@ -89,6 +92,17 @@ const RoleAdminPage = () => {
             loadRoles();
         }
     }, [q]);
+
+    useEffect(() => {
+        const permissionsToCheck = [
+            ALL_PERMISSIONS.ROLES.LIST,
+            ALL_PERMISSIONS.ROLES.CREATE,
+            ALL_PERMISSIONS.ROLES.UPDATE,
+            ALL_PERMISSIONS.ROLES.DELETE,
+        ].map(({ apiPath, method }) => ({ apiPath, method }));
+
+        dispatch(fetchPermissions(permissionsToCheck));
+    }, [dispatch]);
 
     return (
         <div className="px-4">

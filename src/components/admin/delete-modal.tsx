@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { authApis } from "@/config/Api";
 import { Alert, AlertDescription } from "../ui/alert";
 import { AlertCircleIcon } from "lucide-react";
@@ -37,6 +37,12 @@ const DeleteModal = ({ open, deletingId, onCancel, name, load, endpoint }: Props
             setLoading(false);
         }
     }
+
+    useEffect(() => {
+        if (open) {
+            setMsg("");
+        }
+    }, [open]);
 
     return (
         <Dialog open={open} onOpenChange={onCancel}>

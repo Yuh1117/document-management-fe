@@ -8,7 +8,7 @@ interface SpinnerProps {
 export const Spinner = ({ className, size = 24 }: SpinnerProps) => (
     <div
         className={cn(
-            "animate-spin rounded-full border-4 border-muted border-t-primary",
+            "animate-spin rounded-full border-3 border-muted border-t-primary",
             className
         )}
         style={{ width: size, height: size }}

@@ -3,6 +3,14 @@ import type { IAccount } from '@/types/type';
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import cookies from "react-cookies";
 
+interface UsersState {
+    user: IAccount | null;
+}
+
+const initialState: UsersState = {
+    user: null,
+};
+
 export const getProfile = createAsyncThunk(
     'users/profile',
     async () => {
@@ -13,14 +21,6 @@ export const getProfile = createAsyncThunk(
         return null;
     }
 )
-
-interface UsersState {
-    user: IAccount | null;
-}
-
-const initialState: UsersState = {
-    user: null,
-};
 
 const userSlice = createSlice({
     name: 'users',
