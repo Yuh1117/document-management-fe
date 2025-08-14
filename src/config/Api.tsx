@@ -9,17 +9,17 @@ export const endpoints = {
     'profile': '/api/secure/profile',
     "google-login": "/api/auth/google",
     
-    "settings": "/api/secure/settings",
-    "settings-detail": (id: number) => `/api/secure/settings/${id}`,
+    "settings": "/api/admin/settings",
+    "settings-detail": (id: number) => `/api/admin/settings/${id}`,
     
-    "users": "/api/secure/users",
-    "users-detail": (id: number) => `/api/secure/users/${id}`,
+    "users": "/api/admin/users",
+    "users-detail": (id: number) => `/api/admin/users/${id}`,
     
-    "roles": "/api/secure/roles",
-    "roles-detail": (id: number) => `/api/secure/roles/${id}`,
+    "roles": "/api/admin/roles",
+    "roles-detail": (id: number) => `/api/admin/roles/${id}`,
     
-    "permissions": "/api/secure/permissions",
-    "permissions-detail": (id: number) => `/api/secure/permissions/${id}`,
+    "permissions": "/api/admin/permissions",
+    "permissions-detail": (id: number) => `/api/admin/permissions/${id}`,
     "check-permissions": "/api/secure/check-permissions"
 }
 

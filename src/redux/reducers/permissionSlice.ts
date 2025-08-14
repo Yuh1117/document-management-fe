@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { authApis, endpoints } from '@/config/Api';
+import { logout } from './userSlice';
 
 interface PermissionsState {
     permissionsMap: Record<string, boolean>;
     loading: boolean;
-    error?: string;
 }
 
 const initialState: PermissionsState = {
@@ -28,7 +28,6 @@ const permissionsSlice = createSlice({
         builder
             .addCase(fetchPermissions.pending, (state) => {
                 state.loading = true;
-                state.error = undefined;
             })
             .addCase(fetchPermissions.fulfilled, (state, action) => {
                 state.loading = false;
@@ -39,7 +38,10 @@ const permissionsSlice = createSlice({
             })
             .addCase(fetchPermissions.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.error.message;
+            })
+            .addCase(logout, (state) => {
+                state.permissionsMap = {};
+                state.loading = false;
             });
     },
 });
