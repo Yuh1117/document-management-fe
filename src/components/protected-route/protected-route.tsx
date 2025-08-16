@@ -10,7 +10,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 export const AdminRoute = ({ children }: { children: React.ReactNode }) => {
     const user = useAppSelector(state => state.users.user);
-    return user ? user?.role.name.startsWith("ADMIN") ? <>{children}</> : <NotPermitted /> : <NotLogin />;
+    return user ? user?.role.name.startsWith("ROLE_ADMIN") ? <>{children}</> : <NotPermitted /> : <NotLogin />;
 };
 
 export const AuthRoute = ({ children }: { children: React.ReactNode }) => {

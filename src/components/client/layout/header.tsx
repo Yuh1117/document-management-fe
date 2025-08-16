@@ -78,7 +78,7 @@ const Account = ({ user }: { user: IAccount | null }) => {
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
-                        {user.role.name.startsWith("ADMIN") &&
+                        {user.role.name.startsWith("ROLE_ADMIN") &&
                             <DropdownMenuItem className="font-medium" onClick={() => nav("/admin")}>
                                 Admin
                             </DropdownMenuItem>

@@ -1,7 +1,7 @@
 import { authApis, endpoints } from '@/config/Api';
 import type { IAccount } from '@/types/type';
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import cookies from "react-cookies";
+import cookies from 'react-cookies';
 
 interface UsersState {
     user: IAccount | null;
@@ -14,13 +14,14 @@ const initialState: UsersState = {
 export const getProfile = createAsyncThunk(
     'users/profile',
     async () => {
-        if (cookies.load('token')) {
+        const token = cookies.load('token');
+        if (token) {
             const res = await authApis().get(endpoints["profile"])
             return res.data.data;
         }
         return null;
     }
-)
+);
 
 const userSlice = createSlice({
     name: 'users',
@@ -30,29 +31,21 @@ const userSlice = createSlice({
             state.user = action.payload;
         },
         logout: (state) => {
-            cookies.remove("token")
+            cookies.remove("token");
             state.user = null;
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(getProfile.pending, (state, action) => {
-            if (action.payload) {
-                state.user = null
-            }
-        })
-
-        builder.addCase(getProfile.fulfilled, (state, action) => {
-            if (action.payload) {
-                state.user = action.payload
-            }
-        })
-
-        builder.addCase(getProfile.rejected, (state, action) => {
-            if (action.payload) {
-                state.user = null
-            }
-        })
-
+        builder
+            .addCase(getProfile.pending, (state) => {
+                state.user = null;
+            })
+            .addCase(getProfile.fulfilled, (state, action) => {
+                state.user = action.payload ?? null;
+            })
+            .addCase(getProfile.rejected, (state) => {
+                state.user = null;
+            });
     },
 });
 
