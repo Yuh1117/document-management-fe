@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useEffect, useState } from "react";
@@ -51,16 +51,14 @@ const DeleteModal = ({ open, deletingId, onCancel, name, load, endpoint }: Props
                     <DialogTitle>Xác nhận xoá</DialogTitle>
                 </DialogHeader>
                 {msg &&
-                    <DialogDescription>
-                        <Alert className="border-red-500" variant="destructive">
-                            <AlertCircleIcon />
-                            <AlertDescription>
-                                {msg}
-                            </AlertDescription>
-                        </Alert>
-                    </DialogDescription>
+                    <Alert className="border-red-500" variant="destructive">
+                        <AlertCircleIcon />
+                        <AlertDescription>
+                            {msg}
+                        </AlertDescription>
+                    </Alert>
                 }
-                <p>Bạn có chắc chắn muốn xoá {name} này không?</p>
+                <div>Bạn có chắc chắn muốn xoá {name} này không?</div>
                 <DialogFooter>
                     <Button variant="outline" onClick={onCancel}>Hủy</Button>
                     <Button className="bg-red-500 dark:bg-red-500 hover:bg-red-500/90 dark:hover:bg-red-500/90"
