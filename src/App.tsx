@@ -16,6 +16,7 @@ import SettingAdminPage from './pages/admin/setting'
 import UserAdminPage from './pages/admin/user'
 import PermissionAdminPage from './pages/admin/permission'
 import RoleAdminPage from './pages/admin/role'
+import Files from './pages/client/files'
 
 const homeLoader = async () => {
   return { message: "Home page hehe" };
@@ -60,7 +61,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/my-files",
-        Component: null,
+        Component: Files,
       },
       {
         path: "/recent",
