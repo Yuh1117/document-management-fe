@@ -1,19 +1,68 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
-import { Download, EllipsisVertical, FileText, FolderOpen, FolderSymlink, Info, Link2, PenLine, Trash, UserRoundPlus } from "lucide-react";
+import { FileText } from "lucide-react";
 import type { IDocument } from "@/types/type";
+import { authApis, endpoints } from "@/config/Api";
+import { Checkbox } from "@/components/ui/checkbox";
+import EllipsisDropDown from "../ellipsis-dropdown";
 
 type Props = {
-    data: IDocument
-}
+    data: IDocument;
+    setLoadingDetail: (loading: boolean) => void;
+    setDocumentDetail: (doc: IDocument) => void;
+    setIsSheetOpen: (open: boolean) => void;
+    isMultiSelectMode?: boolean;
+    selectedDocs?: number[];
+    setSelectedDocs?: (data: number[]) => void;
+};
 
-const Document = ({ data }: Props) => {
+const Document = ({
+    data,
+    setLoadingDetail,
+    setDocumentDetail,
+    setIsSheetOpen,
+    isMultiSelectMode,
+    selectedDocs,
+    setSelectedDocs
+}: Props) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
     const handleDropdownToggle = (open: boolean) => {
         setIsDropdownOpen(open);
+    };
+
+    const handleViewDetail = async () => {
+        try {
+            setLoadingDetail(true);
+            const res = await authApis().get(endpoints["document-detail"](data.id));
+            setDocumentDetail(res.data.data);
+            setIsSheetOpen(true);
+        } catch (error) {
+            console.error("Lỗi khi tải chi tiết tài liệu", error);
+        } finally {
+            setLoadingDetail(false);
+        }
+    };
+
+    const handleDownload = async () => {
+        try {
+            const res = await authApis().get(endpoints["download-single-document"](data.id), {
+                responseType: "blob",
+            });
+
+            const url = window.URL.createObjectURL(new Blob([res.data]));
+            const link = document.createElement("a");
+
+            link.href = url;
+            link.setAttribute("download", data.originalFilename || data.name);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Tải xuống thất bại:", error);
+        }
     };
 
     return (
@@ -27,70 +76,24 @@ const Document = ({ data }: Props) => {
                     <Label className="truncate max-w-[130px]">{data.name}</Label>
                 </div>
                 <div>
-                    <DropdownMenu onOpenChange={handleDropdownToggle}>
-                        <DropdownMenuTrigger asChild>
-                            <div className="cursor-pointer hover:bg-background/90 p-1 rounded-xl">
-                                <EllipsisVertical size={16} />
-                            </div>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start">
-                            <DropdownMenuGroup>
-                                <DropdownMenuItem >
-                                    <Download className="text-black-900" />
-                                    Tải xuống
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <PenLine className="text-black-900" />
-                                    Đổi tên
-                                </DropdownMenuItem>
-                            </DropdownMenuGroup>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuGroup>
-                                <DropdownMenuSub>
-                                    <DropdownMenuSubTrigger>
-                                        <UserRoundPlus className="size-4 me-2" />
-                                        Chia sẻ
-                                    </DropdownMenuSubTrigger>
-                                    <DropdownMenuPortal>
-                                        <DropdownMenuSubContent>
-                                            <DropdownMenuItem>
-                                                <UserRoundPlus className="text-black-900" />
-                                                Chia sẻ
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem>
-                                                <Link2 className="text-black-900" />
-                                                URL
-                                            </DropdownMenuItem>
-                                        </DropdownMenuSubContent>
-                                    </DropdownMenuPortal>
-                                </DropdownMenuSub>
-                                <DropdownMenuSub>
-                                    <DropdownMenuSubTrigger>
-                                        <FolderOpen className="size-4 me-2" />
-                                        Sắp xếp
-                                    </DropdownMenuSubTrigger>
-                                    <DropdownMenuPortal>
-                                        <DropdownMenuSubContent>
-                                            <DropdownMenuItem>
-                                                <FolderSymlink className="text-black-900" />
-                                                Di chuyển
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem>...</DropdownMenuItem>
-                                        </DropdownMenuSubContent>
-                                    </DropdownMenuPortal>
-                                </DropdownMenuSub>
-                                <DropdownMenuItem>
-                                    <Info className="text-black-900" />
-                                    Chi tiết
-                                </DropdownMenuItem>
-                            </DropdownMenuGroup>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>
-                                <Trash className="text-black-900" />
-                                Chuyển vào thùng rác
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    {isMultiSelectMode && selectedDocs && setSelectedDocs ? (
+                        <Checkbox
+                            className="border-2 border-black"
+                            checked={selectedDocs.includes(data.id)}
+                            onCheckedChange={(checked) => {
+                                if (checked) {
+                                    setSelectedDocs([...selectedDocs, data.id]);
+                                } else {
+                                    setSelectedDocs(selectedDocs.filter((id) => id !== data.id));
+                                }
+                            }}
+                        />
+                    ) : <EllipsisDropDown
+                        handleDropdownToggle={handleDropdownToggle}
+                        handleDownload={handleDownload}
+                        handleViewDetail={handleViewDetail}
+                    />}
+
                 </div>
             </CardHeader>
             <CardContent>

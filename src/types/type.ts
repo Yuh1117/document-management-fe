@@ -52,7 +52,7 @@ export interface ISetting {
 }
 
 export interface IDocument {
-    id: string,
+    id: number,
     name: string,
     description: string,
     originalFilename: string,

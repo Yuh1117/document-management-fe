@@ -22,7 +22,11 @@ export const endpoints = {
     "permissions-detail": (id: number) => `/api/admin/permissions/${id}`,
     "check-permissions": "/api/secure/check-permissions",
 
-    "my-files": "/api/secure/my-files"
+    "my-files": "/api/secure/my-files",
+    "folder-detail": (folderId: number) => `/api/secure/folders/${folderId}`,
+    "document-detail": (documentId: number) => `/api/secure/documents/${documentId}`,
+    "download-single-document": (documentId: number) => `/api/secure/documents/download/${documentId}`,
+    "download-multiple-documents": "/api/secure/documents/download/multiple"
 }
 
 export const authApis = () => {

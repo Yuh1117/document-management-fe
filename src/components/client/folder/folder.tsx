@@ -4,17 +4,36 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Label } from "@/components/ui/label";
 import { Download, EllipsisVertical, Folder as FolderIcon, FolderOpen, FolderSymlink, Info, Link2, PenLine, Trash, UserRoundPlus } from "lucide-react";
 import type { IFolder } from "@/types/type";
+import { authApis, endpoints } from "@/config/Api";
 
 type Props = {
-    data: IFolder
+    data: IFolder,
+    setLoadingDetail: (loading: boolean) => void,
+    setFolderDetail: (data: IFolder) => void,
+    setIsSheetOpen: (open: boolean) => void
 }
 
-const Folder = ({ data }: Props) => {
+const Folder = ({ data, setLoadingDetail, setFolderDetail, setIsSheetOpen }: Props) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
     const handleDropdownToggle = (open: boolean) => {
         setIsDropdownOpen(open);
     };
+
+    const handleViewDetail = async () => {
+        try {
+            setLoadingDetail(true);
+            const res = await authApis().get(endpoints["folder-detail"](data.id));
+
+            setFolderDetail(res.data.data);
+            setIsSheetOpen(true);
+        } catch (error) {
+            console.error("Lỗi khi tải chi tiết thư mục", error);
+        } finally {
+            setLoadingDetail(false);
+        }
+    };
+
 
     return (
         <Card
@@ -79,7 +98,7 @@ const Folder = ({ data }: Props) => {
                                         </DropdownMenuSubContent>
                                     </DropdownMenuPortal>
                                 </DropdownMenuSub>
-                                <DropdownMenuItem>
+                                <DropdownMenuItem onClick={handleViewDetail}>
                                     <Info className="text-black-900" />
                                     Chi tiết
                                 </DropdownMenuItem>
