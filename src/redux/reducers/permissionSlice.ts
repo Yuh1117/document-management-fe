@@ -36,7 +36,7 @@ const permissionsSlice = createSlice({
                     ...action.payload,
                 };
             })
-            .addCase(fetchPermissions.rejected, (state, action) => {
+            .addCase(fetchPermissions.rejected, (state) => {
                 state.loading = false;
             })
             .addCase(logout, (state) => {

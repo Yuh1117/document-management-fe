@@ -3,8 +3,13 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Download, EllipsisVertical, FileText, FolderOpen, FolderSymlink, Info, Link2, PenLine, Trash, UserRoundPlus } from "lucide-react";
+import type { IDocument } from "@/types/type";
 
-const Document = () => {
+type Props = {
+    data: IDocument
+}
+
+const Document = ({ data }: Props) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
     const handleDropdownToggle = (open: boolean) => {
@@ -19,7 +24,7 @@ const Document = () => {
             <CardHeader className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <FileText />
-                    <Label>abc.txt</Label>
+                    <Label className="truncate max-w-[130px]">{data.name}</Label>
                 </div>
                 <div>
                     <DropdownMenu onOpenChange={handleDropdownToggle}>

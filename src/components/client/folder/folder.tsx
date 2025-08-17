@@ -3,8 +3,13 @@ import { Card, CardHeader } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Download, EllipsisVertical, Folder as FolderIcon, FolderOpen, FolderSymlink, Info, Link2, PenLine, Trash, UserRoundPlus } from "lucide-react";
+import type { IFolder } from "@/types/type";
 
-const Folder = () => {
+type Props = {
+    data: IFolder
+}
+
+const Folder = ({ data }: Props) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
     const handleDropdownToggle = (open: boolean) => {
@@ -19,7 +24,7 @@ const Folder = () => {
             <CardHeader className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <FolderIcon />
-                    <Label>Name</Label>
+                    <Label>{data.name}</Label>
                 </div>
                 <div>
                     <DropdownMenu onOpenChange={handleDropdownToggle}>
@@ -31,11 +36,11 @@ const Folder = () => {
                         <DropdownMenuContent align="start">
                             <DropdownMenuGroup>
                                 <DropdownMenuItem>
-                                    <Download className="text-black-900"/>
+                                    <Download className="text-black-900" />
                                     Tải xuống
                                 </DropdownMenuItem>
                                 <DropdownMenuItem>
-                                    <PenLine className="text-black-900"/>
+                                    <PenLine className="text-black-900" />
                                     Đổi tên
                                 </DropdownMenuItem>
                             </DropdownMenuGroup>
@@ -49,11 +54,11 @@ const Folder = () => {
                                     <DropdownMenuPortal>
                                         <DropdownMenuSubContent>
                                             <DropdownMenuItem>
-                                                <UserRoundPlus className="text-black-900"/>
+                                                <UserRoundPlus className="text-black-900" />
                                                 Chia sẻ
                                             </DropdownMenuItem>
                                             <DropdownMenuItem>
-                                                <Link2 className="text-black-900"/>
+                                                <Link2 className="text-black-900" />
                                                 URL
                                             </DropdownMenuItem>
                                         </DropdownMenuSubContent>
@@ -67,7 +72,7 @@ const Folder = () => {
                                     <DropdownMenuPortal>
                                         <DropdownMenuSubContent>
                                             <DropdownMenuItem>
-                                                <FolderSymlink className="text-black-900"/>
+                                                <FolderSymlink className="text-black-900" />
                                                 Di chuyển
                                             </DropdownMenuItem>
                                             <DropdownMenuItem>...</DropdownMenuItem>
@@ -75,13 +80,13 @@ const Folder = () => {
                                     </DropdownMenuPortal>
                                 </DropdownMenuSub>
                                 <DropdownMenuItem>
-                                    <Info className="text-black-900"/>
+                                    <Info className="text-black-900" />
                                     Chi tiết
                                 </DropdownMenuItem>
                             </DropdownMenuGroup>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem>
-                                <Trash className="text-black-900"/>
+                                <Trash className="text-black-900" />
                                 Chuyển vào thùng rác
                             </DropdownMenuItem>
                         </DropdownMenuContent>

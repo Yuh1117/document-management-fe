@@ -51,3 +51,48 @@ export interface ISetting {
     updatedBy?: IUser,
 }
 
+export interface IDocument {
+    id: string,
+    name: string,
+    description: string,
+    originalFilename: string,
+    storedFilename: string,
+    filePath: string,
+    fileSize: number,
+    mimeType: string,
+    storageType: string,
+    createdAt?: string,
+    updatedAt?: string,
+    createdBy?: IUser,
+    updatedBy?: IUser,
+}
+
+export interface IFolder {
+    id: number,
+    name: string,
+    inheritPermissions: boolean,
+    isDeleted: boolean,
+    documents: IDocument[],
+    folders: ISubFolder[],
+    createdAt?: string,
+    updatedAt?: string,
+    createdBy?: IUser,
+    updatedBy?: IUser,
+}
+
+export interface ISubFolder {
+    id: number,
+    name: string,
+    inheritPermissions: boolean,
+    isDeleted: boolean,
+    createdAt?: string,
+    updatedAt?: string,
+    createdBy?: IUser,
+    updatedBy?: IUser,
+}
+
+export interface IFileItem {
+    folder: IFolder,
+    document: IDocument
+    type: string
+}
