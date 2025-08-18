@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import type { IDocument } from "@/types/type";
 import { formatFileSize, formatTime } from "@/config/utils";
 import { Separator } from "@/components/ui/separator";
+import { useAppSelector } from "@/redux/hooks";
 
 type Props = {
     isSheetOpen: boolean;
@@ -14,6 +15,8 @@ type Props = {
 };
 
 const DocumentDetail = ({ isSheetOpen, setIsSheetOpen, documentDetail, loadingDetail }: Props) => {
+    const userId = useAppSelector(state => state.users.user?.id)
+
     return (
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetContent className="rounded-l-2xl">
@@ -46,11 +49,11 @@ const DocumentDetail = ({ isSheetOpen, setIsSheetOpen, documentDetail, loadingDe
                                 <div className="space-y-2">
                                     <div className="flex items-center">
                                         <Label className="me-2 medium text-md">Tạo bởi:</Label>
-                                        <Badge variant="secondary">{documentDetail.createdBy?.email}</Badge>
+                                        <Badge variant="secondary">{documentDetail.createdBy?.id === userId ? "Tôi" : documentDetail.createdBy?.email}</Badge>
                                     </div>
                                     <div className="flex items-center">
                                         <Label className="me-2 medium text-md">Cập nhật bởi:</Label>
-                                        <Badge variant="secondary">{documentDetail.updatedBy?.email}</Badge>
+                                        <Badge variant="secondary">{documentDetail.updatedBy?.id === userId ? "Tôi" : documentDetail.updatedBy?.email}</Badge>
                                     </div>
                                     <div className="flex items-center">
                                         <Label className="me-2 medium text-md">Tạo lúc:</Label>

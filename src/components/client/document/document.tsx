@@ -6,6 +6,7 @@ import type { IDocument } from "@/types/type";
 import { authApis, endpoints } from "@/config/Api";
 import { Checkbox } from "@/components/ui/checkbox";
 import EllipsisDropDown from "../ellipsis-dropdown";
+import { toast } from "sonner";
 
 type Props = {
     data: IDocument;
@@ -27,6 +28,7 @@ const Document = ({
     setSelectedDocs
 }: Props) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+    const [downloading, setDownloading] = useState<boolean>(false);
 
     const handleDropdownToggle = (open: boolean) => {
         setIsDropdownOpen(open);
@@ -47,6 +49,8 @@ const Document = ({
 
     const handleDownload = async () => {
         try {
+            setDownloading(true)
+
             const res = await authApis().get(endpoints["download-single-document"](data.id), {
                 responseType: "blob",
             });
@@ -60,8 +64,17 @@ const Document = ({
             link.click();
             link.remove();
             window.URL.revokeObjectURL(url);
+
+            toast.success("Tải về thành công", {
+                duration: 2000
+            })
         } catch (error) {
             console.error("Tải xuống thất bại:", error);
+            toast.error("Tải về thất bại", {
+                duration: 2000
+            })
+        } finally {
+            setDownloading(true)
         }
     };
 
@@ -73,12 +86,12 @@ const Document = ({
             <CardHeader className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <FileText />
-                    <Label className="truncate max-w-[130px]">{data.name}</Label>
+                    <Label className="truncate max-w-[110px]">{data.name}</Label>
                 </div>
                 <div>
                     {isMultiSelectMode && selectedDocs && setSelectedDocs ? (
                         <Checkbox
-                            className="border-2 border-black"
+                            className="border-2 border-black dark:border-white"
                             checked={selectedDocs.includes(data.id)}
                             onCheckedChange={(checked) => {
                                 if (checked) {

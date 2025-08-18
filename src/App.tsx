@@ -25,7 +25,7 @@ const homeLoader = async () => {
 const MainLayout = () => (
   <>
     <Header />
-    <SidebarProvider>
+    <SidebarProvider className="min-h-0">
       <AppSidebar className="border-none pt-18" />
       <SidebarInset className="pe-2">
         <Outlet />
@@ -61,7 +61,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/my-files",
-        Component: Files,
+        element: <Files mode="my-files" />,
+      },
+      {
+        path: "/folders/:id",
+        element: <Files mode="folder" />,
       },
       {
         path: "/recent",

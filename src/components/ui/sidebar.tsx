@@ -2,7 +2,7 @@ import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva } from "class-variance-authority"
 import type { VariantProps } from "class-variance-authority"
-import { ArrowLeftToLine, ArrowRightFromLine } from "lucide-react"
+import { PanelLeftIcon } from "lucide-react"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -256,20 +256,20 @@ function SidebarTrigger({
   onClick,
   ...props
 }: React.ComponentProps<typeof Button>) {
-  const { toggleSidebar, state } = useSidebar()
+  const { toggleSidebar } = useSidebar()
 
   return (
     <button
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
-      className={cn("cursor-pointer p-2 rounded-2xl hover:bg-input/50 dark:hover:bg-input/50", className)}
+      className={cn("cursor-pointer p-2 rounded-xl hover:bg-input/50 dark:hover:bg-input/50", className)}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
       }}
       {...props}
     >
-      {state !== "collapsed" ? <ArrowLeftToLine size={17} /> : <ArrowRightFromLine size={17} />}
+      <PanelLeftIcon size={20} />
       <span className="sr-only">Toggle Sidebar</span>
     </button>
   )

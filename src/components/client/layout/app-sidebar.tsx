@@ -17,8 +17,7 @@ import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
-  SidebarRail,
-  SidebarTrigger,
+  SidebarRail
 } from "@/components/ui/sidebar"
 import { NewDropDown } from "../new-dropdown"
 
@@ -72,7 +71,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar collapsible="icon" {...props}>
       <SidebarRail />
       <SidebarHeader className="pt-1 md:pt-0">
-        <SidebarTrigger className="absolute right-[-15px] top-[50%] z-50 bg-background border"/>
         <NewDropDown items={data.new} />
       </SidebarHeader>
       <SidebarContent>

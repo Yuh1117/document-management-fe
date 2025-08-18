@@ -5,7 +5,7 @@ import { Link, useLocation, useNavigate } from "react-router";
 import { useForm } from "react-hook-form"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useEffect, useState, type ChangeEvent } from "react";
-import { AlertCircleIcon, CircleCheck, Loader2Icon } from "lucide-react"
+import { AlertCircleIcon, Loader2Icon } from "lucide-react"
 import { useTranslation } from "react-i18next";
 import Api, { endpoints } from "@/config/Api";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -105,16 +105,15 @@ const Login = () => {
 
     useEffect(() => {
         if (successMsg) {
-            toast(successMsg, {
-                duration: 3000,
-                icon: <CircleCheck />
+            toast.success(successMsg, {
+                duration: 3000
             })
         }
     }, [successMsg])
 
     return (
         <div className="bg-muted flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
-            <Toaster position="top-center" />
+            <Toaster richColors position="top-center" />
 
             <Card className="w-full md:max-w-sm">
                 <CardContent >
