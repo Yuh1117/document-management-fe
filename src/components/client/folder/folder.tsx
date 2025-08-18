@@ -1,20 +1,36 @@
 import { useState } from "react";
 import { Card, CardHeader } from "@/components/ui/card";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
-import { Download, EllipsisVertical, Folder as FolderIcon, FolderOpen, FolderSymlink, Info, Link2, PenLine, Trash, UserRoundPlus } from "lucide-react";
+import { Folder as FolderIcon } from "lucide-react";
 import type { IFolder } from "@/types/type";
 import { authApis, endpoints } from "@/config/Api";
+import { useNavigate } from "react-router";
+import { cn } from "@/lib/utils";
+import { Checkbox } from "@/components/ui/checkbox";
+import EllipsisDropDown from "../ellipsis-dropdown";
 
 type Props = {
     data: IFolder,
     setLoadingDetail: (loading: boolean) => void,
     setFolderDetail: (data: IFolder) => void,
-    setIsSheetOpen: (open: boolean) => void
+    setIsSheetOpen: (open: boolean) => void,
+    isMultiSelectMode?: boolean;
+    selectedFolders?: number[];
+    setSelectedFolders?: (data: number[]) => void;
 }
 
-const Folder = ({ data, setLoadingDetail, setFolderDetail, setIsSheetOpen }: Props) => {
+const Folder = ({
+    data,
+    setLoadingDetail,
+    setFolderDetail,
+    setIsSheetOpen,
+    isMultiSelectMode,
+    selectedFolders,
+    setSelectedFolders
+}: Props) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+    const nav = useNavigate();
+    const [downloading, setDownloading] = useState<boolean>(false);
 
     const handleDropdownToggle = (open: boolean) => {
         setIsDropdownOpen(open);
@@ -34,82 +50,58 @@ const Folder = ({ data, setLoadingDetail, setFolderDetail, setIsSheetOpen }: Pro
         }
     };
 
+    const handleDownload = async () => {
+        try {
+            setDownloading(true)
+
+            const res = await authApis().get(endpoints["download-single-folder"](data.id), {
+                responseType: "blob",
+            });
+
+            const url = window.URL.createObjectURL(new Blob([res.data]));
+            const link = document.createElement("a");
+
+            link.href = url;
+            link.setAttribute("download", `${data.name}.zip`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Tải xuống thất bại:", error);
+        } finally {
+            setDownloading(false)
+        }
+    };
+
 
     return (
-        <Card
-            className={`bg-background hover:bg-input/50 py-4 rounded-xl border-1 transition-all duration-200 ${isDropdownOpen ? "bg-input/50" : ""
-                }`}
+        <Card onDoubleClick={() => { if (!isMultiSelectMode) nav(`/folders/${data.id}`) }}
+            className={cn("bg-background hover:bg-input/50 py-4 rounded-xl border-1 transition-all duration-200", isDropdownOpen && "bg-input/50")}
         >
             <CardHeader className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <FolderIcon />
-                    <Label>{data.name}</Label>
+                    <Label className="truncate max-w-[110px]">{data.name}</Label>
                 </div>
                 <div>
-                    <DropdownMenu onOpenChange={handleDropdownToggle}>
-                        <DropdownMenuTrigger asChild>
-                            <div className="cursor-pointer hover:bg-background/90 p-1 rounded-xl">
-                                <EllipsisVertical size={16} />
-                            </div>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start">
-                            <DropdownMenuGroup>
-                                <DropdownMenuItem>
-                                    <Download className="text-black-900" />
-                                    Tải xuống
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <PenLine className="text-black-900" />
-                                    Đổi tên
-                                </DropdownMenuItem>
-                            </DropdownMenuGroup>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuGroup>
-                                <DropdownMenuSub>
-                                    <DropdownMenuSubTrigger>
-                                        <UserRoundPlus className="size-4 me-2" />
-                                        Chia sẻ
-                                    </DropdownMenuSubTrigger>
-                                    <DropdownMenuPortal>
-                                        <DropdownMenuSubContent>
-                                            <DropdownMenuItem>
-                                                <UserRoundPlus className="text-black-900" />
-                                                Chia sẻ
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem>
-                                                <Link2 className="text-black-900" />
-                                                URL
-                                            </DropdownMenuItem>
-                                        </DropdownMenuSubContent>
-                                    </DropdownMenuPortal>
-                                </DropdownMenuSub>
-                                <DropdownMenuSub>
-                                    <DropdownMenuSubTrigger>
-                                        <FolderOpen className="size-4 me-2" />
-                                        Sắp xếp
-                                    </DropdownMenuSubTrigger>
-                                    <DropdownMenuPortal>
-                                        <DropdownMenuSubContent>
-                                            <DropdownMenuItem>
-                                                <FolderSymlink className="text-black-900" />
-                                                Di chuyển
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem>...</DropdownMenuItem>
-                                        </DropdownMenuSubContent>
-                                    </DropdownMenuPortal>
-                                </DropdownMenuSub>
-                                <DropdownMenuItem onClick={handleViewDetail}>
-                                    <Info className="text-black-900" />
-                                    Chi tiết
-                                </DropdownMenuItem>
-                            </DropdownMenuGroup>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>
-                                <Trash className="text-black-900" />
-                                Chuyển vào thùng rác
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    {isMultiSelectMode && selectedFolders && setSelectedFolders ? (
+                        <Checkbox
+                            className="border-2 border-black dark:border-white"
+                            checked={selectedFolders.includes(data.id)}
+                            onCheckedChange={(checked) => {
+                                if (checked) {
+                                    setSelectedFolders([...selectedFolders, data.id]);
+                                } else {
+                                    setSelectedFolders(selectedFolders.filter((id) => id !== data.id));
+                                }
+                            }}
+                        />
+                    ) : <EllipsisDropDown
+                        handleDropdownToggle={handleDropdownToggle}
+                        handleDownload={handleDownload}
+                        handleViewDetail={handleViewDetail}
+                    />}
                 </div>
             </CardHeader>
         </Card>

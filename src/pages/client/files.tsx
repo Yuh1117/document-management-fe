@@ -3,30 +3,52 @@ import DocumentDetail from "@/components/client/document/document-detail";
 import Folder from "@/components/client/folder/folder";
 import FolderDetail from "@/components/client/folder/folder-detail";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Spinner } from "@/components/ui/spinner";
 import { authApis, endpoints } from "@/config/Api";
+import { useAppSelector } from "@/redux/hooks";
 import type { IDocument, IFileItem, IFolder } from "@/types/type";
 import { Download, ListChecks, X } from "lucide-react";
 import { useEffect, useState, useMemo, useRef } from "react";
+import { useParams } from "react-router";
+import { toast, Toaster } from "sonner";
 
-const Files = () => {
+const Files = ({ mode }: { mode: string }) => {
     const [files, setFiles] = useState<IFileItem[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [page, setPage] = useState<number>(1);
     const [hasMore, setHasMore] = useState<boolean>(true);
-    const [isFolderSheetOpen, setIsFolderSheetOpen] = useState(false);
+    const [isFolderSheetOpen, setIsFolderSheetOpen] = useState<boolean>(false);
     const [folderDetail, setFolderDetail] = useState<IFolder | null>(null);
-    const [loadingFolderDetail, setLoadingFolderDetail] = useState(false);
-    const [isDocumentSheetOpen, setIsDocumentSheetOpen] = useState(false);
+    const [loadingFolderDetail, setLoadingFolderDetail] = useState<boolean>(false);
+    const [isDocumentSheetOpen, setIsDocumentSheetOpen] = useState<boolean>(false);
     const [documentDetail, setDocumentDetail] = useState<IDocument | null>(null);
-    const [loadingDocumentDetail, setLoadingDocumentDetail] = useState(false);
+    const [loadingDocumentDetail, setLoadingDocumentDetail] = useState<boolean>(false);
     const [selectedDocs, setSelectedDocs] = useState<number[]>([]);
+    const [selectedFolders, setSelectedFolders] = useState<number[]>([]);
     const [isMultiSelectMode, setIsMultiSelectMode] = useState(false);
+    const [downloading, setDownloading] = useState<boolean>(false);
+    const { id } = useParams<{ id: string }>()
+    const reloadFlag = useAppSelector(state => state.files.reloadFlag)
+
+    const buildUrl = () => {
+        switch (mode) {
+            case "my-files":
+                return `${endpoints["my-files"]}?page=${page}`;
+            case "folder":
+                return `${endpoints["folder-files"](id!)}?page=${page}`;
+            default:
+                return "";
+        }
+    };
 
     const loadFiles = async () => {
         try {
             setLoading(true);
-            const url = `${endpoints["my-files"]}?page=${page}`;
+            const url = buildUrl();
+            if (!url) return;
+
             const res = await authApis().get(url);
             const data = res.data.data;
 
@@ -38,49 +60,99 @@ const Files = () => {
             }
         } catch (error) {
             console.error(error);
+            setHasMore(false);
+            setPage(0);
         } finally {
             setLoading(false);
         }
     };
 
     const handleDownloadSelected = async () => {
-        if (selectedDocs.length === 0) return;
+        if (selectedDocs.length === 0 && selectedFolders.length === 0) return;
 
         try {
-            const res = await authApis().post(
-                endpoints["download-multiple-documents"],
-                selectedDocs,
-                { responseType: "blob" }
-            );
+            setDownloading(true);
 
-            const blob = new Blob([res.data], { type: "application/zip" });
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement("a");
+            if (selectedDocs.length !== 0 && selectedFolders.length === 0) {
+                const res = await authApis().post(endpoints["download-multiple-documents"], selectedDocs,
+                    { responseType: "blob" }
+                );
 
-            link.href = url;
-            link.setAttribute("download", "tai-lieu.zip");
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            window.URL.revokeObjectURL(url);
-            setSelectedDocs([]);
-            setIsMultiSelectMode(false);
-        } catch (err) {
-            console.error("Lỗi tải xuống nhiều tài liệu:", err);
+                const blob = new Blob([res.data], { type: "application/zip" });
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement("a");
+
+                link.href = url;
+                link.setAttribute("download", "documents.zip");
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                window.URL.revokeObjectURL(url);
+
+                toast.success("Tải về thành công", {
+                    duration: 2000
+                })
+
+                setSelectedDocs([]);
+                setIsMultiSelectMode(false);
+
+            } else if (selectedDocs.length === 0 && selectedFolders.length !== 0) {
+                const res = await authApis().post(endpoints["download-multiple-folders"], selectedFolders,
+                    { responseType: "blob" }
+                );
+
+                const blob = new Blob([res.data], { type: "application/zip" });
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement("a");
+
+                link.href = url;
+                link.setAttribute("download", "folders.zip");
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                window.URL.revokeObjectURL(url);
+
+                toast.success("Tải về thành công", {
+                    duration: 2000
+                })
+
+                setSelectedFolders([]);
+                setIsMultiSelectMode(false);
+
+            } else {
+                return;
+            }
+        } catch (error) {
+            console.log("Download error", error)
+            toast.error("Tải về thất bại", {
+                duration: 2000
+            })
+        } finally {
+            setDownloading(false)
         }
     };
-
 
     useEffect(() => {
         if (page > 0) {
             loadFiles();
         }
-    }, [page]);
+    }, [page, id, mode]);
+
+    useEffect(() => {
+        setFiles([]);
+        setPage(1);
+        setHasMore(true);
+        setIsMultiSelectMode(false)
+        setSelectedDocs([])
+        setSelectedFolders([])
+    }, [id, mode, reloadFlag]);
 
     const observerRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         if (!hasMore || loading) return;
+
+        const scrollViewport = document.querySelector('[data-slot="scroll-area-viewport"]');
 
         const observer = new IntersectionObserver(
             (entries) => {
@@ -88,7 +160,10 @@ const Files = () => {
                     setPage((prev) => prev + 1);
                 }
             },
-            { threshold: 1.0 }
+            {
+                root: scrollViewport,
+                threshold: 1.0
+            }
         );
 
         if (observerRef.current) observer.observe(observerRef.current);
@@ -102,8 +177,10 @@ const Files = () => {
     const documents = useMemo(() => files.filter((f) => f.type === "document"), [files]);
 
     return (
-        <div className="bg-muted dark:bg-sidebar flex flex-col min-h-svh rounded-xl p-2">
-            <div className="sticky top-18 z-40 bg-muted/80 backdrop-blur supports-[backdrop-filter]:bg-muted/60 flex items-center justify-between rounded-xl p-4 border-b">
+        <div className="bg-muted dark:bg-sidebar flex flex-col rounded-xl p-2 select-none">
+            <Toaster richColors position="top-center" />
+            <div className="bg-muted/60 backdrop-blur flex items-center justify-between rounded-xl p-4 border-b">
+                <SidebarTrigger />
                 <h1 className="text-2xl font-semibold">Files của tôi</h1>
                 <div className="cursor-pointer p-2 rounded-2xl hover:bg-input/50 dark:hover:bg-input/50"
                     onClick={() => {
@@ -111,12 +188,11 @@ const Files = () => {
                         setSelectedDocs([]);
                     }}
                 >
-                    {isMultiSelectMode ? <X /> : <ListChecks />}
+                    {isMultiSelectMode ? <X size={20} /> : <ListChecks size={20} />}
                 </div>
             </div>
 
-
-            <div className="p-2">
+            <ScrollArea className="p-2 h-[calc(100vh-170px)]">
                 {files.length === 0 && !loading ? (
                     <div className="flex justify-center items-center py-8 text-muted-foreground">
                         Không có dữ liệu
@@ -133,6 +209,9 @@ const Files = () => {
                                             setLoadingDetail={setLoadingFolderDetail}
                                             setFolderDetail={setFolderDetail}
                                             setIsSheetOpen={setIsFolderSheetOpen}
+                                            isMultiSelectMode={isMultiSelectMode}
+                                            selectedFolders={selectedFolders}
+                                            setSelectedFolders={setSelectedFolders}
                                         />
                                     ))}
                                 </div>
@@ -172,16 +251,17 @@ const Files = () => {
                 {!hasMore && files.length > 0 && (
                     <p className="text-center text-muted-foreground py-4">Đã tải hết</p>
                 )}
-            </div>
+            </ScrollArea>
 
             {isMultiSelectMode && (
                 <div className="fixed bottom-0 left-0 right-0 bg-background border-t p-4 flex justify-between items-center z-50 shadow-lg">
                     <span className="text-sm text-muted-foreground">
-                        {selectedDocs.length} tài liệu được chọn
+                        {selectedFolders.length} thư mục được chọn, {selectedDocs.length} tài liệu được chọn
                     </span>
                     <div className="flex gap-2">
                         <Button
                             onClick={handleDownloadSelected}
+                            disabled={selectedDocs.length === 0 && selectedFolders.length === 0}
                         >
                             <Download className="text-black-900" />
                             Tải xuống
@@ -198,7 +278,6 @@ const Files = () => {
                     </div>
                 </div>
             )}
-
 
             <FolderDetail
                 isSheetOpen={isFolderSheetOpen}
