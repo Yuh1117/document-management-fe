@@ -19,7 +19,7 @@ const FolderDetail = ({ isSheetOpen, setIsSheetOpen, loadingDetail, folderDetail
 
     return (
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-            <SheetContent className="rounded-l-2xl">
+            <SheetContent className="rounded-l-2xl" aria-describedby={undefined}>
                 <SheetHeader>
                     <SheetTitle className="text-lg mb-2">Chi tiết thư mục</SheetTitle>
                     <div>

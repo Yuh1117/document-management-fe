@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import EllipsisDropDown from "../ellipsis-dropdown";
 import { useAppDispatch } from "@/redux/hooks";
 import { openFolderModal } from "@/redux/reducers/filesSlice";
+import EllipsisDropDownDeleted from "../ellipsis-dropdown-deleted";
 
 type Props = {
     data: IFolder,
@@ -103,18 +104,22 @@ const Folder = ({
                     <Label className="truncate max-w-[110px]">{data.name}</Label>
                 </div>
                 <div>
-                    {isMultiSelectMode && selectedFolders && setSelectedFolders ? (
-                        <Checkbox
-                            className="border-2 border-black dark:border-white"
-                            checked={selectedFolders.includes(data.id)}
-                            onCheckedChange={handleToggleCheck}
-                        />
-                    ) : <EllipsisDropDown
+                    {data.deleted ? <EllipsisDropDownDeleted
                         handleDropdownToggle={handleDropdownToggle}
-                        handleDownload={handleDownload}
-                        handleViewDetail={handleViewDetail}
-                        handleOpenEdit={handleOpenEdit}
-                    />}
+                    /> : (
+                        isMultiSelectMode && selectedFolders && setSelectedFolders ? (
+                            <Checkbox
+                                className="border-2 border-black dark:border-white"
+                                checked={selectedFolders.includes(data.id)}
+                                onCheckedChange={handleToggleCheck}
+                            />
+                        ) : <EllipsisDropDown
+                            handleDropdownToggle={handleDropdownToggle}
+                            handleDownload={handleDownload}
+                            handleViewDetail={handleViewDetail}
+                            handleOpenEdit={handleOpenEdit}
+                        />
+                    )}
                 </div>
             </CardHeader>
         </Card>

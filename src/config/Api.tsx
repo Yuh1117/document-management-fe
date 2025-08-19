@@ -24,6 +24,7 @@ export const endpoints = {
 
     "my-files": "/api/secure/files/my-files",
     "folder-files": (folderId: string | number) => `/api/secure/files/folders/${folderId}`,
+    "trash-files": "/api/secure/files/trash",
 
     "folders": "/api/secure/folders",
     "documents": "/api/secure/documents",

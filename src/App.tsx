@@ -77,7 +77,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/trash",
-        Component: null,
+        element: <Files mode="trash" />,
       }
     ],
   },

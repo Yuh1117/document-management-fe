@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useAppDispatch } from "@/redux/hooks";
 import { openDocumentModal } from "@/redux/reducers/filesSlice";
 import { cn } from "@/lib/utils";
+import EllipsisDropDownDeleted from "../ellipsis-dropdown-deleted";
 
 type Props = {
     data: IDocument;
@@ -107,19 +108,22 @@ const Document = ({
                     <Label className="truncate max-w-[110px]">{data.name}</Label>
                 </div>
                 <div>
-                    {isMultiSelectMode && selectedDocs && setSelectedDocs ? (
-                        <Checkbox
-                            className="border-2 border-black dark:border-white"
-                            checked={selectedDocs.includes(data.id)}
-                            onCheckedChange={handleToggleCheck}
-                        />
-                    ) : <EllipsisDropDown
+                    {data.deleted ? <EllipsisDropDownDeleted
                         handleDropdownToggle={handleDropdownToggle}
-                        handleDownload={handleDownload}
-                        handleViewDetail={handleViewDetail}
-                        handleOpenEdit={handleOpenEdit}
-                    />}
-
+                    /> : (
+                        isMultiSelectMode && selectedDocs && setSelectedDocs ? (
+                            <Checkbox
+                                className="border-2 border-black dark:border-white"
+                                checked={selectedDocs.includes(data.id)}
+                                onCheckedChange={handleToggleCheck}
+                            />
+                        ) : <EllipsisDropDown
+                            handleDropdownToggle={handleDropdownToggle}
+                            handleDownload={handleDownload}
+                            handleViewDetail={handleViewDetail}
+                            handleOpenEdit={handleOpenEdit}
+                        />
+                    )}
                 </div>
             </CardHeader>
             <CardContent>

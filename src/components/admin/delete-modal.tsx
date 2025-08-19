@@ -46,7 +46,7 @@ const DeleteModal = ({ open, deletingId, onCancel, name, load, endpoint }: Props
 
     return (
         <Dialog open={open} onOpenChange={onCancel}>
-            <DialogContent>
+            <DialogContent aria-describedby={undefined}>
                 <DialogHeader>
                     <DialogTitle>Xác nhận xoá</DialogTitle>
                 </DialogHeader>
