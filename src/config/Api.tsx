@@ -24,13 +24,20 @@ export const endpoints = {
 
     "my-files": "/api/secure/files/my-files",
     "folder-files": (folderId: string | number) => `/api/secure/files/folders/${folderId}`,
+
+    "folders": "/api/secure/folders",
+    "documents": "/api/secure/documents",
     "folder-detail": (folderId: string | number) => `/api/secure/folders/${folderId}`,
     "document-detail": (documentId: string | number) => `/api/secure/documents/${documentId}`,
-    "upload-multiple-files": "/api/secure/documents/upload",
+
+    "upload-multiple-documents": "/api/secure/documents/upload",
+    "upload-folder": "api/secure/folders/upload",
+
     "download-single-document": (documentId: string | number) => `/api/secure/documents/download/${documentId}`,
     "download-multiple-documents": "/api/secure/documents/download/multiple",
     "download-single-folder": (folderId: string | number) => `/api/secure/folders/download/${folderId}`,
     "download-multiple-folders": "/api/secure/folders/download/multiple",
+    "download-multiple-files": "/api/secure/files/download/multiple"
 }
 
 export const authApis = () => {
