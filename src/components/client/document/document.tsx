@@ -7,6 +7,9 @@ import { authApis, endpoints } from "@/config/Api";
 import { Checkbox } from "@/components/ui/checkbox";
 import EllipsisDropDown from "../ellipsis-dropdown";
 import { toast } from "sonner";
+import { useAppDispatch } from "@/redux/hooks";
+import { openDocumentModal } from "@/redux/reducers/filesSlice";
+import { cn } from "@/lib/utils";
 
 type Props = {
     data: IDocument;
@@ -29,9 +32,20 @@ const Document = ({
 }: Props) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const [downloading, setDownloading] = useState<boolean>(false);
+    const dispatch = useAppDispatch();
 
     const handleDropdownToggle = (open: boolean) => {
         setIsDropdownOpen(open);
+    };
+
+    const handleToggleCheck = () => {
+        if (isMultiSelectMode && selectedDocs && setSelectedDocs) {
+            if (selectedDocs?.includes(data.id)) {
+                setSelectedDocs(selectedDocs.filter((id) => id !== data.id));
+            } else {
+                setSelectedDocs([...selectedDocs, data.id]);
+            }
+        }
     };
 
     const handleViewDetail = async () => {
@@ -78,10 +92,14 @@ const Document = ({
         }
     };
 
+    const handleOpenEdit = () => {
+        dispatch(openDocumentModal({ data: data }))
+    }
+
     return (
         <Card
-            className={`bg-background hover:bg-input/50 py-4 rounded-xl border-1 transition-all duration-200 ${isDropdownOpen ? "bg-input/50" : ""
-                }`}
+            onClick={handleToggleCheck}
+            className={cn("bg-background hover:bg-input/50 py-4 rounded-xl border-1 transition-all duration-200", isDropdownOpen && "bg-input/50")}
         >
             <CardHeader className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -93,18 +111,13 @@ const Document = ({
                         <Checkbox
                             className="border-2 border-black dark:border-white"
                             checked={selectedDocs.includes(data.id)}
-                            onCheckedChange={(checked) => {
-                                if (checked) {
-                                    setSelectedDocs([...selectedDocs, data.id]);
-                                } else {
-                                    setSelectedDocs(selectedDocs.filter((id) => id !== data.id));
-                                }
-                            }}
+                            onCheckedChange={handleToggleCheck}
                         />
                     ) : <EllipsisDropDown
                         handleDropdownToggle={handleDropdownToggle}
                         handleDownload={handleDownload}
                         handleViewDetail={handleViewDetail}
+                        handleOpenEdit={handleOpenEdit}
                     />}
 
                 </div>

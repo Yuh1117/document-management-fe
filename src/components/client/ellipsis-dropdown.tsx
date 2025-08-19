@@ -5,9 +5,10 @@ type Props = {
     handleDropdownToggle: (open: boolean) => void,
     handleDownload: () => Promise<void>,
     handleViewDetail: () => Promise<void>
+    handleOpenEdit: () => void
 }
 
-const EllipsisDropDown = ({ handleDropdownToggle, handleDownload, handleViewDetail }: Props) => {
+const EllipsisDropDown = ({ handleDropdownToggle, handleDownload, handleViewDetail, handleOpenEdit }: Props) => {
     return (
         <DropdownMenu onOpenChange={handleDropdownToggle}>
             <DropdownMenuTrigger asChild>
@@ -21,7 +22,7 @@ const EllipsisDropDown = ({ handleDropdownToggle, handleDownload, handleViewDeta
                         <Download className="text-black-900" />
                         Tải xuống
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleOpenEdit}>
                         <PenLine className="text-black-900" />
                         Đổi tên
                     </DropdownMenuItem>

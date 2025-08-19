@@ -1,13 +1,16 @@
 import Document from "@/components/client/document/document";
 import DocumentDetail from "@/components/client/document/document-detail";
+import DocumentModal from "@/components/client/document/document-modal";
 import Folder from "@/components/client/folder/folder";
 import FolderDetail from "@/components/client/folder/folder-detail";
+import FolderModal from "@/components/client/folder/folder-modal";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Spinner } from "@/components/ui/spinner";
 import { authApis, endpoints } from "@/config/Api";
-import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { closeDocumentModal, closeFolderModal } from "@/redux/reducers/filesSlice";
 import type { IDocument, IFileItem, IFolder } from "@/types/type";
 import { Download, ListChecks, X } from "lucide-react";
 import { useEffect, useState, useMemo, useRef } from "react";
@@ -30,7 +33,8 @@ const Files = ({ mode }: { mode: string }) => {
     const [isMultiSelectMode, setIsMultiSelectMode] = useState(false);
     const [downloading, setDownloading] = useState<boolean>(false);
     const { id } = useParams<{ id: string }>()
-    const reloadFlag = useAppSelector(state => state.files.reloadFlag)
+    const { reloadFlag, folderModal, documentModal } = useAppSelector(state => state.files)
+    const dispatch = useAppDispatch()
 
     const buildUrl = () => {
         switch (mode) {
@@ -120,7 +124,33 @@ const Files = ({ mode }: { mode: string }) => {
                 setIsMultiSelectMode(false);
 
             } else {
-                return;
+                const data: { [key: string]: number[] } = {
+                    folderIds: selectedFolders,
+                    documentIds: selectedDocs
+                }
+
+                const res = await authApis().post(endpoints["download-multiple-files"], data,
+                    { responseType: "blob" }
+                );
+
+                const blob = new Blob([res.data], { type: "application/zip" });
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement("a");
+
+                link.href = url;
+                link.setAttribute("download", "folders-documents.zip");
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                window.URL.revokeObjectURL(url);
+
+                toast.success("Tải về thành công", {
+                    duration: 2000
+                })
+
+                setSelectedFolders([]);
+                setSelectedDocs([])
+                setIsMultiSelectMode(false);
             }
         } catch (error) {
             console.log("Download error", error)
@@ -192,7 +222,7 @@ const Files = ({ mode }: { mode: string }) => {
                 </div>
             </div>
 
-            <ScrollArea className="p-2 h-[calc(100vh-170px)]">
+            <ScrollArea className="p-2 h-[calc(100vh-160px)]">
                 {files.length === 0 && !loading ? (
                     <div className="flex justify-center items-center py-8 text-muted-foreground">
                         Không có dữ liệu
@@ -261,10 +291,12 @@ const Files = ({ mode }: { mode: string }) => {
                     <div className="flex gap-2">
                         <Button
                             onClick={handleDownloadSelected}
-                            disabled={selectedDocs.length === 0 && selectedFolders.length === 0}
+                            disabled={selectedDocs.length === 0 && selectedFolders.length === 0 || downloading}
                         >
-                            <Download className="text-black-900" />
-                            Tải xuống
+                            {downloading ? <Spinner /> : <>
+                                <Download className="text-black-900" />
+                                Tải xuống (zip)
+                            </>}
                         </Button>
                         <Button
                             variant="outline"
@@ -272,6 +304,7 @@ const Files = ({ mode }: { mode: string }) => {
                                 setIsMultiSelectMode(false);
                                 setSelectedDocs([]);
                             }}
+                            disabled={downloading}
                         >
                             Huỷ
                         </Button>
@@ -291,6 +324,23 @@ const Files = ({ mode }: { mode: string }) => {
                 setIsSheetOpen={setIsDocumentSheetOpen}
                 documentDetail={documentDetail}
                 loadingDetail={loadingDocumentDetail}
+            />
+
+            <FolderModal
+                open={folderModal.open}
+                onOpenChange={(open) => {
+                    if (!open) dispatch(closeFolderModal());
+                }}
+                isEditing={folderModal.isEditing}
+                data={folderModal.data}
+            />
+
+            <DocumentModal
+                open={documentModal.open}
+                onOpenChange={(open) => {
+                    if (!open) dispatch(closeDocumentModal());
+                }}
+                data={documentModal.data}
             />
         </div>
     );
