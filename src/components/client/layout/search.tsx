@@ -5,21 +5,27 @@ import { cn } from "@/lib/utils"
 import { Label } from "@/components/ui/label"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 import { Button } from "@/components/ui/button"
+import { useNavigate } from "react-router"
 
 const SearchBar = () => {
     const [isOpen, setIsOpen] = useState(false)
     const [searchValue, setSearchValue] = useState("")
     const [searchHistory, setSearchHistory] = useState<{ label: string }[]>([])
+    const nav = useNavigate()
 
-    const saveToHistory = (value: string) => {
-        if (!value.trim()) return
+    const handleSearch = (value: string) => {
+        const trimmed = value.trim()
+        if (!trimmed) return
 
-        const exists = searchHistory.some(item => item.label.toLowerCase() === value.toLowerCase())
-        if (exists) return
+        const exists = searchHistory.some(item => item.label.toLowerCase() === trimmed.toLowerCase())
+        if (!exists) {
+            const updatedHistory = [{ label: trimmed }, ...searchHistory].slice(0, 5)
+            setSearchHistory(updatedHistory)
+            localStorage.setItem("search-history", JSON.stringify(updatedHistory))
+        }
 
-        const updatedHistory = [{ label: value }, ...searchHistory].slice(0, 5)
-        setSearchHistory(updatedHistory)
-        localStorage.setItem("search-history", JSON.stringify(updatedHistory))
+        nav(`/search?kw=${encodeURIComponent(trimmed)}`);
+        setIsOpen(false)
     }
 
     const deleteHistoryItem = (indexToRemove: number) => {
@@ -29,13 +35,13 @@ const SearchBar = () => {
     }
 
     const handleClick = () => {
-        saveToHistory(searchValue)
+        handleSearch(searchValue)
         setIsOpen(false)
     }
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
-            saveToHistory(searchValue)
+            handleSearch(searchValue)
             setIsOpen(false)
             e.currentTarget.blur()
         }
@@ -78,15 +84,20 @@ const SearchBar = () => {
                                     <div
                                         key={index}
                                         className="group flex items-center justify-between gap-2 px-2 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-xl cursor-default"
+                                        onClick={() => {
+                                            setSearchValue(item.label)
+                                            handleSearch(item.label)
+                                        }}
                                     >
                                         <div className="flex items-center gap-2">
                                             <SearchIcon className="size-4 opacity-50" />
                                             <span>{item.label}</span>
                                         </div>
                                         <X
-                                            className="size-3 opacity-0 group-hover:opacity-60 hover:text-destructive hover:opacity-100 cursor-pointer"
-                                            onMouseDown={(e) => {
-                                                e.preventDefault()
+                                            className="size-4 opacity-0 group-hover:opacity-60 hover:text-destructive hover:opacity-100 cursor-pointer"
+                                            onMouseDown={(e) => e.preventDefault()}
+                                            onClick={(e) => {
+                                                e.stopPropagation()
                                                 deleteHistoryItem(index)
                                             }}
                                         />

@@ -24,9 +24,16 @@ export const endpoints = {
 
     "my-files": "/api/secure/files/my-files",
     "folder-files": (folderId: string | number) => `/api/secure/files/folders/${folderId}`,
+    "trash-files": "/api/secure/files/trash",
+    "search-files": "/api/secure/files/search",
 
     "folders": "/api/secure/folders",
     "documents": "/api/secure/documents",
+    "folder-restore": "/api/secure/folders/restore",
+    "document-restore": "/api/secure/documents/restore",
+    "folder-delete-permanent": "/api/secure/folders/permanent",
+    "document-delete-permanent": "/api/secure/documents/permanent",
+    "files-delete-permanent": "/api/secure/files/permanent",
     "folder-detail": (folderId: string | number) => `/api/secure/folders/${folderId}`,
     "document-detail": (documentId: string | number) => `/api/secure/documents/${documentId}`,
 

@@ -19,7 +19,7 @@ const DocumentDetail = ({ isSheetOpen, setIsSheetOpen, documentDetail, loadingDe
 
     return (
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-            <SheetContent className="rounded-l-2xl">
+            <SheetContent className="rounded-l-2xl" aria-describedby={undefined}>
                 <SheetHeader>
                     <SheetTitle className="text-lg mb-2">Chi tiết tài liệu</SheetTitle>
                     <div>

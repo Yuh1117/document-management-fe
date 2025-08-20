@@ -9,7 +9,10 @@ import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import EllipsisDropDown from "../ellipsis-dropdown";
 import { useAppDispatch } from "@/redux/hooks";
-import { openFolderModal } from "@/redux/reducers/filesSlice";
+import { openFolderModal, triggerReload } from "@/redux/reducers/filesSlice";
+import EllipsisDropDownDeleted from "../ellipsis-dropdown-deleted";
+import { Spinner } from "@/components/ui/spinner";
+import { toast } from "sonner";
 
 type Props = {
     data: IFolder,
@@ -33,6 +36,7 @@ const Folder = ({
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const nav = useNavigate();
     const [downloading, setDownloading] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false)
     const dispatch = useAppDispatch()
 
     const handleDropdownToggle = (open: boolean) => {
@@ -41,7 +45,7 @@ const Folder = ({
 
     const handleToggleCheck = () => {
         if (isMultiSelectMode && selectedFolders && setSelectedFolders) {
-            if (selectedFolders?.includes(data.id)) {
+            if (selectedFolders.includes(data.id)) {
                 setSelectedFolders(selectedFolders.filter((id) => id !== data.id));
             } else {
                 setSelectedFolders([...selectedFolders, data.id]);
@@ -91,6 +95,73 @@ const Folder = ({
         dispatch(openFolderModal({ isEditing: true, data: data }))
     }
 
+    const handleSoftDelete = async () => {
+        try {
+            setLoading(true);
+
+            const req: number[] = [data.id]
+            await authApis().delete(endpoints["folders"], {
+                data: req
+            });
+            
+            dispatch(triggerReload())
+            toast.success("Đã chuyền vào thùng rác", {
+                duration: 2000
+            })
+        } catch (error) {
+            console.error("Lỗi khi xoá", error);
+            toast.error("Chuyển vào thùng rác thất bại", {
+                duration: 2000
+            })
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const handleRestore = async () => {
+        try {
+            setLoading(true);
+
+            const req: number[] = [data.id]
+            await authApis().patch(endpoints["folder-restore"], req);
+
+            dispatch(triggerReload())
+            toast.success("Đã khôi phục", {
+                duration: 2000
+            })
+        } catch (error) {
+            console.error("Lỗi khi khôi phục", error);
+            toast.error("Khôi phục thất bại", {
+                duration: 2000
+            })
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const handleHardDelete = async () => {
+        try {
+            setLoading(true);
+
+            const req: number[] = [data.id]
+            await authApis().delete(endpoints["folder-delete-permanent"], {
+                data: req
+            });
+
+            dispatch(triggerReload())
+            toast.success("Đã xoá vĩnh viễn thành công", {
+                duration: 2000
+            })
+        } catch (error) {
+            console.error("Lỗi khi xoá", error);
+            toast.error("Xoá vĩnh viễn thất bại", {
+                duration: 2000
+            })
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return (
         <Card
             onDoubleClick={() => { if (!isMultiSelectMode) nav(`/folders/${data.id}`) }}
@@ -103,18 +174,27 @@ const Folder = ({
                     <Label className="truncate max-w-[110px]">{data.name}</Label>
                 </div>
                 <div>
-                    {isMultiSelectMode && selectedFolders && setSelectedFolders ? (
-                        <Checkbox
-                            className="border-2 border-black dark:border-white"
-                            checked={selectedFolders.includes(data.id)}
-                            onCheckedChange={handleToggleCheck}
-                        />
-                    ) : <EllipsisDropDown
-                        handleDropdownToggle={handleDropdownToggle}
-                        handleDownload={handleDownload}
-                        handleViewDetail={handleViewDetail}
-                        handleOpenEdit={handleOpenEdit}
-                    />}
+                    {loading ? <Spinner /> : (
+                        data.deleted ? <EllipsisDropDownDeleted
+                            handleDropdownToggle={handleDropdownToggle}
+                            handleRestore={handleRestore}
+                            handleHardDelete={handleHardDelete}
+                        /> : (
+                            isMultiSelectMode && selectedFolders && setSelectedFolders ? (
+                                <Checkbox
+                                    className="border-2 border-black dark:border-white"
+                                    checked={selectedFolders.includes(data.id)}
+                                    onCheckedChange={handleToggleCheck}
+                                />
+                            ) : <EllipsisDropDown
+                                handleDropdownToggle={handleDropdownToggle}
+                                handleDownload={handleDownload}
+                                handleViewDetail={handleViewDetail}
+                                handleOpenEdit={handleOpenEdit}
+                                handleSoftDelete={handleSoftDelete}
+                            />
+                        ))
+                    }
                 </div>
             </CardHeader>
         </Card>

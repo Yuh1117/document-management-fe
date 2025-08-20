@@ -64,6 +64,10 @@ const router = createBrowserRouter([
         element: <Files mode="my-files" />,
       },
       {
+        path: "/search",
+        element: <Files mode="search" />,
+      },
+      {
         path: "/folders/:id",
         element: <Files mode="folder" />,
       },
@@ -77,7 +81,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/trash",
-        Component: null,
+        element: <Files mode="trash" />,
       }
     ],
   },

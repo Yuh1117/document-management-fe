@@ -4,11 +4,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 type Props = {
     handleDropdownToggle: (open: boolean) => void,
     handleDownload: () => Promise<void>,
-    handleViewDetail: () => Promise<void>
-    handleOpenEdit: () => void
+    handleViewDetail: () => Promise<void>,
+    handleOpenEdit: () => void,
+    handleSoftDelete: () => Promise<void>
 }
 
-const EllipsisDropDown = ({ handleDropdownToggle, handleDownload, handleViewDetail, handleOpenEdit }: Props) => {
+const EllipsisDropDown = ({ handleDropdownToggle, handleDownload, handleViewDetail, handleOpenEdit, handleSoftDelete }: Props) => {
     return (
         <DropdownMenu onOpenChange={handleDropdownToggle}>
             <DropdownMenuTrigger asChild>
@@ -68,7 +69,7 @@ const EllipsisDropDown = ({ handleDropdownToggle, handleDownload, handleViewDeta
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleSoftDelete}>
                     <Trash className="text-black-900" />
                     Chuyển vào thùng rác
                 </DropdownMenuItem>
