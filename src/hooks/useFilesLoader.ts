@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { IFileItem } from "@/types/type";
 import { authApis } from "@/config/Api";
 
-export function useFilesLoader(endpoint: string, reloadFlag?: any) {
+export function useFilesLoader(endpoint: string, reloadFlag?: any, query?: string) {
     const [files, setFiles] = useState<IFileItem[]>([]);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
@@ -12,7 +12,11 @@ export function useFilesLoader(endpoint: string, reloadFlag?: any) {
     const loadFiles = async () => {
         try {
             setLoading(true);
-            const url = `${endpoint}?page=${page}`
+
+            let url = `${endpoint}?page=${page}`
+            if (query) {
+                url = `${url}&kw=${query}`
+            }
             const res = await authApis().get(url);
             const data = res.data.data;
 
@@ -33,13 +37,13 @@ export function useFilesLoader(endpoint: string, reloadFlag?: any) {
     useEffect(() => {
         if (page > 0)
             loadFiles();
-    }, [page, endpoint]);
+    }, [page, endpoint, query]);
 
     useEffect(() => {
         setFiles([]);
         setPage(1);
         setHasMore(true);
-    }, [reloadFlag, endpoint]);
+    }, [reloadFlag, endpoint, query]);
 
     useEffect(() => {
         if (!hasMore || loading) return;

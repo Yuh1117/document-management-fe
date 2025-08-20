@@ -2,10 +2,12 @@ import { BrushCleaning, EllipsisVertical, History } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
 type Props = {
-    handleDropdownToggle: (open: boolean) => void
+    handleDropdownToggle: (open: boolean) => void,
+    handleRestore: () => Promise<void>
+    handleHardDelete: () => Promise<void>
 }
 
-const EllipsisDropDownDeleted = ({ handleDropdownToggle }: Props) => {
+const EllipsisDropDownDeleted = ({ handleDropdownToggle, handleRestore, handleHardDelete }: Props) => {
     return (
         <DropdownMenu onOpenChange={handleDropdownToggle}>
             <DropdownMenuTrigger asChild>
@@ -15,11 +17,11 @@ const EllipsisDropDownDeleted = ({ handleDropdownToggle }: Props) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
                 <DropdownMenuGroup>
-                    <DropdownMenuItem>
-                        <History  className="text-black-900" />
+                    <DropdownMenuItem onClick={handleRestore}>
+                        <History className="text-black-900" />
                         Khôi phục
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleHardDelete}>
                         <BrushCleaning className="text-black-900" />
                         Xoá vĩnh viễn
                     </DropdownMenuItem>

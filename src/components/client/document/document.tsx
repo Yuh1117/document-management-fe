@@ -8,9 +8,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import EllipsisDropDown from "../ellipsis-dropdown";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/redux/hooks";
-import { openDocumentModal } from "@/redux/reducers/filesSlice";
+import { openDocumentModal, triggerReload } from "@/redux/reducers/filesSlice";
 import { cn } from "@/lib/utils";
 import EllipsisDropDownDeleted from "../ellipsis-dropdown-deleted";
+import { Spinner } from "@/components/ui/spinner";
 
 type Props = {
     data: IDocument;
@@ -33,6 +34,7 @@ const Document = ({
 }: Props) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const [downloading, setDownloading] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false)
     const dispatch = useAppDispatch();
 
     const handleDropdownToggle = (open: boolean) => {
@@ -41,7 +43,7 @@ const Document = ({
 
     const handleToggleCheck = () => {
         if (isMultiSelectMode && selectedDocs && setSelectedDocs) {
-            if (selectedDocs?.includes(data.id)) {
+            if (selectedDocs.includes(data.id)) {
                 setSelectedDocs(selectedDocs.filter((id) => id !== data.id));
             } else {
                 setSelectedDocs([...selectedDocs, data.id]);
@@ -97,6 +99,73 @@ const Document = ({
         dispatch(openDocumentModal({ data: data }))
     }
 
+    const handleSoftDelete = async () => {
+        try {
+            setLoading(true);
+
+            const req: number[] = [data.id]
+            await authApis().delete(endpoints["documents"], {
+                data: req
+            });
+
+            dispatch(triggerReload())
+            toast.success("Đã chuyền vào thùng rác", {
+                duration: 2000
+            })
+        } catch (error) {
+            console.error("Lỗi khi xoá", error);
+            toast.error("Chuyển vào thùng rác thất bại", {
+                duration: 2000
+            })
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const handleRestore = async () => {
+        try {
+            setLoading(true);
+
+            const req: number[] = [data.id]
+            await authApis().patch(endpoints["document-restore"], req);
+
+            dispatch(triggerReload())
+            toast.success("Đã khôi phục", {
+                duration: 2000
+            })
+        } catch (error) {
+            console.error("Lỗi khi khôi phục", error);
+            toast.error("Khôi phục thất bại", {
+                duration: 2000
+            })
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const handleHardDelete = async () => {
+        try {
+            setLoading(true);
+
+            const req: number[] = [data.id]
+            await authApis().delete(endpoints["document-delete-permanent"], {
+                data: req
+            });
+            
+            dispatch(triggerReload())
+            toast.success("Đã xoá vĩnh viễn thành công", {
+                duration: 2000
+            })
+        } catch (error) {
+            console.error("Lỗi khi xoá", error);
+            toast.error("Xoá vĩnh viễn thất bại", {
+                duration: 2000
+            })
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return (
         <Card
             onClick={handleToggleCheck}
@@ -108,22 +177,27 @@ const Document = ({
                     <Label className="truncate max-w-[110px]">{data.name}</Label>
                 </div>
                 <div>
-                    {data.deleted ? <EllipsisDropDownDeleted
-                        handleDropdownToggle={handleDropdownToggle}
-                    /> : (
-                        isMultiSelectMode && selectedDocs && setSelectedDocs ? (
-                            <Checkbox
-                                className="border-2 border-black dark:border-white"
-                                checked={selectedDocs.includes(data.id)}
-                                onCheckedChange={handleToggleCheck}
-                            />
-                        ) : <EllipsisDropDown
+                    {loading ? <Spinner /> : (
+                        data.deleted ? <EllipsisDropDownDeleted
                             handleDropdownToggle={handleDropdownToggle}
-                            handleDownload={handleDownload}
-                            handleViewDetail={handleViewDetail}
-                            handleOpenEdit={handleOpenEdit}
-                        />
-                    )}
+                            handleRestore={handleRestore}
+                            handleHardDelete={handleHardDelete}
+                        /> : (
+                            isMultiSelectMode && selectedDocs && setSelectedDocs ? (
+                                <Checkbox
+                                    className="border-2 border-black dark:border-white"
+                                    checked={selectedDocs.includes(data.id)}
+                                    onCheckedChange={handleToggleCheck}
+                                />
+                            ) : <EllipsisDropDown
+                                handleDropdownToggle={handleDropdownToggle}
+                                handleDownload={handleDownload}
+                                handleViewDetail={handleViewDetail}
+                                handleOpenEdit={handleOpenEdit}
+                                handleSoftDelete={handleSoftDelete}
+                            />
+                        ))
+                    }
                 </div>
             </CardHeader>
             <CardContent>

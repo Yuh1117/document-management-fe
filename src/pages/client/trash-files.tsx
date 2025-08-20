@@ -1,19 +1,50 @@
-import { useMemo } from "react";
-import { useAppSelector } from "@/redux/hooks";
-import { endpoints } from "@/config/Api";
+import { useMemo, useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { authApis, endpoints } from "@/config/Api";
 import { Spinner } from "@/components/ui/spinner";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Toaster } from "sonner";
+import { toast, Toaster } from "sonner";
 import Document from "@/components/client/document/document";
 import Folder from "@/components/client/folder/folder";
 import { useFilesLoader } from "@/hooks/useFilesLoader";
 import { useDetailSheet } from "@/hooks/useDetailSheet";
+import { triggerReload } from "@/redux/reducers/filesSlice";
 
 const TrashFilesPage = () => {
     const { reloadFlag } = useAppSelector(state => state.files);
     const { files, loading, hasMore, observerRef } = useFilesLoader(endpoints["trash-files"], reloadFlag);
     const details = useDetailSheet();
+    const [cleaning, setCleaning] = useState<boolean>(false);
+    const dispatch = useAppDispatch()
+
+    const handleCleanTrash = async () => {
+        if (documents.length === 0 && folders.length === 0) return;
+
+        try {
+            setCleaning(true)
+
+            await authApis().delete(endpoints["files-delete-permanent"], {
+                data: {
+                    folderIds: folders.map(f => f.folder.id),
+                    documentIds: documents.map(d => d.document.id)
+                }
+            });
+
+            dispatch(triggerReload())
+            toast.success("Đã dọn sạch thùng rác", {
+                duration: 2000
+            })
+        } catch (error) {
+            console.log(error)
+            toast.success("Dọn thất bại", {
+                duration: 2000
+            })
+        } finally {
+            setCleaning(false)
+        }
+
+    }
 
     const folders = useMemo(() => files.filter((f) => f.type === "folder"), [files]);
     const documents = useMemo(() => files.filter((f) => f.type === "document"), [files]);
@@ -27,9 +58,10 @@ const TrashFilesPage = () => {
                     <SidebarTrigger />
                     <h1 className="text-2xl font-semibold">Thùng rác</h1>
                 </div>
-                <div className="cursor-pointer p-2 rounded-xl hover:bg-input/50 dark:hover:bg-input/50">
+                {cleaning ? <Spinner /> : <div className="cursor-pointer p-2 rounded-xl hover:bg-input/50 dark:hover:bg-input/50"
+                    onClick={handleCleanTrash} >
                     Dọn sạch thùng rác
-                </div>
+                </div>}
             </div>
 
             <ScrollArea className="p-2 h-[calc(100vh-160px)]">
