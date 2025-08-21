@@ -44,7 +44,9 @@ export const endpoints = {
     "download-multiple-documents": "/api/secure/documents/download/multiple",
     "download-single-folder": (folderId: string | number) => `/api/secure/folders/download/${folderId}`,
     "download-multiple-folders": "/api/secure/folders/download/multiple",
-    "download-multiple-files": "/api/secure/files/download/multiple"
+    "download-multiple-files": "/api/secure/files/download/multiple",
+
+    "share-url": "/api/secure/documents/share-url"
 }
 
 export const authApis = () => {

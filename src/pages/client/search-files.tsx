@@ -14,10 +14,10 @@ import DocumentModal from "@/components/client/document/document-modal";
 import Folder from "@/components/client/folder/folder";
 import FolderDetail from "@/components/client/folder/folder-detail";
 import FolderModal from "@/components/client/folder/folder-modal";
-import { useFilesLoader } from "@/hooks/useFilesLoader";
-import { useMultiSelect } from "@/hooks/useMultiSelect";
-import { useDownloadFiles } from "@/hooks/useDownloadFiles";
-import { useDetailSheet } from "@/hooks/useDetailSheet";
+import { useFilesLoader } from "@/hooks/use-files-loader";
+import { useMultiSelect } from "@/hooks/use-multi-select";
+import { useDownloadFiles } from "@/hooks/use-download-files";
+import { useDetailSheet } from "@/hooks/use-detail-sheet";
 import { useLocation } from "react-router";
 
 const SearchFilesPage = () => {

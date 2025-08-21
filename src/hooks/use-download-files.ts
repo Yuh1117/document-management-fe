@@ -44,11 +44,9 @@ export function useDownloadFiles() {
             window.URL.revokeObjectURL(url);
 
             toast.success("Tải về thành công", { duration: 2000 });
-            return true;
         } catch (err) {
             console.error("Download error", err);
             toast.error("Tải về thất bại", { duration: 2000 });
-            return false;
         } finally {
             setDownloading(false);
         }
