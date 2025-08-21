@@ -14,11 +14,13 @@ import DocumentModal from "@/components/client/document/document-modal";
 import Folder from "@/components/client/folder/folder";
 import FolderDetail from "@/components/client/folder/folder-detail";
 import FolderModal from "@/components/client/folder/folder-modal";
-import { useFilesLoader } from "@/hooks/useFilesLoader";
-import { useMultiSelect } from "@/hooks/useMultiSelect";
-import { useDownloadFiles } from "@/hooks/useDownloadFiles";
-import { useDetailSheet } from "@/hooks/useDetailSheet";
+import { useFilesLoader } from "@/hooks/use-files-loader";
+import { useMultiSelect } from "@/hooks/use-multi-select";
+import { useDownloadFiles } from "@/hooks/use-download-files";
+import { useDetailSheet } from "@/hooks/use-detail-sheet";
 import { useParams } from "react-router";
+import ShareUrlModal from "@/components/client/document/share-url-modal";
+import { useShareFiles } from "@/hooks/use-share-files";
 
 const FolderFilesPage = () => {
     const { id } = useParams<string>()
@@ -28,12 +30,13 @@ const FolderFilesPage = () => {
     const { downloading, download } = useDownloadFiles();
     const details = useDetailSheet();
     const dispatch = useAppDispatch();
+    const share = useShareFiles();
 
     const folders = useMemo(() => files.filter((f) => f.type === "folder"), [files]);
     const documents = useMemo(() => files.filter((f) => f.type === "document"), [files]);
 
     return (
-        <div className="bg-muted dark:bg-sidebar flex flex-col rounded-xl p-2 select-none">
+        <div className="bg-muted dark:bg-muted flex flex-col rounded-xl p-2 select-none">
             <Toaster richColors position="top-center" />
 
             <div className="bg-muted/60 backdrop-blur flex items-center justify-between rounded-xl p-4 border-b">
@@ -90,6 +93,8 @@ const FolderFilesPage = () => {
                                             isMultiSelectMode={multi.isMultiSelectMode}
                                             selectedDocs={multi.selectedDocs}
                                             setSelectedDocs={multi.setSelectedDocs}
+                                            setSharedUrlDocument={share.setSharedUrlDocument}
+                                            setIsUrlModalOpen={share.setIsUrlModalOpen}
                                         />
                                     ))}
                                 </div>
@@ -157,6 +162,14 @@ const FolderFilesPage = () => {
                 open={documentModal.open}
                 onOpenChange={(open) => !open && dispatch(closeDocumentModal())}
                 data={documentModal.data}
+            />
+
+            <ShareUrlModal
+                doc={share.sharedUrlDocument}
+                open={share.isUrlModalOpen}
+                onOpenChange={share.setIsUrlModalOpen}
+                createSignedUrl={share.createSignedUrl}
+                sharing={share.sharing}
             />
         </div>
     );

@@ -42,7 +42,7 @@ const filesSlice = createSlice({
         },
         closeFolderModal: (state) => {
             state.folderModal.open = false
-            state.folderModal.isEditing = false
+            // state.folderModal.isEditing = false
             state.folderModal.data = null
         },
 

@@ -100,10 +100,8 @@ const Folder = ({
             setLoading(true);
 
             const req: number[] = [data.id]
-            await authApis().delete(endpoints["folders"], {
-                data: req
-            });
-            
+            await authApis().patch(endpoints["folders"], req);
+
             dispatch(triggerReload())
             toast.success("Đã chuyền vào thùng rác", {
                 duration: 2000

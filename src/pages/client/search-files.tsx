@@ -14,10 +14,10 @@ import DocumentModal from "@/components/client/document/document-modal";
 import Folder from "@/components/client/folder/folder";
 import FolderDetail from "@/components/client/folder/folder-detail";
 import FolderModal from "@/components/client/folder/folder-modal";
-import { useFilesLoader } from "@/hooks/useFilesLoader";
-import { useMultiSelect } from "@/hooks/useMultiSelect";
-import { useDownloadFiles } from "@/hooks/useDownloadFiles";
-import { useDetailSheet } from "@/hooks/useDetailSheet";
+import { useFilesLoader } from "@/hooks/use-files-loader";
+import { useMultiSelect } from "@/hooks/use-multi-select";
+import { useDownloadFiles } from "@/hooks/use-download-files";
+import { useDetailSheet } from "@/hooks/use-detail-sheet";
 import { useLocation } from "react-router";
 
 const SearchFilesPage = () => {
@@ -37,7 +37,7 @@ const SearchFilesPage = () => {
     const documents = useMemo(() => files.filter((f) => f.type === "document"), [files]);
 
     return (
-        <div className="bg-muted dark:bg-sidebar flex flex-col rounded-xl p-2 select-none">
+        <div className="bg-muted dark:bg-muted flex flex-col rounded-xl p-2 select-none">
             <Toaster richColors position="top-center" />
 
             <div className="bg-muted/60 backdrop-blur flex items-center justify-between rounded-xl p-4 border-b">

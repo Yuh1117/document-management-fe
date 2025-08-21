@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { Textarea } from "@/components/ui/textarea";
 import { authApis, endpoints } from "@/config/Api";
 import { useAppDispatch } from "@/redux/hooks";
 import { closeDocumentModal, triggerReload } from "@/redux/reducers/filesSlice";
@@ -11,7 +12,6 @@ import type { IDocument } from "@/types/type";
 import { AlertCircleIcon } from "lucide-react";
 import { useEffect, useState, type ChangeEvent } from "react";
 import { useForm } from "react-hook-form";
-import { useParams } from "react-router";
 
 const fieldNames: { [key: string]: string } = {
     name: "Tên"
@@ -126,6 +126,24 @@ const DocumentModal = ({
                                                 value={field.value || ""}
                                                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                     form.setValue('name', e.target.value)
+                                                }} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="description"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Mô tả</FormLabel>
+                                        <FormControl>
+                                            <Textarea {...field}
+                                                value={field.value || ""}
+                                                onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+                                                    form.setValue('description', e.target.value)
                                                 }} />
                                         </FormControl>
                                         <FormMessage />

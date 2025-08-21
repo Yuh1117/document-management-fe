@@ -14,10 +14,12 @@ import DocumentModal from "@/components/client/document/document-modal";
 import Folder from "@/components/client/folder/folder";
 import FolderDetail from "@/components/client/folder/folder-detail";
 import FolderModal from "@/components/client/folder/folder-modal";
-import { useFilesLoader } from "@/hooks/useFilesLoader";
-import { useMultiSelect } from "@/hooks/useMultiSelect";
-import { useDownloadFiles } from "@/hooks/useDownloadFiles";
-import { useDetailSheet } from "@/hooks/useDetailSheet";
+import { useFilesLoader } from "@/hooks/use-files-loader";
+import { useMultiSelect } from "@/hooks/use-multi-select";
+import { useDownloadFiles } from "@/hooks/use-download-files";
+import { useDetailSheet } from "@/hooks/use-detail-sheet";
+import { useShareFiles } from "@/hooks/use-share-files";
+import ShareUrlModal from "@/components/client/document/share-url-modal";
 
 const MyFilesPage = () => {
     const { reloadFlag, folderModal, documentModal } = useAppSelector(state => state.files);
@@ -26,12 +28,13 @@ const MyFilesPage = () => {
     const { downloading, download } = useDownloadFiles();
     const details = useDetailSheet();
     const dispatch = useAppDispatch();
+    const share = useShareFiles();
 
     const folders = useMemo(() => files.filter((f) => f.type === "folder"), [files]);
     const documents = useMemo(() => files.filter((f) => f.type === "document"), [files]);
 
     return (
-        <div className="bg-muted dark:bg-sidebar flex flex-col rounded-xl p-2 select-none">
+        <div className="bg-muted dark:bg-muted flex flex-col rounded-xl p-2 select-none">
             <Toaster richColors position="top-center" />
 
             <div className="bg-muted/60 backdrop-blur flex items-center justify-between rounded-xl p-4 border-b">
@@ -88,6 +91,8 @@ const MyFilesPage = () => {
                                             isMultiSelectMode={multi.isMultiSelectMode}
                                             selectedDocs={multi.selectedDocs}
                                             setSelectedDocs={multi.setSelectedDocs}
+                                            setSharedUrlDocument={share.setSharedUrlDocument}
+                                            setIsUrlModalOpen={share.setIsUrlModalOpen}
                                         />
                                     ))}
                                 </div>
@@ -116,7 +121,10 @@ const MyFilesPage = () => {
                     </span>
                     <div className="flex gap-2">
                         <Button
-                            onClick={() => download(multi.selectedDocs, multi.selectedFolders)}
+                            onClick={() => {
+                                download(multi.selectedDocs, multi.selectedFolders)
+                                multi.reset()
+                            }}
                             disabled={multi.selectedDocs.length === 0 && multi.selectedFolders.length === 0 || downloading}
                         >
                             {downloading ? <Spinner /> : <>
@@ -154,6 +162,14 @@ const MyFilesPage = () => {
                 open={documentModal.open}
                 onOpenChange={(open) => !open && dispatch(closeDocumentModal())}
                 data={documentModal.data}
+            />
+
+            <ShareUrlModal
+                doc={share.sharedUrlDocument}
+                open={share.isUrlModalOpen}
+                onOpenChange={share.setIsUrlModalOpen}
+                createSignedUrl={share.createSignedUrl}
+                sharing={share.sharing}
             />
         </div>
     );

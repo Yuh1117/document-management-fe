@@ -21,6 +21,8 @@ type Props = {
     isMultiSelectMode?: boolean;
     selectedDocs?: number[];
     setSelectedDocs?: (data: number[]) => void;
+    setSharedUrlDocument?: (doc: IDocument) => void,
+    setIsUrlModalOpen?: (open: boolean) => void
 };
 
 const Document = ({
@@ -30,7 +32,9 @@ const Document = ({
     setIsSheetOpen,
     isMultiSelectMode,
     selectedDocs,
-    setSelectedDocs
+    setSelectedDocs,
+    setSharedUrlDocument,
+    setIsUrlModalOpen
 }: Props) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const [downloading, setDownloading] = useState<boolean>(false);
@@ -104,9 +108,7 @@ const Document = ({
             setLoading(true);
 
             const req: number[] = [data.id]
-            await authApis().delete(endpoints["documents"], {
-                data: req
-            });
+            await authApis().patch(endpoints["documents"], req);
 
             dispatch(triggerReload())
             toast.success("Đã chuyền vào thùng rác", {
@@ -151,7 +153,7 @@ const Document = ({
             await authApis().delete(endpoints["document-delete-permanent"], {
                 data: req
             });
-            
+
             dispatch(triggerReload())
             toast.success("Đã xoá vĩnh viễn thành công", {
                 duration: 2000
@@ -164,6 +166,11 @@ const Document = ({
         } finally {
             setLoading(false);
         }
+    }
+
+    const handleOpenShareUrl = () => {
+        setSharedUrlDocument?.(data)
+        setIsUrlModalOpen?.(true)
     }
 
     return (
@@ -195,6 +202,7 @@ const Document = ({
                                 handleViewDetail={handleViewDetail}
                                 handleOpenEdit={handleOpenEdit}
                                 handleSoftDelete={handleSoftDelete}
+                                handleOpenShareUrl={handleOpenShareUrl}
                             />
                         ))
                     }

@@ -6,10 +6,11 @@ type Props = {
     handleDownload: () => Promise<void>,
     handleViewDetail: () => Promise<void>,
     handleOpenEdit: () => void,
-    handleSoftDelete: () => Promise<void>
+    handleSoftDelete: () => Promise<void>,
+    handleOpenShareUrl?: () => void
 }
 
-const EllipsisDropDown = ({ handleDropdownToggle, handleDownload, handleViewDetail, handleOpenEdit, handleSoftDelete }: Props) => {
+const EllipsisDropDown = ({ handleDropdownToggle, handleDownload, handleViewDetail, handleOpenEdit, handleSoftDelete, handleOpenShareUrl }: Props) => {
     return (
         <DropdownMenu onOpenChange={handleDropdownToggle}>
             <DropdownMenuTrigger asChild>
@@ -25,7 +26,7 @@ const EllipsisDropDown = ({ handleDropdownToggle, handleDownload, handleViewDeta
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={handleOpenEdit}>
                         <PenLine className="text-black-900" />
-                        Đổi tên
+                        Chỉnh sửa
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
@@ -41,7 +42,7 @@ const EllipsisDropDown = ({ handleDropdownToggle, handleDownload, handleViewDeta
                                     <UserRoundPlus className="text-black-900" />
                                     Chia sẻ
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
+                                <DropdownMenuItem onClick={handleOpenShareUrl}>
                                     <Link2 className="text-black-900" />
                                     URL
                                 </DropdownMenuItem>

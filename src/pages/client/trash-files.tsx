@@ -7,37 +7,34 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast, Toaster } from "sonner";
 import Document from "@/components/client/document/document";
 import Folder from "@/components/client/folder/folder";
-import { useFilesLoader } from "@/hooks/useFilesLoader";
-import { useDetailSheet } from "@/hooks/useDetailSheet";
+import { useFilesLoader } from "@/hooks/use-files-loader";
+import { useDetailSheet } from "@/hooks/use-detail-sheet";
 import { triggerReload } from "@/redux/reducers/filesSlice";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 const TrashFilesPage = () => {
     const { reloadFlag } = useAppSelector(state => state.files);
     const { files, loading, hasMore, observerRef } = useFilesLoader(endpoints["trash-files"], reloadFlag);
     const details = useDetailSheet();
     const [cleaning, setCleaning] = useState<boolean>(false);
+    const [open, setOpen] = useState<boolean>(false)
     const dispatch = useAppDispatch()
 
     const handleCleanTrash = async () => {
-        if (documents.length === 0 && folders.length === 0) return;
-
         try {
             setCleaning(true)
 
-            await authApis().delete(endpoints["files-delete-permanent"], {
-                data: {
-                    folderIds: folders.map(f => f.folder.id),
-                    documentIds: documents.map(d => d.document.id)
-                }
-            });
-
+            await authApis().delete(endpoints["files-delete-permanent"]);
+            
+            setOpen(false)
             dispatch(triggerReload())
             toast.success("Đã dọn sạch thùng rác", {
                 duration: 2000
             })
         } catch (error) {
             console.log(error)
-            toast.success("Dọn thất bại", {
+            toast.error("Dọn thất bại", {
                 duration: 2000
             })
         } finally {
@@ -50,7 +47,7 @@ const TrashFilesPage = () => {
     const documents = useMemo(() => files.filter((f) => f.type === "document"), [files]);
 
     return (
-        <div className="bg-muted dark:bg-sidebar flex flex-col rounded-xl p-2 select-none">
+        <div className="bg-muted dark:bg-muted flex flex-col rounded-xl p-2 select-none">
             <Toaster richColors position="top-center" />
 
             <div className="bg-muted/60 backdrop-blur flex items-center justify-between rounded-xl p-4 border-b">
@@ -59,7 +56,10 @@ const TrashFilesPage = () => {
                     <h1 className="text-2xl font-semibold">Thùng rác</h1>
                 </div>
                 {cleaning ? <Spinner /> : <div className="cursor-pointer p-2 rounded-xl hover:bg-input/50 dark:hover:bg-input/50"
-                    onClick={handleCleanTrash} >
+                    onClick={() => {
+                        if (documents.length === 0 && folders.length === 0) return;
+                        setOpen(true);
+                    }} >
                     Dọn sạch thùng rác
                 </div>}
             </div>
@@ -120,6 +120,22 @@ const TrashFilesPage = () => {
                 )}
             </ScrollArea>
 
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogContent aria-describedby={undefined}>
+                    <DialogHeader>
+                        <DialogTitle>Xóa vĩnh viễn</DialogTitle>
+                        <DialogDescription>
+                            Tất cả các mục trong thùng rác sẽ bị xóa vĩnh viễn.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setOpen(false)}>Hủy</Button>
+                        <Button variant="destructive" onClick={handleCleanTrash} disabled={cleaning}>
+                            {cleaning ? <Spinner size={16} /> : "Xác nhận"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div >
     );
 };

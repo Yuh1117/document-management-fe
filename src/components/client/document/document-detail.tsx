@@ -6,6 +6,7 @@ import type { IDocument } from "@/types/type";
 import { formatFileSize, formatTime } from "@/config/utils";
 import { Separator } from "@/components/ui/separator";
 import { useAppSelector } from "@/redux/hooks";
+import { Textarea } from "@/components/ui/textarea";
 
 type Props = {
     isSheetOpen: boolean;
@@ -19,7 +20,7 @@ const DocumentDetail = ({ isSheetOpen, setIsSheetOpen, documentDetail, loadingDe
 
     return (
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-            <SheetContent className="rounded-l-2xl" aria-describedby={undefined}>
+            <SheetContent className="rounded-l-xl" aria-describedby={undefined}>
                 <SheetHeader>
                     <SheetTitle className="text-lg mb-2">Chi tiết tài liệu</SheetTitle>
                     <div>
@@ -32,9 +33,9 @@ const DocumentDetail = ({ isSheetOpen, setIsSheetOpen, documentDetail, loadingDe
                                         <Label className="me-2 medium text-md">Tên:</Label>
                                         <span>{documentDetail.name}</span>
                                     </div>
-                                    <div className="flex items-center">
+                                    <div>
                                         <Label className="me-2 medium text-md">Mô tả:</Label>
-                                        <span>{documentDetail.description}</span>
+                                        <Textarea readOnly tabIndex={-1} value={documentDetail.description || ""} />
                                     </div>
                                     <div className="flex items-center">
                                         <Label className="me-2 medium text-md">Loại:</Label>
