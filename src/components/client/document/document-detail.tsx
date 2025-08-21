@@ -20,7 +20,7 @@ const DocumentDetail = ({ isSheetOpen, setIsSheetOpen, documentDetail, loadingDe
 
     return (
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-            <SheetContent className="rounded-l-2xl" aria-describedby={undefined}>
+            <SheetContent className="rounded-l-xl" aria-describedby={undefined}>
                 <SheetHeader>
                     <SheetTitle className="text-lg mb-2">Chi tiết tài liệu</SheetTitle>
                     <div>
@@ -35,7 +35,7 @@ const DocumentDetail = ({ isSheetOpen, setIsSheetOpen, documentDetail, loadingDe
                                     </div>
                                     <div>
                                         <Label className="me-2 medium text-md">Mô tả:</Label>
-                                        <Textarea readOnly tabIndex={-1}>{documentDetail.description}</Textarea>
+                                        <Textarea readOnly tabIndex={-1} value={documentDetail.description || ""} />
                                     </div>
                                     <div className="flex items-center">
                                         <Label className="me-2 medium text-md">Loại:</Label>

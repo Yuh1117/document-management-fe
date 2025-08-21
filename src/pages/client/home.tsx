@@ -9,7 +9,7 @@ const Home = () => {
     const loaderData = useLoaderData()
 
     return (
-        <div className="bg-muted dark:bg-sidebar flex flex-col rounded-xl p-2 select-none">
+        <div className="bg-muted dark:bg-muted flex flex-col rounded-xl p-2 select-none">
             <div className="bg-muted/60 backdrop-blur flex items-center justify-between rounded-xl p-4 border-b">
                 <div className="flex items-center gap-4">
                     <SidebarTrigger />
