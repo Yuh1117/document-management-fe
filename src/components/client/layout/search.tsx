@@ -1,17 +1,25 @@
 import { useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
-import { SearchCheck, SearchIcon, SlidersHorizontal, X } from "lucide-react"
+import { SearchCheck, SearchIcon, SlidersHorizontal, Underline, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Label } from "@/components/ui/label"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 const SearchBar = () => {
     const [isOpen, setIsOpen] = useState(false)
     const [searchValue, setSearchValue] = useState("")
     const [searchHistory, setSearchHistory] = useState<{ label: string }[]>([])
     const nav = useNavigate()
+    const [showAdvanced, setShowAdvanced] = useState(false)
+    const [kw, setKw] = useState<string>("")
+    const [kwType, setKwType] = useState<string>("exact")
+    const [type, setType] = useState("any")
+    const [size, setSize] = useState<number>()
+    const [sizeType, setSizeType] = useState("gt")
 
     const handleSearch = (value: string) => {
         const trimmed = value.trim()
@@ -47,12 +55,21 @@ const SearchBar = () => {
         }
     }
 
+    const reset = () => {
+        setKw("")
+        setKwType("exact")
+        setType("any")
+        setSize(undefined)
+        setSizeType("gt")
+    }
+
     useEffect(() => {
         const stored = localStorage.getItem("search-history")
         if (stored) {
             setSearchHistory(JSON.parse(stored))
         }
-    }, [])
+        reset()
+    }, [showAdvanced])
 
     const filteredHistory = searchValue.trim()
         ? searchHistory.filter(item => item.label.toLowerCase().includes(searchValue.toLowerCase())) : searchHistory
@@ -116,7 +133,10 @@ const SearchBar = () => {
                         <Label className="m-2 text-xs text-muted-foreground">Nâng cao</Label>
                         <HoverCard >
                             <HoverCardTrigger>
-                                <Button variant="link" className="cursor-default">
+                                <Button variant="ghost" className="rounded-xl"
+                                    onClick={() => {
+                                        setShowAdvanced(true)
+                                    }}>
                                     <SlidersHorizontal className="size-4 opacity-60" />
                                     Tìm kiếm nâng cao
                                 </Button>
@@ -127,8 +147,76 @@ const SearchBar = () => {
                         </HoverCard>
                     </div>
                 </div>
-            )
-            }
+            )}
+
+            <Dialog open={showAdvanced} onOpenChange={setShowAdvanced}>
+                <DialogContent aria-describedby={undefined} className="top-[30%] left-[55%] w-full md:max-w-xl">
+                    <DialogHeader>
+                        <DialogTitle>Tìm kiếm nâng cao</DialogTitle>
+                    </DialogHeader>
+
+                    <div className="grid grid-cols-4 gap-4 p-1">
+                        <Label className="col-span-1">Loại tài liệu</Label>
+                        <div className="col-span-3">
+                            <Select value={type} onValueChange={(s: string) => setType(s)}>
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Chọn loại tài liệu" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="any">Bất kỳ</SelectItem>
+                                    <SelectItem value="pdf">PDF</SelectItem>
+                                    <SelectItem value="docx">DOCX</SelectItem>
+                                    <SelectItem value="image">Hình ảnh</SelectItem>
+                                    <SelectItem value="folder">Thư mục</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <Label className="col-span-1">Dung lượng file</Label>
+                        <div className="col-span-3 flex items-center gap-4">
+                            <Select value={sizeType} onValueChange={(s: string) => setSizeType(s)}>
+                                <SelectTrigger>
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="gt">Lớn hơn</SelectItem>
+                                    <SelectItem value="lt">Nhỏ hơn</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Input type="number" placeholder="MB" className="w-32"
+                                  value={size ?? ""} onChange={(e) => setSize(parseFloat(e.target.value))} />
+                        </div>
+
+                        <Label className="col-span-4">Từ khóa</Label>
+                        <div className="col-span-1">
+                            <Select value={kwType} onValueChange={(s: string) => setKwType(s)}>
+                                <SelectTrigger>
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="exact">Chính xác</SelectItem>
+                                    <SelectItem value="similar">Gần giống</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="col-span-3">
+                            <Input placeholder="Nhập từ khóa"
+                                value={kw}
+                                onChange={(e) => setKw(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+
+                    <DialogFooter>
+                        <Button variant="outline" onClick={reset}>
+                            Đặt lại
+                        </Button>
+                        <Button onClick={() => setShowAdvanced(false)}>Tìm kiếm</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
         </div >
     )
 }
