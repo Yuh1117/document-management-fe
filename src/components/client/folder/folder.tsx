@@ -16,12 +16,15 @@ import { toast } from "sonner";
 
 type Props = {
     data: IFolder,
-    setLoadingDetail: (loading: boolean) => void,
-    setFolderDetail: (data: IFolder) => void,
-    setIsSheetOpen: (open: boolean) => void,
+    setLoadingDetail?: (loading: boolean) => void,
+    setFolderDetail?: (data: IFolder) => void,
+    setIsSheetOpen?: (open: boolean) => void,
     isMultiSelectMode?: boolean;
     selectedFolders?: number[];
     setSelectedFolders?: (data: number[]) => void;
+    setTransferFolder?: (data: IFolder) => void
+    setIsTransferModalOpen?: (open: boolean) => void
+    setTransferMode?: (mode: "copy" | "move") => void
 }
 
 const Folder = ({
@@ -31,7 +34,10 @@ const Folder = ({
     setIsSheetOpen,
     isMultiSelectMode,
     selectedFolders,
-    setSelectedFolders
+    setSelectedFolders,
+    setTransferFolder,
+    setIsTransferModalOpen,
+    setTransferMode
 }: Props) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const nav = useNavigate();
@@ -55,15 +61,15 @@ const Folder = ({
 
     const handleViewDetail = async () => {
         try {
-            setLoadingDetail(true);
+            setLoadingDetail?.(true);
             const res = await authApis().get(endpoints["folder-detail"](data.id));
 
-            setFolderDetail(res.data.data);
-            setIsSheetOpen(true);
+            setFolderDetail?.(res.data.data);
+            setIsSheetOpen?.(true);
         } catch (error) {
             console.error("Lỗi khi tải chi tiết thư mục", error);
         } finally {
-            setLoadingDetail(false);
+            setLoadingDetail?.(false);
         }
     };
 
@@ -160,6 +166,12 @@ const Folder = ({
         }
     }
 
+    const handleOpenTransfer = (mode: "copy" | "move") => {
+        setTransferFolder?.(data)
+        setIsTransferModalOpen?.(true)
+        setTransferMode?.(mode)
+    }
+
     return (
         <Card
             onDoubleClick={() => { if (!isMultiSelectMode) nav(`/folders/${data.id}`) }}
@@ -190,6 +202,7 @@ const Folder = ({
                                 handleViewDetail={handleViewDetail}
                                 handleOpenEdit={handleOpenEdit}
                                 handleSoftDelete={handleSoftDelete}
+                                handleOpenTransfer={handleOpenTransfer}
                             />
                         ))
                     }

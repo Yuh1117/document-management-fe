@@ -22,8 +22,8 @@ const EllipsisDropDownDeleted = ({ handleDropdownToggle, handleRestore, handleHa
                         Khôi phục
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={handleHardDelete}>
-                        <BrushCleaning className="text-black-900" />
-                        Xoá vĩnh viễn
+                        <BrushCleaning className="text-red-500" />
+                        <span className="text-red-500">Xoá vĩnh viễn</span>
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
             </DropdownMenuContent>

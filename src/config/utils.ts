@@ -1,4 +1,4 @@
-import type { IPermission } from "@/types/type";
+import type { IDocument, IFolder, IPermission } from "@/types/type";
 
 export function formatTime(time: string | undefined): string {
     if (!time) return "";
@@ -98,4 +98,13 @@ export function formatFileSize(bytes: number): string {
     if (bytes === 0) return '0 Byte';
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return (bytes / Math.pow(1024, i)).toFixed(2) + ' ' + sizes[i];
+}
+
+
+export function isDocument(data: any): data is IDocument {
+    return data && "originalFilename" in data && "mimeType" in data;
+}
+
+export function isFolder(data: any): data is IFolder {
+    return data && "inheritPermissions" in data;
 }

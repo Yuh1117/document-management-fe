@@ -20,6 +20,8 @@ import { useDownloadFiles } from "@/hooks/use-download-files";
 import { useDetailSheet } from "@/hooks/use-detail-sheet";
 import { useShareFiles } from "@/hooks/use-share-files";
 import ShareUrlModal from "@/components/client/document/share-url-modal";
+import TransferModal from "@/components/client/transfer-modal";
+import { useTransferFiles } from "@/hooks/use-transfer-files";
 
 const MyFilesPage = () => {
     const { reloadFlag, folderModal, documentModal } = useAppSelector(state => state.files);
@@ -29,6 +31,7 @@ const MyFilesPage = () => {
     const details = useDetailSheet();
     const dispatch = useAppDispatch();
     const share = useShareFiles();
+    const transfer = useTransferFiles();
 
     const folders = useMemo(() => files.filter((f) => f.type === "folder"), [files]);
     const documents = useMemo(() => files.filter((f) => f.type === "document"), [files]);
@@ -71,6 +74,9 @@ const MyFilesPage = () => {
                                             isMultiSelectMode={multi.isMultiSelectMode}
                                             selectedFolders={multi.selectedFolders}
                                             setSelectedFolders={multi.setSelectedFolders}
+                                            setTransferFolder={transfer.setTransferFolder}
+                                            setIsTransferModalOpen={transfer.setIsTransferModalOpen}
+                                            setTransferMode={transfer.setTransferMode}
                                         />
                                     ))}
                                 </div>
@@ -93,6 +99,9 @@ const MyFilesPage = () => {
                                             setSelectedDocs={multi.setSelectedDocs}
                                             setSharedUrlDocument={share.setSharedUrlDocument}
                                             setIsUrlModalOpen={share.setIsUrlModalOpen}
+                                            setTransferDocument={transfer.setTransferDocument}
+                                            setIsTransferModalOpen={transfer.setIsTransferModalOpen}
+                                            setTransferMode={transfer.setTransferMode}
                                         />
                                     ))}
                                 </div>
@@ -171,6 +180,16 @@ const MyFilesPage = () => {
                 createSignedUrl={share.createSignedUrl}
                 sharing={share.sharing}
             />
+
+            <TransferModal
+                open={transfer.isTransferModalOpen}
+                onOpenChange={transfer.setIsTransferModalOpen}
+                data={transfer.transferDocument || transfer.transferFolder}
+                mode={transfer.transferMode}
+                transfering={transfer.transfering}
+                setTransfering={transfer.setTransfering}
+            />
+
         </div>
     );
 };

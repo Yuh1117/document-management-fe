@@ -17,7 +17,6 @@ export const useDetailSheet = () => {
         setFolderDetail,
         loadingFolderDetail,
         setLoadingFolderDetail,
-        
         isDocumentSheetOpen,
         setIsDocumentSheetOpen,
         documentDetail,
