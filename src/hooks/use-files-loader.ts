@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { IFileItem } from "@/types/type";
 import { authApis } from "@/config/Api";
 
-export function useFilesLoader(endpoint: string, reloadFlag?: any, query?: string) {
+export function useFilesLoader(endpoint: string | null, reloadFlag?: any, query?: string) {
     const [files, setFiles] = useState<IFileItem[]>([]);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
@@ -35,7 +35,7 @@ export function useFilesLoader(endpoint: string, reloadFlag?: any, query?: strin
     };
 
     useEffect(() => {
-        if (page > 0)
+        if (endpoint && page > 0)
             loadFiles();
     }, [page, endpoint, query]);
 

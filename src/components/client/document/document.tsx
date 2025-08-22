@@ -23,6 +23,9 @@ type Props = {
     setSelectedDocs?: (data: number[]) => void;
     setSharedUrlDocument?: (doc: IDocument) => void,
     setIsUrlModalOpen?: (open: boolean) => void
+    setTransferDocument?: (data: IDocument) => void
+    setIsTransferModalOpen?: (open: boolean) => void
+    setTransferMode?: (mode: "copy" | "move") => void
 };
 
 const Document = ({
@@ -34,7 +37,10 @@ const Document = ({
     selectedDocs,
     setSelectedDocs,
     setSharedUrlDocument,
-    setIsUrlModalOpen
+    setIsUrlModalOpen,
+    setTransferDocument,
+    setIsTransferModalOpen,
+    setTransferMode
 }: Props) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const [downloading, setDownloading] = useState<boolean>(false);
@@ -173,6 +179,12 @@ const Document = ({
         setIsUrlModalOpen?.(true)
     }
 
+    const handleOpenTransfer = (mode: "copy" | "move") => {
+        setTransferDocument?.(data)
+        setIsTransferModalOpen?.(true)
+        setTransferMode?.(mode)
+    }
+
     return (
         <Card
             onClick={handleToggleCheck}
@@ -203,6 +215,7 @@ const Document = ({
                                 handleOpenEdit={handleOpenEdit}
                                 handleSoftDelete={handleSoftDelete}
                                 handleOpenShareUrl={handleOpenShareUrl}
+                                handleOpenTransfer={handleOpenTransfer}
                             />
                         ))
                     }

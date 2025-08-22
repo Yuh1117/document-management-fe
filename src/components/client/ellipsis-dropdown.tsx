@@ -1,4 +1,4 @@
-import { Download, EllipsisVertical, FolderOpen, FolderSymlink, Info, Link2, PenLine, Trash, UserRoundPlus } from "lucide-react";
+import { Copy, Download, EllipsisVertical, FolderOpen, FolderSymlink, Info, Link2, PenLine, Trash, UserRoundPlus } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
 type Props = {
@@ -8,9 +8,10 @@ type Props = {
     handleOpenEdit: () => void,
     handleSoftDelete: () => Promise<void>,
     handleOpenShareUrl?: () => void
+    handleOpenTransfer?: (mode: "copy" | "move") => void
 }
 
-const EllipsisDropDown = ({ handleDropdownToggle, handleDownload, handleViewDetail, handleOpenEdit, handleSoftDelete, handleOpenShareUrl }: Props) => {
+const EllipsisDropDown = ({ handleDropdownToggle, handleDownload, handleViewDetail, handleOpenEdit, handleSoftDelete, handleOpenShareUrl, handleOpenTransfer }: Props) => {
     return (
         <DropdownMenu onOpenChange={handleDropdownToggle}>
             <DropdownMenuTrigger asChild>
@@ -27,6 +28,10 @@ const EllipsisDropDown = ({ handleDropdownToggle, handleDownload, handleViewDeta
                     <DropdownMenuItem onClick={handleOpenEdit}>
                         <PenLine className="text-black-900" />
                         Chỉnh sửa
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleOpenTransfer?.("copy")}>
+                        <Copy className="text-black-900" />
+                        Sao chép
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
@@ -56,7 +61,7 @@ const EllipsisDropDown = ({ handleDropdownToggle, handleDownload, handleViewDeta
                         </DropdownMenuSubTrigger>
                         <DropdownMenuPortal>
                             <DropdownMenuSubContent>
-                                <DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleOpenTransfer?.("move")}>
                                     <FolderSymlink className="text-black-900" />
                                     Di chuyển
                                 </DropdownMenuItem>
@@ -71,8 +76,8 @@ const EllipsisDropDown = ({ handleDropdownToggle, handleDownload, handleViewDeta
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSoftDelete}>
-                    <Trash className="text-black-900" />
-                    Chuyển vào thùng rác
+                    <Trash className="text-red-500" />
+                    <span className="text-red-500">Chuyển vào thùng rác</span>
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
