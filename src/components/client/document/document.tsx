@@ -14,7 +14,8 @@ import EllipsisDropDownDeleted from "../ellipsis-dropdown-deleted";
 import { Spinner } from "@/components/ui/spinner";
 
 type Props = {
-    data: IDocument;
+    data: IDocument,
+    permission: string,
     setLoadingDetail: (loading: boolean) => void;
     setDocumentDetail: (doc: IDocument) => void;
     setIsSheetOpen: (open: boolean) => void;
@@ -30,6 +31,7 @@ type Props = {
 
 const Document = ({
     data,
+    permission,
     setLoadingDetail,
     setDocumentDetail,
     setIsSheetOpen,
@@ -209,6 +211,7 @@ const Document = ({
                                     onCheckedChange={handleToggleCheck}
                                 />
                             ) : <EllipsisDropDown
+                                permission={permission}
                                 handleDropdownToggle={handleDropdownToggle}
                                 handleDownload={handleDownload}
                                 handleViewDetail={handleViewDetail}

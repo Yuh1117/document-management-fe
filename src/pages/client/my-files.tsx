@@ -68,6 +68,7 @@ const MyFilesPage = () => {
                                         <Folder
                                             key={`folder-${f.folder.id}`}
                                             data={f.folder}
+                                            permission={f.permission}
                                             setLoadingDetail={details.setLoadingFolderDetail}
                                             setFolderDetail={details.setFolderDetail}
                                             setIsSheetOpen={details.setIsFolderSheetOpen}
@@ -91,6 +92,7 @@ const MyFilesPage = () => {
                                         <Document
                                             key={`doc-${f.document.id}`}
                                             data={f.document}
+                                            permission={f.permission}
                                             setIsSheetOpen={details.setIsDocumentSheetOpen}
                                             setDocumentDetail={details.setDocumentDetail}
                                             setLoadingDetail={details.setLoadingDocumentDetail}
