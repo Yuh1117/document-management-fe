@@ -18,16 +18,14 @@ import { useFilesLoader } from "@/hooks/use-files-loader";
 import { useMultiSelect } from "@/hooks/use-multi-select";
 import { useDownloadFiles } from "@/hooks/use-download-files";
 import { useDetailSheet } from "@/hooks/use-detail-sheet";
-import { useParams } from "react-router";
-import ShareUrlModal from "@/components/client/document/share-url-modal";
 import { useShareFiles } from "@/hooks/use-share-files";
-import { useTransferFiles } from "@/hooks/use-transfer-files";
+import ShareUrlModal from "@/components/client/document/share-url-modal";
 import TransferModal from "@/components/client/transfer-modal";
+import { useTransferFiles } from "@/hooks/use-transfer-files";
 
-const FolderFilesPage = () => {
-    const { id } = useParams<string>()
+const SharedFilesPage = () => {
     const { reloadFlag, folderModal, documentModal } = useAppSelector(state => state.files);
-    const { files, loading, hasMore, observerRef } = useFilesLoader(endpoints["folder-files"](id!), reloadFlag);
+    const { files, loading, hasMore, observerRef } = useFilesLoader(endpoints["shared-files"], reloadFlag);
     const multi = useMultiSelect();
     const { downloading, download } = useDownloadFiles();
     const details = useDetailSheet();
@@ -45,7 +43,7 @@ const FolderFilesPage = () => {
             <div className="bg-muted/60 backdrop-blur flex items-center justify-between rounded-xl p-4 border-b">
                 <div className="flex items-center gap-4">
                     <SidebarTrigger />
-                    <h1 className="text-2xl font-semibold">Files</h1>
+                    <h1 className="text-2xl font-semibold">Files được chia sẻ</h1>
                 </div>
                 <div
                     className="cursor-pointer p-2 rounded-xl hover:bg-input/50 dark:hover:bg-input/50"
@@ -70,6 +68,7 @@ const FolderFilesPage = () => {
                                         <Folder
                                             key={`folder-${f.folder.id}`}
                                             data={f.folder}
+                                            permission={f.permission}
                                             setLoadingDetail={details.setLoadingFolderDetail}
                                             setFolderDetail={details.setFolderDetail}
                                             setIsSheetOpen={details.setIsFolderSheetOpen}
@@ -93,6 +92,7 @@ const FolderFilesPage = () => {
                                         <Document
                                             key={`doc-${f.document.id}`}
                                             data={f.document}
+                                            permission={f.permission}
                                             setIsSheetOpen={details.setIsDocumentSheetOpen}
                                             setDocumentDetail={details.setDocumentDetail}
                                             setLoadingDetail={details.setLoadingDocumentDetail}
@@ -132,7 +132,10 @@ const FolderFilesPage = () => {
                     </span>
                     <div className="flex gap-2">
                         <Button
-                            onClick={() => download(multi.selectedDocs, multi.selectedFolders)}
+                            onClick={() => {
+                                download(multi.selectedDocs, multi.selectedFolders)
+                                multi.reset()
+                            }}
                             disabled={multi.selectedDocs.length === 0 && multi.selectedFolders.length === 0 || downloading}
                         >
                             {downloading ? <Spinner /> : <>
@@ -153,7 +156,6 @@ const FolderFilesPage = () => {
                 folderDetail={details.folderDetail}
                 loadingDetail={details.loadingFolderDetail}
             />
-
             <DocumentDetail
                 isSheetOpen={details.isDocumentSheetOpen}
                 setIsSheetOpen={details.setIsDocumentSheetOpen}
@@ -189,8 +191,9 @@ const FolderFilesPage = () => {
                 transfering={transfer.transfering}
                 setTransfering={transfer.setTransfering}
             />
-        </div>
-    );
-};
 
-export default FolderFilesPage;
+        </div>
+    )
+}
+
+export default SharedFilesPage;

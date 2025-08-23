@@ -2,6 +2,7 @@ import MyFilesPage from "./my-files";
 import FolderFilesPage from "./folder-files";
 import TrashFilesPage from "./trash-files";
 import SearchFilesPage from "./search-files";
+import SharedFilesPage from "./shared-files";
 
 const Files = ({ mode }: { mode: string }) => {
     switch (mode) {
@@ -13,6 +14,8 @@ const Files = ({ mode }: { mode: string }) => {
             return <FolderFilesPage />;
         case "trash":
             return <TrashFilesPage />;
+        case "shared":
+            return <SharedFilesPage />;
         default:
             return <div>Không tìm thấy</div>;
     }

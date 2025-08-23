@@ -98,4 +98,5 @@ export interface IFileItem {
     folder: IFolder,
     document: IDocument
     type: string
+    permission: string
 }

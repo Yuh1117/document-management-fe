@@ -15,6 +15,7 @@ import { authApis, endpoints } from "@/config/Api"
 import { toast } from "sonner"
 import { useState } from "react"
 import { Spinner } from "../ui/spinner"
+import { Separator } from "../ui/separator"
 
 const NewDropDown = () => {
     const { state } = useSidebar()
@@ -172,6 +173,8 @@ const NewDropDown = () => {
                         <FolderUp className="text-black-900" />
                         Tải thư mục lên
                     </DropdownMenuItem>
+
+                    <Separator />
 
                     <DropdownMenuItem onClick={handleAddFolder}>
                         <FolderPlus className="text-black-900" />

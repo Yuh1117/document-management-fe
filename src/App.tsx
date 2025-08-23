@@ -73,7 +73,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/shared",
-        Component: null,
+        element: <Files mode="shared" />,
       },
       {
         path: "/trash",

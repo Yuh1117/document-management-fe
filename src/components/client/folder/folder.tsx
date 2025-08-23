@@ -16,6 +16,7 @@ import { toast } from "sonner";
 
 type Props = {
     data: IFolder,
+    permission: string,
     setLoadingDetail?: (loading: boolean) => void,
     setFolderDetail?: (data: IFolder) => void,
     setIsSheetOpen?: (open: boolean) => void,
@@ -29,6 +30,7 @@ type Props = {
 
 const Folder = ({
     data,
+    permission,
     setLoadingDetail,
     setFolderDetail,
     setIsSheetOpen,
@@ -197,6 +199,7 @@ const Folder = ({
                                     onCheckedChange={handleToggleCheck}
                                 />
                             ) : <EllipsisDropDown
+                                permission={permission}
                                 handleDropdownToggle={handleDropdownToggle}
                                 handleDownload={handleDownload}
                                 handleViewDetail={handleViewDetail}
