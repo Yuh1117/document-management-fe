@@ -1,7 +1,6 @@
 import * as React from "react"
 import {
   Home,
-  Clock,
   Box,
   Users,
   Trash,
@@ -28,12 +27,6 @@ const navMainItems: NavItem[] = [
     title: "Files của tôi",
     url: "/my-files",
     icon: Box,
-    access: true
-  },
-  {
-    title: "Gần đây",
-    url: "/recent",
-    icon: Clock,
     access: true
   },
   {

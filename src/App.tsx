@@ -72,10 +72,6 @@ const router = createBrowserRouter([
         element: <Files mode="folder" />,
       },
       {
-        path: "/recent",
-        Component: null,
-      },
-      {
         path: "/shared",
         Component: null,
       },
