@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import EllipsisDropDown from "../ellipsis-dropdown";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/redux/hooks";
-import { openDocumentModal, triggerReload } from "@/redux/reducers/filesSlice";
+import { openDocumentModal, setPermission, triggerReload } from "@/redux/reducers/filesSlice";
 import { cn } from "@/lib/utils";
 import EllipsisDropDownDeleted from "../ellipsis-dropdown-deleted";
 import { Spinner } from "@/components/ui/spinner";
@@ -26,7 +26,9 @@ type Props = {
     setIsUrlModalOpen?: (open: boolean) => void
     setTransferDocument?: (data: IDocument) => void
     setIsTransferModalOpen?: (open: boolean) => void
-    setTransferMode?: (mode: "copy" | "move") => void
+    setTransferMode?: (mode: "copy" | "move") => void,
+    setSharedDocument?: (doc: IDocument) => void
+    setIsShareModalOpen?: (open: boolean) => void
 };
 
 const Document = ({
@@ -42,7 +44,9 @@ const Document = ({
     setIsUrlModalOpen,
     setTransferDocument,
     setIsTransferModalOpen,
-    setTransferMode
+    setTransferMode,
+    setSharedDocument,
+    setIsShareModalOpen
 }: Props) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const [downloading, setDownloading] = useState<boolean>(false);
@@ -181,6 +185,12 @@ const Document = ({
         setIsUrlModalOpen?.(true)
     }
 
+    const handleOpenShare = () => {
+        setSharedDocument?.(data)
+        setIsShareModalOpen?.(true)
+        dispatch(setPermission(permission))
+    }
+
     const handleOpenTransfer = (mode: "copy" | "move") => {
         setTransferDocument?.(data)
         setIsTransferModalOpen?.(true)
@@ -219,6 +229,7 @@ const Document = ({
                                 handleSoftDelete={handleSoftDelete}
                                 handleOpenShareUrl={handleOpenShareUrl}
                                 handleOpenTransfer={handleOpenTransfer}
+                                handleOpenShare={handleOpenShare}
                             />
                         ))
                     }

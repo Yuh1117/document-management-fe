@@ -23,6 +23,7 @@ import ShareUrlModal from "@/components/client/document/share-url-modal";
 import { useShareFiles } from "@/hooks/use-share-files";
 import { useTransferFiles } from "@/hooks/use-transfer-files";
 import TransferModal from "@/components/client/transfer-modal";
+import ShareModal from "@/components/client/share-modal";
 
 const FolderFilesPage = () => {
     const { id } = useParams<string>()
@@ -70,6 +71,7 @@ const FolderFilesPage = () => {
                                         <Folder
                                             key={`folder-${f.folder.id}`}
                                             data={f.folder}
+                                            permission={f.permission}
                                             setLoadingDetail={details.setLoadingFolderDetail}
                                             setFolderDetail={details.setFolderDetail}
                                             setIsSheetOpen={details.setIsFolderSheetOpen}
@@ -79,6 +81,8 @@ const FolderFilesPage = () => {
                                             setTransferFolder={transfer.setTransferFolder}
                                             setIsTransferModalOpen={transfer.setIsTransferModalOpen}
                                             setTransferMode={transfer.setTransferMode}
+                                            setSharedFolder={share.setSharedFolder}
+                                            setIsShareModalOpen={share.setIsShareModalOpen}
                                         />
                                     ))}
                                 </div>
@@ -93,6 +97,7 @@ const FolderFilesPage = () => {
                                         <Document
                                             key={`doc-${f.document.id}`}
                                             data={f.document}
+                                            permission={f.permission}
                                             setIsSheetOpen={details.setIsDocumentSheetOpen}
                                             setDocumentDetail={details.setDocumentDetail}
                                             setLoadingDetail={details.setLoadingDocumentDetail}
@@ -104,6 +109,8 @@ const FolderFilesPage = () => {
                                             setTransferDocument={transfer.setTransferDocument}
                                             setIsTransferModalOpen={transfer.setIsTransferModalOpen}
                                             setTransferMode={transfer.setTransferMode}
+                                            setSharedDocument={share.setSharedDocument}
+                                            setIsShareModalOpen={share.setIsShareModalOpen}
                                         />
                                     ))}
                                 </div>
@@ -179,6 +186,14 @@ const FolderFilesPage = () => {
                 onOpenChange={share.setIsUrlModalOpen}
                 createSignedUrl={share.createSignedUrl}
                 sharing={share.sharing}
+            />
+            <ShareModal
+                data={share.sharedDocument || share.sharedFolder}
+                open={share.isShareModalOpen}
+                onOpenChange={share.setIsShareModalOpen}
+                sharing={share.sharing}
+                saveShare={share.saveShare}
+                removeShare={share.removeShare}
             />
 
             <TransferModal

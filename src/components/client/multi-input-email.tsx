@@ -4,12 +4,11 @@ import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 type Props = {
-    onChange?: (emails: string[]) => void,
     emails: string[],
     setEmails: (e: string[]) => void
 }
 
-const MultiEmailInput = ({ onChange, emails, setEmails }: Props) => {
+const MultiEmailInput = ({ emails, setEmails }: Props) => {
     const [value, setValue] = useState("")
 
     const addEmail = (email: string) => {
@@ -19,13 +18,11 @@ const MultiEmailInput = ({ onChange, emails, setEmails }: Props) => {
         if (emails.includes(trimmed)) return
         const updated = [...emails, trimmed]
         setEmails(updated)
-        onChange?.(updated)
     }
 
     const removeEmail = (email: string) => {
         const updated = emails.filter(e => e !== email)
         setEmails(updated)
-        onChange?.(updated)
     }
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

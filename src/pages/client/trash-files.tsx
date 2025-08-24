@@ -26,7 +26,7 @@ const TrashFilesPage = () => {
             setCleaning(true)
 
             await authApis().delete(endpoints["files-delete-permanent"]);
-            
+
             setOpen(false)
             dispatch(triggerReload())
             toast.success("Đã dọn sạch thùng rác", {
@@ -79,6 +79,7 @@ const TrashFilesPage = () => {
                                         <Folder
                                             key={`folder-${f.folder.id}`}
                                             data={f.folder}
+                                            permission={f.permission}
                                             setLoadingDetail={details.setLoadingFolderDetail}
                                             setFolderDetail={details.setFolderDetail}
                                             setIsSheetOpen={details.setIsFolderSheetOpen}
@@ -96,6 +97,7 @@ const TrashFilesPage = () => {
                                         <Document
                                             key={`doc-${f.document.id}`}
                                             data={f.document}
+                                            permission={f.permission}
                                             setIsSheetOpen={details.setIsDocumentSheetOpen}
                                             setDocumentDetail={details.setDocumentDetail}
                                             setLoadingDetail={details.setLoadingDocumentDetail}

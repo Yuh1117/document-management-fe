@@ -54,7 +54,7 @@ const NewDropDown = () => {
             if (error.response?.status === 400) {
                 if (Array.isArray(errors)) {
                     errors.forEach((err: { field: string; message: string }) => {
-                        errorMsg += err.message + "-";
+                        errorMsg += err.message + "\n";
                     });
                 } else {
                     errorMsg = errors
@@ -108,7 +108,7 @@ const NewDropDown = () => {
             if (error.response?.status === 400) {
                 if (Array.isArray(errors)) {
                     errors.forEach((err: { field: string; message: string }) => {
-                        errorMsg += err.message + "-";
+                        errorMsg += err.message + "\n";
                     });
                 } else {
                     errorMsg = errors

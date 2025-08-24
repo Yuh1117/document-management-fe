@@ -12,6 +12,7 @@ interface FilesState {
         open: boolean,
         data: IDocument | null
     }
+    permission: string | null
 }
 
 const initialState: FilesState = {
@@ -24,7 +25,8 @@ const initialState: FilesState = {
     documentModal: {
         open: false,
         data: null
-    }
+    },
+    permission: null
 }
 
 const filesSlice = createSlice({
@@ -53,9 +55,17 @@ const filesSlice = createSlice({
         closeDocumentModal: (state) => {
             state.documentModal.open = false
             state.documentModal.data = null
+        },
+
+        setPermission: (state, action: PayloadAction<string | null>) => {
+            console.log(action.payload)
+            state.permission = action.payload
+        },
+        resetPermission: (state) => {
+            state.permission = null
         }
     },
 })
 
-export const { triggerReload, openFolderModal, closeFolderModal, openDocumentModal, closeDocumentModal } = filesSlice.actions
+export const { triggerReload, openFolderModal, closeFolderModal, openDocumentModal, closeDocumentModal, setPermission, resetPermission } = filesSlice.actions
 export default filesSlice.reducer

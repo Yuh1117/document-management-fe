@@ -22,6 +22,7 @@ import { useShareFiles } from "@/hooks/use-share-files";
 import ShareUrlModal from "@/components/client/document/share-url-modal";
 import TransferModal from "@/components/client/transfer-modal";
 import { useTransferFiles } from "@/hooks/use-transfer-files";
+import ShareModal from "@/components/client/share-modal";
 
 const MyFilesPage = () => {
     const { reloadFlag, folderModal, documentModal } = useAppSelector(state => state.files);
@@ -78,6 +79,8 @@ const MyFilesPage = () => {
                                             setTransferFolder={transfer.setTransferFolder}
                                             setIsTransferModalOpen={transfer.setIsTransferModalOpen}
                                             setTransferMode={transfer.setTransferMode}
+                                            setSharedFolder={share.setSharedFolder}
+                                            setIsShareModalOpen={share.setIsShareModalOpen}
                                         />
                                     ))}
                                 </div>
@@ -104,6 +107,8 @@ const MyFilesPage = () => {
                                             setTransferDocument={transfer.setTransferDocument}
                                             setIsTransferModalOpen={transfer.setIsTransferModalOpen}
                                             setTransferMode={transfer.setTransferMode}
+                                            setSharedDocument={share.setSharedDocument}
+                                            setIsShareModalOpen={share.setIsShareModalOpen}
                                         />
                                     ))}
                                 </div>
@@ -181,6 +186,14 @@ const MyFilesPage = () => {
                 onOpenChange={share.setIsUrlModalOpen}
                 createSignedUrl={share.createSignedUrl}
                 sharing={share.sharing}
+            />
+            <ShareModal
+                data={share.sharedDocument || share.sharedFolder}
+                open={share.isShareModalOpen}
+                onOpenChange={share.setIsShareModalOpen}
+                sharing={share.sharing}
+                saveShare={share.saveShare}
+                removeShare={share.removeShare}
             />
 
             <TransferModal

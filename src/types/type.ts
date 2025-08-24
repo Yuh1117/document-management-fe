@@ -100,3 +100,15 @@ export interface IFileItem {
     type: string
     permission: string
 }
+
+export interface IDocumentShare {
+    document: IDocument,
+    user: IUser,
+    shareType: string
+}
+
+export interface IFolderShare {
+    folder: IFolder,
+    user: IUser,
+    shareType: string
+}

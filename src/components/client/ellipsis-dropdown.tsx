@@ -9,11 +9,12 @@ type Props = {
     handleOpenEdit: () => void,
     handleSoftDelete: () => Promise<void>,
     handleOpenShareUrl?: () => void
-    handleOpenTransfer?: (mode: "copy" | "move") => void
+    handleOpenTransfer?: (mode: "copy" | "move") => void,
+    handleOpenShare?: () => void
 }
 
 const EllipsisDropDown = ({ permission, handleDropdownToggle, handleDownload, handleViewDetail,
-    handleOpenEdit, handleSoftDelete, handleOpenShareUrl, handleOpenTransfer }: Props) => {
+    handleOpenEdit, handleSoftDelete, handleOpenShareUrl, handleOpenTransfer, handleOpenShare }: Props) => {
     return (
         <DropdownMenu onOpenChange={handleDropdownToggle}>
             <DropdownMenuTrigger asChild>
@@ -47,7 +48,7 @@ const EllipsisDropDown = ({ permission, handleDropdownToggle, handleDownload, ha
                         </DropdownMenuSubTrigger>
                         <DropdownMenuPortal>
                             <DropdownMenuSubContent>
-                                <DropdownMenuItem>
+                                <DropdownMenuItem onClick={handleOpenShare}>
                                     <UserRoundPlus className="text-black-900" />
                                     Chia sẻ
                                 </DropdownMenuItem>
@@ -80,12 +81,14 @@ const EllipsisDropDown = ({ permission, handleDropdownToggle, handleDownload, ha
                         Chi tiết
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
-                <DropdownMenuSeparator />
                 {(permission === "OWNER") && (
-                    <DropdownMenuItem onClick={handleSoftDelete}>
-                        <Trash className="text-red-500" />
-                        <span className="text-red-500">Chuyển vào thùng rác</span>
-                    </DropdownMenuItem>
+                    <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={handleSoftDelete}>
+                            <Trash className="text-red-500" />
+                            <span className="text-red-500">Chuyển vào thùng rác</span>
+                        </DropdownMenuItem>
+                    </>
                 )}
             </DropdownMenuContent>
         </DropdownMenu>

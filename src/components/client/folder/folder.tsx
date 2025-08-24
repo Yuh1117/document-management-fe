@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import EllipsisDropDown from "../ellipsis-dropdown";
 import { useAppDispatch } from "@/redux/hooks";
-import { openFolderModal, triggerReload } from "@/redux/reducers/filesSlice";
+import { openFolderModal, setPermission, triggerReload } from "@/redux/reducers/filesSlice";
 import EllipsisDropDownDeleted from "../ellipsis-dropdown-deleted";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
@@ -25,7 +25,9 @@ type Props = {
     setSelectedFolders?: (data: number[]) => void;
     setTransferFolder?: (data: IFolder) => void
     setIsTransferModalOpen?: (open: boolean) => void
-    setTransferMode?: (mode: "copy" | "move") => void
+    setTransferMode?: (mode: "copy" | "move") => void,
+    setSharedFolder?: (folder: IFolder) => void
+    setIsShareModalOpen?: (open: boolean) => void
 }
 
 const Folder = ({
@@ -39,7 +41,9 @@ const Folder = ({
     setSelectedFolders,
     setTransferFolder,
     setIsTransferModalOpen,
-    setTransferMode
+    setTransferMode,
+    setSharedFolder,
+    setIsShareModalOpen
 }: Props) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const nav = useNavigate();
@@ -168,6 +172,12 @@ const Folder = ({
         }
     }
 
+    const handleOpenShare = () => {
+        setSharedFolder?.(data)
+        setIsShareModalOpen?.(true)
+        dispatch(setPermission(permission))
+    }
+
     const handleOpenTransfer = (mode: "copy" | "move") => {
         setTransferFolder?.(data)
         setIsTransferModalOpen?.(true)
@@ -206,6 +216,7 @@ const Folder = ({
                                 handleOpenEdit={handleOpenEdit}
                                 handleSoftDelete={handleSoftDelete}
                                 handleOpenTransfer={handleOpenTransfer}
+                                handleOpenShare={handleOpenShare}
                             />
                         ))
                     }
