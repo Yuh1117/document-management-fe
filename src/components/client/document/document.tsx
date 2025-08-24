@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { FileText } from "lucide-react";
 import type { IDocument } from "@/types/type";
 import { authApis, endpoints } from "@/config/Api";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -12,6 +11,7 @@ import { openDocumentModal, setPermission, triggerReload } from "@/redux/reducer
 import { cn } from "@/lib/utils";
 import EllipsisDropDownDeleted from "../ellipsis-dropdown-deleted";
 import { Spinner } from "@/components/ui/spinner";
+import { getIconComponentByMimeType } from "@/config/file-icons";
 
 type Props = {
     data: IDocument,
@@ -52,6 +52,7 @@ const Document = ({
     const [downloading, setDownloading] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false)
     const dispatch = useAppDispatch();
+    const Icon = getIconComponentByMimeType(data.mimeType);
 
     const handleDropdownToggle = (open: boolean) => {
         setIsDropdownOpen(open);
@@ -204,7 +205,7 @@ const Document = ({
         >
             <CardHeader className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <FileText />
+                    <Icon size={22} />
                     <Label className="truncate max-w-[110px]">{data.name}</Label>
                 </div>
                 <div>
@@ -237,7 +238,7 @@ const Document = ({
             </CardHeader>
             <CardContent>
                 <div className="flex justify-center items-center h-[150px] bg-muted rounded-xl ">
-                    <FileText />
+                    <Icon size={50} />
                 </div>
             </CardContent>
         </Card>

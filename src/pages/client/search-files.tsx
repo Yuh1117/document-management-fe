@@ -19,6 +19,11 @@ import { useMultiSelect } from "@/hooks/use-multi-select";
 import { useDownloadFiles } from "@/hooks/use-download-files";
 import { useDetailSheet } from "@/hooks/use-detail-sheet";
 import { useLocation } from "react-router";
+import TransferModal from "@/components/client/transfer-modal";
+import ShareModal from "@/components/client/share-modal";
+import ShareUrlModal from "@/components/client/document/share-url-modal";
+import { useShareFiles } from "@/hooks/use-share-files";
+import { useTransferFiles } from "@/hooks/use-transfer-files";
 
 const SearchFilesPage = () => {
     const location = useLocation()
@@ -31,6 +36,8 @@ const SearchFilesPage = () => {
     const { downloading, download } = useDownloadFiles();
     const details = useDetailSheet();
     const dispatch = useAppDispatch();
+    const share = useShareFiles();
+    const transfer = useTransferFiles();
 
 
     const folders = useMemo(() => files.filter((f) => f.type === "folder"), [files]);
@@ -75,6 +82,11 @@ const SearchFilesPage = () => {
                                             isMultiSelectMode={multi.isMultiSelectMode}
                                             selectedFolders={multi.selectedFolders}
                                             setSelectedFolders={multi.setSelectedFolders}
+                                            setTransferFolder={transfer.setTransferFolder}
+                                            setIsTransferModalOpen={transfer.setIsTransferModalOpen}
+                                            setTransferMode={transfer.setTransferMode}
+                                            setSharedFolder={share.setSharedFolder}
+                                            setIsShareModalOpen={share.setIsShareModalOpen}
                                         />
                                     ))}
                                 </div>
@@ -96,6 +108,13 @@ const SearchFilesPage = () => {
                                             isMultiSelectMode={multi.isMultiSelectMode}
                                             selectedDocs={multi.selectedDocs}
                                             setSelectedDocs={multi.setSelectedDocs}
+                                            setSharedUrlDocument={share.setSharedUrlDocument}
+                                            setIsUrlModalOpen={share.setIsUrlModalOpen}
+                                            setTransferDocument={transfer.setTransferDocument}
+                                            setIsTransferModalOpen={transfer.setIsTransferModalOpen}
+                                            setTransferMode={transfer.setTransferMode}
+                                            setSharedDocument={share.setSharedDocument}
+                                            setIsShareModalOpen={share.setIsShareModalOpen}
                                         />
                                     ))}
                                 </div>
@@ -124,7 +143,10 @@ const SearchFilesPage = () => {
                     </span>
                     <div className="flex gap-2">
                         <Button
-                            onClick={() => download(multi.selectedDocs, multi.selectedFolders)}
+                            onClick={() => {
+                                download(multi.selectedDocs, multi.selectedFolders)
+                                multi.reset()
+                            }}
                             disabled={multi.selectedDocs.length === 0 && multi.selectedFolders.length === 0 || downloading}
                         >
                             {downloading ? <Spinner /> : <>
@@ -163,6 +185,32 @@ const SearchFilesPage = () => {
                 onOpenChange={(open) => !open && dispatch(closeDocumentModal())}
                 data={documentModal.data}
             />
+
+            <ShareUrlModal
+                doc={share.sharedUrlDocument}
+                open={share.isUrlModalOpen}
+                onOpenChange={share.setIsUrlModalOpen}
+                createSignedUrl={share.createSignedUrl}
+                sharing={share.sharing}
+            />
+            <ShareModal
+                data={share.sharedDocument || share.sharedFolder}
+                open={share.isShareModalOpen}
+                onOpenChange={share.setIsShareModalOpen}
+                sharing={share.sharing}
+                saveShare={share.saveShare}
+                removeShare={share.removeShare}
+            />
+
+            <TransferModal
+                open={transfer.isTransferModalOpen}
+                onOpenChange={transfer.setIsTransferModalOpen}
+                data={transfer.transferDocument || transfer.transferFolder}
+                mode={transfer.transferMode}
+                transfering={transfer.transfering}
+                setTransfering={transfer.setTransfering}
+            />
+
         </div>
     );
 };
