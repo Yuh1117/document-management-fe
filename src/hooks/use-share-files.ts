@@ -1,5 +1,6 @@
 import { authApis, endpoints } from "@/config/Api";
-import type { IDocument } from "@/types/type";
+import { isDocument } from "@/config/utils";
+import type { IDocument, IFolder } from "@/types/type";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -7,6 +8,9 @@ export function useShareFiles() {
     const [isUrlModalOpen, setIsUrlModalOpen] = useState<boolean>(false)
     const [sharing, setSharing] = useState<boolean>(false);
     const [sharedUrlDocument, setSharedUrlDocument] = useState<IDocument | null>(null)
+    const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false)
+    const [sharedDocument, setSharedDocument] = useState<IDocument | null>(null)
+    const [sharedFolder, setSharedFolder] = useState<IFolder | null>(null)
 
     const createSignedUrl = async (id: number, expiredTime: number): Promise<string> => {
         try {
@@ -34,6 +38,56 @@ export function useShareFiles() {
         }
     };
 
+    const saveShare = async (data: IDocument | IFolder, people: { email: string, shareType: string }[]): Promise<boolean> => {
+        try {
+            setSharing(true);
+
+            let url = "";
+            const payload: any = {
+                shares: people
+            };
+
+            if (isDocument(data)) {
+                payload["documentId"] = data.id;
+                url = endpoints["share-doc"];
+            } else {
+                payload["folderId"] = data.id;
+                url = endpoints["share-folder"];
+            }
+
+            await authApis().post(url, payload)
+
+            toast.success("Chia sẻ thành công", {
+                duration: 2000
+            })
+            return true
+        } catch (error: any) {
+            console.error("Lỗi khi chia sẻ", error);
+            const errors = error.response.data.error;
+            let errorMsg: string = "";
+
+            if (error.response?.status === 400) {
+                if (Array.isArray(errors)) {
+                    errors.forEach((err: { field: string; message: string }) => {
+                        errorMsg += err.message + "\n";
+                    });
+                } else {
+                    errorMsg = errors
+                }
+            } else {
+                errorMsg = "Lỗi hệ thống hoặc kết nối"
+            }
+
+            toast.error("Chia sẻ thất bại", {
+                duration: 3000,
+                description: errorMsg
+            });
+            return false
+        } finally {
+            setSharing(false);
+        }
+    }
+
     return {
         createSignedUrl,
         sharing,
@@ -41,6 +95,13 @@ export function useShareFiles() {
         isUrlModalOpen,
         setIsUrlModalOpen,
         sharedUrlDocument,
-        setSharedUrlDocument
+        setSharedUrlDocument,
+        isShareModalOpen,
+        setIsShareModalOpen,
+        sharedDocument,
+        setSharedDocument,
+        sharedFolder,
+        setSharedFolder,
+        saveShare
     };
 }
