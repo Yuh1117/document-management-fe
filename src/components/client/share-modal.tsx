@@ -50,6 +50,7 @@ type Props = {
     onOpenChange: (open: boolean) => void,
     sharing: boolean
     saveShare: (data: IDocument | IFolder, people: { email: string, shareType: string }[]) => Promise<boolean>
+    removeShare: (data: IDocument | IFolder, ids: number[]) => Promise<boolean>
 }
 
 interface Person {
@@ -58,9 +59,11 @@ interface Person {
     email: string
     avatar: string
     shareType: string
+    remove: boolean
+    originalShareType: string
 }
 
-const ShareModal = ({ data, open, onOpenChange, sharing, saveShare }: Props) => {
+const ShareModal = ({ data, open, onOpenChange, sharing, saveShare, removeShare }: Props) => {
     const [emails, setEmails] = useState<string[]>([])
     const [people, setPeople] = useState<Person[]>([])
     const [groups, setGroups] = useState(initialGroups)
@@ -88,7 +91,9 @@ const ShareModal = ({ data, open, onOpenChange, sharing, saveShare }: Props) => 
                             name: `${item.user.lastName} ${item.user.firstName}`,
                             email: item.user.email,
                             avatar: item.user.avatar,
-                            shareType: item.shareType
+                            shareType: item.shareType ?? "VIEW",
+                            originalShareType: item.shareType ?? "VIEW",
+                            remove: false
                         }))
                 )
             } else {
@@ -101,7 +106,9 @@ const ShareModal = ({ data, open, onOpenChange, sharing, saveShare }: Props) => 
                             name: `${item.user.lastName} ${item.user.firstName}`,
                             email: item.user.email,
                             avatar: item.user.avatar,
-                            shareType: item.shareType
+                            shareType: item.shareType ?? "VIEW",
+                            originalShareType: item.shareType ?? "VIEW",
+                            remove: false
                         }))
                 )
             }
@@ -113,15 +120,29 @@ const ShareModal = ({ data, open, onOpenChange, sharing, saveShare }: Props) => 
         }
     }
 
-    const handleSaveShare = async () => {
+    const handleShare = async () => {
         if (!data) return;
 
-        const newPeople: { email: string, shareType: string }[] =
-            [...people.map(p => ({ email: p.email, shareType: p.shareType })), ...emails.map(email => ({ email, shareType: shareType }))];
-        const res: any = await saveShare(data, newPeople);
-        if (res) {
-            reset()
+        const toRemove = people.filter(p => p.remove);
+        const toUpdate = people.filter(p => !p.remove && p.shareType !== p.originalShareType);
+        const hasNewEmails = emails.length > 0;
+
+        if (toUpdate.length > 0 || hasNewEmails) {
+            const newPeople: { email: string, shareType: string }[] = [
+                ...toUpdate.map(p => ({ email: p.email, shareType: p.shareType })),
+                ...emails.map(email => ({ email, shareType })),
+            ];
+            const success = await saveShare(data, newPeople);
+            if (!success) return;
         }
+
+        if (toRemove.length > 0) {
+            const ids = toRemove.map(p => p.id);
+            const success = await removeShare(data, ids);
+            if (!success) return
+        }
+
+        reset();
     }
 
     const reset = () => {
@@ -179,40 +200,56 @@ const ShareModal = ({ data, open, onOpenChange, sharing, saveShare }: Props) => 
                                     <Spinner size={28} />
                                 </div>
                             ) : people.length === 0 ? (
-                                <div className="flex justify-center items-center py-10">
+                                <div className="flex justify-center items-center py-10 text-sm">
                                     Chưa chia sẻ cho ai
                                 </div>
                             ) : <ScrollArea className="h-50 p-3">
                                 <div className="grid gap-6">
                                     {people.map((person, index) => (
-                                        <div key={index} className="flex items-center justify-between gap-4">
+                                        <div key={person.id} className="flex items-center justify-between gap-4">
                                             <div className="flex items-center gap-4">
                                                 <Avatar className="w-10 h-10">
                                                     <AvatarImage src={person.avatar || "/placeholder.svg"} alt="avatar" />
                                                     <AvatarFallback className="rounded-lg">a</AvatarFallback>
                                                 </Avatar>
                                                 <div>
-                                                    <p className="text-sm font-medium leading-none">{person.name}</p>
-                                                    <p className="text-sm text-muted-foreground">{person.email}</p>
+                                                    <p className={cn("text-sm font-medium leading-none", person.remove && "line-through text-muted-foreground")}>
+                                                        {person.name}
+                                                    </p>
+                                                    <p className={cn("text-sm text-muted-foreground", person.remove && "line-through")}>
+                                                        {person.email}
+                                                    </p>
                                                 </div>
                                             </div>
-                                            <Select
-                                                value={person.shareType}
-                                                onValueChange={(value) => {
-                                                    const updated = [...people]
-                                                    updated[index].shareType = value
-                                                    setPeople(updated)
-                                                }}
-                                                disabled={(permission !== "OWNER" && permission !== "EDIT")}
-                                            >
-                                                <SelectTrigger className="w-[120px] h-8 text-sm">
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="VIEW">Xem</SelectItem>
-                                                    <SelectItem value="EDIT">Chỉnh sửa</SelectItem>
-                                                </SelectContent>
-                                            </Select>
+
+                                            <div className="flex items-center gap-2">
+                                                <Select
+                                                    value={person.shareType}
+                                                    onValueChange={(value) => {
+                                                        const updated = [...people];
+                                                        if (value === "remove") {
+                                                            updated[index].remove = true;
+                                                            updated[index].shareType = "remove"
+                                                        } else {
+                                                            updated[index].remove = false;
+                                                            updated[index].shareType = value;
+                                                        }
+                                                        setPeople(updated);
+                                                    }}
+                                                    disabled={(permission !== "OWNER" && permission !== "EDIT")}
+                                                >
+                                                    <SelectTrigger className="w-[120px] h-8 text-sm">
+                                                        <SelectValue />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="VIEW">Xem</SelectItem>
+                                                        <SelectItem value="EDIT">Chỉnh sửa</SelectItem>
+                                                        <SelectItem value="remove" className="text-red-500 focus:text-red-500 dark:focus:text-red-500">
+                                                            Xóa quyền
+                                                        </SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
@@ -316,7 +353,7 @@ const ShareModal = ({ data, open, onOpenChange, sharing, saveShare }: Props) => 
                         OK
                     </Button>
                     {(permission === "OWNER" || permission === "EDIT") &&
-                        <Button onClick={handleSaveShare} disabled={sharing}>
+                        <Button onClick={handleShare} disabled={sharing}>
                             {sharing ? <Spinner size={16} /> : "Lưu"}
                         </Button>
                     }

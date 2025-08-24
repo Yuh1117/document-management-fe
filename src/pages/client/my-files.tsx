@@ -193,6 +193,7 @@ const MyFilesPage = () => {
                 onOpenChange={share.setIsShareModalOpen}
                 sharing={share.sharing}
                 saveShare={share.saveShare}
+                removeShare={share.removeShare}
             />
 
             <TransferModal

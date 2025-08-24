@@ -88,6 +88,37 @@ export function useShareFiles() {
         }
     }
 
+    const removeShare = async (data: IDocument | IFolder, ids: number[]): Promise<boolean> => {
+        try {
+            setSharing(true);
+
+            let url = "";
+
+            if (isDocument(data)) {
+                url = endpoints["share-doc-detail"](data.id);
+            } else {
+                url = endpoints["share-folder-detail"](data.id);
+            }
+
+            await authApis().delete(url, {
+                data: ids
+            })
+
+            toast.success("Đã xoá quyền chia sẻ", {
+                duration: 2000
+            })
+            return true
+        } catch (error: any) {
+            console.error("Lỗi khi xóa", error);
+            toast.error("Xóa quyền thất bại", {
+                duration: 3000,
+            });
+            return false
+        } finally {
+            setSharing(false);
+        }
+    }
+
     return {
         createSignedUrl,
         sharing,
@@ -102,6 +133,7 @@ export function useShareFiles() {
         setSharedDocument,
         sharedFolder,
         setSharedFolder,
-        saveShare
+        saveShare,
+        removeShare
     };
 }
