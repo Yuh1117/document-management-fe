@@ -5,21 +5,48 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
+import { authApis, endpoints } from "@/config/Api";
 import type { IDocument } from "@/types/type";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 type Props = {
     doc: IDocument | null,
     open: boolean,
     onOpenChange: (open: boolean) => void,
-    createSignedUrl: (id: number, expiredTime: number) => Promise<string>,
-    sharing: boolean
 }
 
-const ShareUrlModal = ({ open, onOpenChange, doc, createSignedUrl, sharing }: Props) => {
+const ShareUrlModal = ({ open, onOpenChange, doc }: Props) => {
     const form = useForm<{ id: number; expiredTime: number }>();
     const [signedUrl, setSignedUrl] = useState<string | null>(null);
+    const [sharing, setSharing] = useState<boolean>(false)
+
+    const createSignedUrl = async (id: number, expiredTime: number): Promise<string> => {
+        try {
+            setSharing(true);
+
+            const req: { documentId: number, expiredTime: number } = {
+                documentId: id,
+                expiredTime: expiredTime
+            }
+
+            const res = await authApis().post(endpoints["share-url"], req);
+
+            toast.success("Đã tạo link thành công", {
+                duration: 2000
+            })
+            return res.data.data;
+        } catch (error) {
+            console.error("Lỗi khi chia sẻ", error);
+            toast.error("Chia sẻ thất bại", {
+                duration: 2000
+            })
+            return ""
+        } finally {
+            setSharing(false);
+        }
+    };
 
     const onSubmit = async (data: { id: number, expiredTime: number }) => {
         const url = await createSignedUrl(data.id, data.expiredTime)

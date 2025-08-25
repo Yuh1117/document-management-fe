@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Menu } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
@@ -13,46 +13,13 @@ import logoImg from "@/assets/react.svg";
 import Setting from "@/components/shared/settings/setting-button";
 import type { IAccount } from "@/types/type";
 import SearchBar from "./search";
-
-type MenuItem = {
-    title: string;
-    url: string;
-    icon?: React.ReactNode;
-    items?: MenuItem[];
-}
+import HideDataModal from "../document/hide-data-modal";
 
 const logo = {
     url: "",
     title: "DMS",
     icon: <img src={logoImg} alt="Logo" />
 }
-
-const menu: MenuItem[] = [
-    {
-        title: "Resources",
-        url: "#",
-        items: [
-            { title: "Help Center", url: "#" },
-            { title: "Contact Us", url: "#" },
-            { title: "Status", url: "#" },
-            { title: "Terms of Service", url: "#" },
-        ],
-    }
-]
-
-const SubMenuLink = ({ item }: { item: MenuItem }) => {
-    return (
-        <a
-            className="flex flex-row gap-2 rounded-md p-3 min-w-[150px] transition-colors hover:bg-muted hover:text-accent-foreground"
-            href={item.url}
-        >
-            <div className="text-foreground">{item.icon}</div>
-            <div className="flex flex-col">
-                <span className="text-sm font-medium">{item.title}</span>
-            </div>
-        </a>
-    )
-};
 
 const Account = ({ user }: { user: IAccount | null }) => {
     const dispatch = useAppDispatch();
@@ -102,54 +69,65 @@ const Account = ({ user }: { user: IAccount | null }) => {
 
 const Header = () => {
     const user = useAppSelector(state => state.users.user);
+    const [openModal, setOpenModal] = useState<boolean>(false)
 
-    const desktopMenu = useMemo(() => (
-        menu.map((item) =>
-            item.items ? (
-                <NavigationMenuItem key={item.title}>
-                    <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
-                    <NavigationMenuContent className="bg-popover text-popover-foreground">
-                        {item.items.map((subItem) => (
-                            <NavigationMenuLink asChild key={subItem.title}>
-                                <SubMenuLink item={subItem} />
-                            </NavigationMenuLink>
-                        ))}
-                    </NavigationMenuContent>
-                </NavigationMenuItem>
-            ) : (
-                <NavigationMenuItem key={item.title}>
-                    <NavigationMenuLink
-                        href={item.url}
-                        className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground"
-                    >
-                        {item.title}
-                    </NavigationMenuLink>
-                </NavigationMenuItem>
-            )
+    const desktopMenu = useMemo(() => {
+        return (
+            <NavigationMenu>
+                <NavigationMenuList>
+                    <NavigationMenuItem>
+                        <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
+                        <NavigationMenuContent>
+                            <ul>
+                                <li>
+                                    <NavigationMenuLink asChild onClick={() => setOpenModal(true)}>
+                                        <Link to="#">Hide data</Link>
+                                    </NavigationMenuLink>
+                                    <NavigationMenuLink asChild>
+                                        <Link to="#">Documentation</Link>
+                                    </NavigationMenuLink>
+                                    <NavigationMenuLink asChild>
+                                        <Link to="#">Blocks</Link>
+                                    </NavigationMenuLink>
+                                </li>
+                            </ul>
+                        </NavigationMenuContent>
+                    </NavigationMenuItem>
+                </NavigationMenuList>
+            </NavigationMenu>
         )
+    }, [])
 
-    ), [menu]);
-
-    const mobileMenu = useMemo(() => (
-        menu.map((item) =>
-            item.items ? (
-                <AccordionItem key={item.title} value={item.title} className="border-b-0">
+    const mobileMenu = useMemo(() => {
+        return (
+            <Accordion type="single" collapsible className="flex w-full flex-col gap-4">
+                <AccordionItem value="item-1" className="border-b-0" >
                     <AccordionTrigger className="text-md py-0 font-semibold hover:no-underline">
-                        {item.title}
+                        Resources
                     </AccordionTrigger>
                     <AccordionContent className="mt-2">
-                        {item.items.map((subItem) => (
-                            <SubMenuLink key={subItem.title} item={subItem} />
-                        ))}
+                        <ul>
+                            <li>
+                                <Link to="#" className="flex  rounded-xl p-3 hover:bg-muted hover:text-accent-foreground">
+                                    <span className="text-sm font-medium">Components</span>
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="#" className="flex gap-2 rounded-xl p-3 hover:bg-muted hover:text-accent-foreground">
+                                    <span className="text-sm font-medium">Documentation</span>
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="#" className="flex gap-2 rounded-xl p-3 hover:bg-muted hover:text-accent-foreground">
+                                    <span className="text-sm font-medium">Blocks</span>
+                                </Link>
+                            </li>
+                        </ul>
                     </AccordionContent>
                 </AccordionItem>
-            ) : (
-                <a key={item.title} href={item.url} className="text-md font-semibold">
-                    {item.title}
-                </a>
-            )
+            </Accordion>
         )
-    ), [menu]);
+    }, [])
 
     return (
         <section className="py-3 sticky top-0 z-50 bg-background">
@@ -163,11 +141,7 @@ const Header = () => {
                             </span>
                         </Link>
                         <div className="flex items-center">
-                            <NavigationMenu>
-                                <NavigationMenuList>
-                                    {desktopMenu}
-                                </NavigationMenuList>
-                            </NavigationMenu>
+                            {desktopMenu}
                         </div>
                     </div>
 
@@ -194,7 +168,7 @@ const Header = () => {
                                     <Menu className="size-4" />
                                 </Button>
                             </SheetTrigger>
-                            <SheetContent className="overflow-y-auto">
+                            <SheetContent className="overflow-y-auto" aria-describedby={undefined}>
                                 <SheetHeader>
                                     <SheetTitle>
                                         <a href={logo.url} className="flex items-center gap-2">
@@ -205,13 +179,7 @@ const Header = () => {
                                     </SheetTitle>
                                 </SheetHeader>
                                 <div className="flex flex-col gap-6 p-4">
-                                    <Accordion
-                                        type="single"
-                                        collapsible
-                                        className="flex w-full flex-col gap-4"
-                                    >
-                                        {mobileMenu}
-                                    </Accordion>
+                                    {mobileMenu}
 
                                     <SearchBar />
 
@@ -225,6 +193,11 @@ const Header = () => {
                     </div>
                 </div>
             </div>
+
+            <HideDataModal
+                open={openModal}
+                onOpenChange={setOpenModal}
+            />
         </section>
     );
 };

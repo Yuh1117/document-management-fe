@@ -3,19 +3,43 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Spinner } from "@/components/ui/spinner";
+import { authApis, endpoints } from "@/config/Api";
 import { formatTime } from "@/config/utils";
 import { useAppSelector } from "@/redux/hooks";
 import type { IFolder } from "@/types/type";
+import { useEffect, useState } from "react";
 
 type Props = {
+    data: IFolder | null;
     isSheetOpen: boolean,
-    setIsSheetOpen: (open: boolean) => void,
-    loadingDetail: boolean,
-    folderDetail: IFolder | null
+    setIsSheetOpen: (open: boolean) => void
 }
 
-const FolderDetail = ({ isSheetOpen, setIsSheetOpen, loadingDetail, folderDetail }: Props) => {
+const FolderDetail = ({ isSheetOpen, setIsSheetOpen, data }: Props) => {
     const userId = useAppSelector(state => state.users.user?.id)
+    const [loadingDetail, setLoadingDetail] = useState<boolean>(false)
+    const [folderDetail, setFolderDetail] = useState<IFolder | null>(null)
+
+    const loadViewDetail = async () => {
+        if (!data) return
+        try {
+            setLoadingDetail?.(true);
+            const res = await authApis().get(endpoints["folder-detail"](data.id));
+
+            setFolderDetail?.(res.data.data);
+            setIsSheetOpen?.(true);
+        } catch (error) {
+            console.error("Lỗi khi tải chi tiết thư mục", error);
+        } finally {
+            setLoadingDetail?.(false);
+        }
+    };
+
+    useEffect(() => {
+        if (isSheetOpen) {
+            loadViewDetail()
+        }
+    }, [isSheetOpen])
 
     return (
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>

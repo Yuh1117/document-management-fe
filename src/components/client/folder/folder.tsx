@@ -9,41 +9,26 @@ import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import EllipsisDropDown from "../ellipsis-dropdown";
 import { useAppDispatch } from "@/redux/hooks";
-import { openFolderModal, setPermission, triggerReload } from "@/redux/reducers/filesSlice";
+import { openShareModal, openTransferModal, setPermission, triggerReload } from "@/redux/reducers/filesSlice";
 import EllipsisDropDownDeleted from "../ellipsis-dropdown-deleted";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
+import { openFolderDetail, openFolderModal } from "@/redux/reducers/folderSlice";
 
 type Props = {
     data: IFolder,
     permission: string,
-    setLoadingDetail?: (loading: boolean) => void,
-    setFolderDetail?: (data: IFolder) => void,
-    setIsSheetOpen?: (open: boolean) => void,
     isMultiSelectMode?: boolean;
     selectedFolders?: number[];
     setSelectedFolders?: (data: number[]) => void;
-    setTransferFolder?: (data: IFolder) => void
-    setIsTransferModalOpen?: (open: boolean) => void
-    setTransferMode?: (mode: "copy" | "move") => void,
-    setSharedFolder?: (folder: IFolder) => void
-    setIsShareModalOpen?: (open: boolean) => void
 }
 
 const Folder = ({
     data,
     permission,
-    setLoadingDetail,
-    setFolderDetail,
-    setIsSheetOpen,
     isMultiSelectMode,
     selectedFolders,
-    setSelectedFolders,
-    setTransferFolder,
-    setIsTransferModalOpen,
-    setTransferMode,
-    setSharedFolder,
-    setIsShareModalOpen
+    setSelectedFolders
 }: Props) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const nav = useNavigate();
@@ -65,18 +50,8 @@ const Folder = ({
         }
     };
 
-    const handleViewDetail = async () => {
-        try {
-            setLoadingDetail?.(true);
-            const res = await authApis().get(endpoints["folder-detail"](data.id));
-
-            setFolderDetail?.(res.data.data);
-            setIsSheetOpen?.(true);
-        } catch (error) {
-            console.error("Lỗi khi tải chi tiết thư mục", error);
-        } finally {
-            setLoadingDetail?.(false);
-        }
+    const handleViewDetail = () => {
+        dispatch(openFolderDetail({ data: data }))
     };
 
     const handleDownload = async () => {
@@ -173,15 +148,12 @@ const Folder = ({
     }
 
     const handleOpenShare = () => {
-        setSharedFolder?.(data)
-        setIsShareModalOpen?.(true)
+        dispatch(openShareModal({ data: data }))
         dispatch(setPermission(permission))
     }
 
     const handleOpenTransfer = (mode: "copy" | "move") => {
-        setTransferFolder?.(data)
-        setIsTransferModalOpen?.(true)
-        setTransferMode?.(mode)
+        dispatch(openTransferModal({ data: data, mode: mode }))
     }
 
     return (

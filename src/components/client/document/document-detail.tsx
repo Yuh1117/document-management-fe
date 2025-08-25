@@ -7,20 +7,43 @@ import { formatFileSize, formatTime } from "@/config/utils";
 import { Separator } from "@/components/ui/separator";
 import { useAppSelector } from "@/redux/hooks";
 import { Textarea } from "@/components/ui/textarea";
+import { useEffect, useState } from "react";
+import { authApis, endpoints } from "@/config/Api";
 
 type Props = {
+    data: IDocument | null;
     isSheetOpen: boolean;
     setIsSheetOpen: (open: boolean) => void;
-    documentDetail: IDocument | null;
-    loadingDetail: boolean;
 };
 
-const DocumentDetail = ({ isSheetOpen, setIsSheetOpen, documentDetail, loadingDetail }: Props) => {
+const DocumentDetail = ({ isSheetOpen, setIsSheetOpen, data }: Props) => {
     const userId = useAppSelector(state => state.users.user?.id)
+    const [loadingDetail, setLoadingDetail] = useState<boolean>(false)
+    const [documentDetail, setDocumentDetail] = useState<IDocument | null>(null)
+
+    const loadViewDetail = async () => {
+        if (!data) return
+
+        try {
+            setLoadingDetail(true);
+            const res = await authApis().get(endpoints["document-detail"](data.id));
+            setDocumentDetail(res.data.data);
+        } catch (error) {
+            console.error("Lỗi khi tải chi tiết tài liệu", error);
+        } finally {
+            setLoadingDetail(false);
+        }
+    };
+
+    useEffect(() => {
+        if (isSheetOpen) {
+            loadViewDetail()
+        }
+    }, [isSheetOpen])
 
     return (
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-            <SheetContent className="rounded-l-xl" aria-describedby={undefined}>
+            <SheetContent className="rounded-l-xl p-1" aria-describedby={undefined}>
                 <SheetHeader>
                     <SheetTitle className="text-lg mb-2">Chi tiết tài liệu</SheetTitle>
                     <div>
@@ -37,7 +60,7 @@ const DocumentDetail = ({ isSheetOpen, setIsSheetOpen, documentDetail, loadingDe
                                         <Label className="me-2 medium text-md">Mô tả:</Label>
                                         <Textarea readOnly tabIndex={-1} value={documentDetail.description || ""} />
                                     </div>
-                                    <div className="flex items-center">
+                                    <div className="flex flex-wrap items-center">
                                         <Label className="me-2 medium text-md">Loại:</Label>
                                         <span>{documentDetail.mimeType}</span>
                                     </div>

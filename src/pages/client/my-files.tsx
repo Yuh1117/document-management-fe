@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { closeDocumentModal, closeFolderModal } from "@/redux/reducers/filesSlice";
 import { endpoints } from "@/config/Api";
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
@@ -17,22 +16,21 @@ import FolderModal from "@/components/client/folder/folder-modal";
 import { useFilesLoader } from "@/hooks/use-files-loader";
 import { useMultiSelect } from "@/hooks/use-multi-select";
 import { useDownloadFiles } from "@/hooks/use-download-files";
-import { useDetailSheet } from "@/hooks/use-detail-sheet";
-import { useShareFiles } from "@/hooks/use-share-files";
 import ShareUrlModal from "@/components/client/document/share-url-modal";
 import TransferModal from "@/components/client/transfer-modal";
-import { useTransferFiles } from "@/hooks/use-transfer-files";
 import ShareModal from "@/components/client/share-modal";
+import { closeDocumentDetail, closeDocumentModal, closeShareUrlModal } from "@/redux/reducers/documentSlice";
+import { closeShareModal, closeTransferModal } from "@/redux/reducers/filesSlice";
+import { closeFolderDetail, closeFolderModal } from "@/redux/reducers/folderSlice";
 
 const MyFilesPage = () => {
-    const { reloadFlag, folderModal, documentModal } = useAppSelector(state => state.files);
-    const { files, loading, hasMore, observerRef } = useFilesLoader(endpoints["my-files"], reloadFlag);
+    const fileState = useAppSelector(state => state.files);
+    const documentState = useAppSelector(state => state.documents)
+    const folderState = useAppSelector(state => state.folders)
+    const { files, loading, hasMore, observerRef } = useFilesLoader(endpoints["my-files"], fileState.reloadFlag);
     const multi = useMultiSelect();
     const { downloading, download } = useDownloadFiles();
-    const details = useDetailSheet();
     const dispatch = useAppDispatch();
-    const share = useShareFiles();
-    const transfer = useTransferFiles();
 
     const folders = useMemo(() => files.filter((f) => f.type === "folder"), [files]);
     const documents = useMemo(() => files.filter((f) => f.type === "document"), [files]);
@@ -70,17 +68,9 @@ const MyFilesPage = () => {
                                             key={`folder-${f.folder.id}`}
                                             data={f.folder}
                                             permission={f.permission}
-                                            setLoadingDetail={details.setLoadingFolderDetail}
-                                            setFolderDetail={details.setFolderDetail}
-                                            setIsSheetOpen={details.setIsFolderSheetOpen}
                                             isMultiSelectMode={multi.isMultiSelectMode}
                                             selectedFolders={multi.selectedFolders}
                                             setSelectedFolders={multi.setSelectedFolders}
-                                            setTransferFolder={transfer.setTransferFolder}
-                                            setIsTransferModalOpen={transfer.setIsTransferModalOpen}
-                                            setTransferMode={transfer.setTransferMode}
-                                            setSharedFolder={share.setSharedFolder}
-                                            setIsShareModalOpen={share.setIsShareModalOpen}
                                         />
                                     ))}
                                 </div>
@@ -96,19 +86,9 @@ const MyFilesPage = () => {
                                             key={`doc-${f.document.id}`}
                                             data={f.document}
                                             permission={f.permission}
-                                            setIsSheetOpen={details.setIsDocumentSheetOpen}
-                                            setDocumentDetail={details.setDocumentDetail}
-                                            setLoadingDetail={details.setLoadingDocumentDetail}
                                             isMultiSelectMode={multi.isMultiSelectMode}
                                             selectedDocs={multi.selectedDocs}
                                             setSelectedDocs={multi.setSelectedDocs}
-                                            setSharedUrlDocument={share.setSharedUrlDocument}
-                                            setIsUrlModalOpen={share.setIsUrlModalOpen}
-                                            setTransferDocument={transfer.setTransferDocument}
-                                            setIsTransferModalOpen={transfer.setIsTransferModalOpen}
-                                            setTransferMode={transfer.setTransferMode}
-                                            setSharedDocument={share.setSharedDocument}
-                                            setIsShareModalOpen={share.setIsShareModalOpen}
                                         />
                                     ))}
                                 </div>
@@ -156,53 +136,44 @@ const MyFilesPage = () => {
             )}
 
             <FolderDetail
-                isSheetOpen={details.isFolderSheetOpen}
-                setIsSheetOpen={details.setIsFolderSheetOpen}
-                folderDetail={details.folderDetail}
-                loadingDetail={details.loadingFolderDetail}
+                data={folderState.folderDetail.data}
+                isSheetOpen={folderState.folderDetail.open}
+                setIsSheetOpen={(open) => !open && dispatch(closeFolderDetail())}
             />
             <DocumentDetail
-                isSheetOpen={details.isDocumentSheetOpen}
-                setIsSheetOpen={details.setIsDocumentSheetOpen}
-                documentDetail={details.documentDetail}
-                loadingDetail={details.loadingDocumentDetail}
+                data={documentState.documentDetail.data}
+                isSheetOpen={documentState.documentDetail.open}
+                setIsSheetOpen={(open) => !open && dispatch(closeDocumentDetail())}
             />
 
             <FolderModal
-                open={folderModal.open}
+                open={folderState.folderModal.open}
                 onOpenChange={(open) => !open && dispatch(closeFolderModal())}
-                isEditing={folderModal.isEditing}
-                data={folderModal.data}
+                isEditing={folderState.folderModal.isEditing}
+                data={folderState.folderModal.data}
             />
             <DocumentModal
-                open={documentModal.open}
+                open={documentState.documentModal.open}
                 onOpenChange={(open) => !open && dispatch(closeDocumentModal())}
-                data={documentModal.data}
+                data={documentState.documentModal.data}
             />
 
             <ShareUrlModal
-                doc={share.sharedUrlDocument}
-                open={share.isUrlModalOpen}
-                onOpenChange={share.setIsUrlModalOpen}
-                createSignedUrl={share.createSignedUrl}
-                sharing={share.sharing}
+                doc={documentState.shareUrlModal.data}
+                open={documentState.shareUrlModal.open}
+                onOpenChange={(open) => !open && dispatch(closeShareUrlModal())}
             />
             <ShareModal
-                data={share.sharedDocument || share.sharedFolder}
-                open={share.isShareModalOpen}
-                onOpenChange={share.setIsShareModalOpen}
-                sharing={share.sharing}
-                saveShare={share.saveShare}
-                removeShare={share.removeShare}
+                data={fileState.shareModal.data}
+                open={fileState.shareModal.open}
+                onOpenChange={(open) => !open && dispatch(closeShareModal())}
             />
 
             <TransferModal
-                open={transfer.isTransferModalOpen}
-                onOpenChange={transfer.setIsTransferModalOpen}
-                data={transfer.transferDocument || transfer.transferFolder}
-                mode={transfer.transferMode}
-                transfering={transfer.transfering}
-                setTransfering={transfer.setTransfering}
+                data={fileState.transferModal.data}
+                open={fileState.transferModal.open}
+                onOpenChange={(open) => !open && dispatch(closeTransferModal())}
+                mode={fileState.transferModal.mode}
             />
 
         </div>

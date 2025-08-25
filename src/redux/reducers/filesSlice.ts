@@ -1,32 +1,32 @@
+import type { IDocument, IFolder } from "@/types/type";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
-import type { IDocument, IFolder } from "@/types/type"
 
 interface FilesState {
     reloadFlag: boolean,
-    folderModal: {
-        open: boolean,
-        isEditing: boolean,
-        data: IFolder | null
-    },
-    documentModal: {
-        open: boolean,
-        data: IDocument | null
-    }
-    permission: string | null
+    shareModal: {
+        open: boolean;
+        data: IDocument | IFolder | null;
+    };
+    transferModal: {
+        open: boolean;
+        data: IDocument | IFolder | null;
+        mode: "move" | "copy" | null;
+    };
+    permission: string | null;
 }
 
 const initialState: FilesState = {
     reloadFlag: false,
-    folderModal: {
+    permission: null,
+    shareModal: {
         open: false,
-        isEditing: false,
-        data: null
+        data: null,
     },
-    documentModal: {
+    transferModal: {
         open: false,
-        data: null
+        data: null,
+        mode: null,
     },
-    permission: null
 }
 
 const filesSlice = createSlice({
@@ -37,24 +37,24 @@ const filesSlice = createSlice({
             state.reloadFlag = !state.reloadFlag
         },
 
-        openFolderModal: (state, action: PayloadAction<{ isEditing: boolean, data: IFolder | null }>) => {
-            state.folderModal.open = true
-            state.folderModal.isEditing = action.payload.isEditing
-            state.folderModal.data = action.payload.data
+        openShareModal: (state, action: PayloadAction<{ data: IDocument | IFolder | null }>) => {
+            state.shareModal.open = true;
+            state.shareModal.data = action.payload.data;
         },
-        closeFolderModal: (state) => {
-            state.folderModal.open = false
-            // state.folderModal.isEditing = false
-            state.folderModal.data = null
+        closeShareModal: (state) => {
+            state.shareModal.open = false;
+            state.shareModal.data = null;
         },
 
-        openDocumentModal: (state, action: PayloadAction<{ data: IDocument | null }>) => {
-            state.documentModal.open = true
-            state.documentModal.data = action.payload.data
+        openTransferModal: (state, action: PayloadAction<{ data: IDocument | IFolder | null; mode: "move" | "copy" | null }>) => {
+            state.transferModal.open = true;
+            state.transferModal.data = action.payload.data;
+            state.transferModal.mode = action.payload.mode;
         },
-        closeDocumentModal: (state) => {
-            state.documentModal.open = false
-            state.documentModal.data = null
+        closeTransferModal: (state) => {
+            state.transferModal.open = false;
+            state.transferModal.data = null;
+            state.transferModal.mode = null;
         },
 
         setPermission: (state, action: PayloadAction<string | null>) => {
@@ -67,5 +67,5 @@ const filesSlice = createSlice({
     },
 })
 
-export const { triggerReload, openFolderModal, closeFolderModal, openDocumentModal, closeDocumentModal, setPermission, resetPermission } = filesSlice.actions
+export const { triggerReload, setPermission, resetPermission, openShareModal, closeShareModal, openTransferModal, closeTransferModal } = filesSlice.actions
 export default filesSlice.reducer

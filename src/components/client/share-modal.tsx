@@ -24,6 +24,7 @@ import { authApis, endpoints } from "@/config/Api"
 import { Spinner } from "../ui/spinner"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import { resetPermission } from "@/redux/reducers/filesSlice"
+import { toast } from "sonner"
 
 const initialGroups = [
     {
@@ -48,9 +49,6 @@ type Props = {
     data: IDocument | IFolder | null,
     open: boolean,
     onOpenChange: (open: boolean) => void,
-    sharing: boolean
-    saveShare: (data: IDocument | IFolder, people: { email: string, shareType: string }[]) => Promise<boolean>
-    removeShare: (data: IDocument | IFolder, ids: number[]) => Promise<boolean>
 }
 
 interface Person {
@@ -63,7 +61,7 @@ interface Person {
     originalShareType: string
 }
 
-const ShareModal = ({ data, open, onOpenChange, sharing, saveShare, removeShare }: Props) => {
+const ShareModal = ({ data, open, onOpenChange }: Props) => {
     const [emails, setEmails] = useState<string[]>([])
     const [people, setPeople] = useState<Person[]>([])
     const [groups, setGroups] = useState(initialGroups)
@@ -72,6 +70,7 @@ const ShareModal = ({ data, open, onOpenChange, sharing, saveShare, removeShare 
     const [openSelect, setOpenSelect] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
     const permission = useAppSelector(state => state.files.permission)
+    const [sharing, setSharing] = useState<boolean>(false)
     const dispatch = useAppDispatch()
 
     const loadUserPermissions = async () => {
@@ -117,6 +116,87 @@ const ShareModal = ({ data, open, onOpenChange, sharing, saveShare, removeShare 
             console.error(error)
         } finally {
             setLoading(false)
+        }
+    }
+
+    const saveShare = async (data: IDocument | IFolder, people: { email: string, shareType: string }[]): Promise<boolean> => {
+        try {
+            setSharing(true);
+
+            let url = "";
+            const payload: any = {
+                shares: people
+            };
+
+            if (isDocument(data)) {
+                payload["documentId"] = data.id;
+                url = endpoints["share-doc"];
+            } else {
+                payload["folderId"] = data.id;
+                url = endpoints["share-folder"];
+            }
+
+            await authApis().post(url, payload)
+
+            toast.success("Chia sẻ thành công", {
+                duration: 2000
+            })
+            return true
+        } catch (error: any) {
+            console.error("Lỗi khi chia sẻ", error);
+            const errors = error.response.data.error;
+            let errorMsg: string = "";
+
+            if (error.response?.status === 400) {
+                if (Array.isArray(errors)) {
+                    errors.forEach((err: { field: string; message: string }) => {
+                        errorMsg += err.message + "\n";
+                    });
+                } else {
+                    errorMsg = errors
+                }
+            } else {
+                errorMsg = "Lỗi hệ thống hoặc kết nối"
+            }
+
+            toast.error("Chia sẻ thất bại", {
+                duration: 3000,
+                description: errorMsg
+            });
+            return false
+        } finally {
+            setSharing(false);
+        }
+    }
+
+    const removeShare = async (data: IDocument | IFolder, ids: number[]): Promise<boolean> => {
+        try {
+            setSharing(true);
+
+            let url = "";
+
+            if (isDocument(data)) {
+                url = endpoints["share-doc-detail"](data.id);
+            } else {
+                url = endpoints["share-folder-detail"](data.id);
+            }
+
+            await authApis().delete(url, {
+                data: ids
+            })
+
+            toast.success("Đã xoá quyền chia sẻ", {
+                duration: 2000
+            })
+            return true
+        } catch (error: any) {
+            console.error("Lỗi khi xóa", error);
+            toast.error("Xóa quyền thất bại", {
+                duration: 3000,
+            });
+            return false
+        } finally {
+            setSharing(false);
         }
     }
 

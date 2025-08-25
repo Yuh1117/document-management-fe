@@ -24,9 +24,7 @@ type Props = {
     data: IDocument | IFolder | null,
     open: boolean,
     onOpenChange: (open: boolean) => void,
-    mode: string | undefined,
-    transfering: boolean,
-    setTransfering: (t: boolean) => void
+    mode: "copy" | "move" | null
 }
 
 const rootEntries = [
@@ -37,14 +35,13 @@ const TransferModal = ({
     data,
     open,
     onOpenChange,
-    mode,
-    transfering,
-    setTransfering
+    mode
 }: Props) => {
     const [selectedFolder, setSelectedFolder] = useState<number | null>(null)
     const [currentEndpoint, setCurrentEndpoint] = useState<string | null>(null)
     const [breadcrumb, setBreadcrumb] = useState<{ id: number, name: string }[]>([])
     const dispatch = useAppDispatch()
+    const [transfering, setTransfering] = useState<boolean>(false)
     const { files, loading, hasMore, observerRef } = useFilesLoader(currentEndpoint, open)
 
 
