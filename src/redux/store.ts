@@ -1,14 +1,17 @@
 import { configureStore } from '@reduxjs/toolkit'
-import UserReducer from "./reducers/userSlice"
-import PermissionReducer from "./reducers/permissionSlice"
-import FilesReducer from "./reducers/filesSlice"
-
+import userSlice from "./reducers/userSlice"
+import permissionSlice from "./reducers/permissionSlice"
+import filesSlice from "./reducers/filesSlice"
+import documentSlice from "./reducers/documentSlice"
+import folderSlice from "./reducers/folderSlice"
 
 export const store = configureStore({
     reducer: {
-        users: UserReducer,
-        permissions: PermissionReducer,
-        files: FilesReducer
+        users: userSlice,
+        permissions: permissionSlice,
+        files: filesSlice,
+        documents: documentSlice,
+        folders: folderSlice
     },
 })
 

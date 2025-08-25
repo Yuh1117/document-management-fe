@@ -10,12 +10,13 @@ import { FileUp, FolderPlus, FolderUp, Plus } from "lucide-react"
 import { useSidebar } from "../ui/sidebar"
 import { useParams } from "react-router"
 import { useAppDispatch } from "@/redux/hooks"
-import { openFolderModal, triggerReload } from "@/redux/reducers/filesSlice"
+import { triggerReload } from "@/redux/reducers/filesSlice"
 import { authApis, endpoints } from "@/config/Api"
 import { toast } from "sonner"
 import { useState } from "react"
 import { Spinner } from "../ui/spinner"
 import { Separator } from "../ui/separator"
+import { openFolderModal } from "@/redux/reducers/folderSlice"
 
 const NewDropDown = () => {
     const { state } = useSidebar()

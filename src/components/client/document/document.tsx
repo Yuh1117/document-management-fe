@@ -7,52 +7,33 @@ import { Checkbox } from "@/components/ui/checkbox";
 import EllipsisDropDown from "../ellipsis-dropdown";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/redux/hooks";
-import { openDocumentModal, setPermission, triggerReload } from "@/redux/reducers/filesSlice";
+import { openShareModal, openTransferModal, setPermission, triggerReload } from "@/redux/reducers/filesSlice";
 import { cn } from "@/lib/utils";
 import EllipsisDropDownDeleted from "../ellipsis-dropdown-deleted";
 import { Spinner } from "@/components/ui/spinner";
 import { getIconComponentByMimeType } from "@/config/file-icons";
+import { openDocumentDetail, openDocumentModal, openShareUrlModal } from "@/redux/reducers/documentSlice";
 
 type Props = {
     data: IDocument,
     permission: string,
-    setLoadingDetail: (loading: boolean) => void;
-    setDocumentDetail: (doc: IDocument) => void;
-    setIsSheetOpen: (open: boolean) => void;
     isMultiSelectMode?: boolean;
     selectedDocs?: number[];
     setSelectedDocs?: (data: number[]) => void;
-    setSharedUrlDocument?: (doc: IDocument) => void,
-    setIsUrlModalOpen?: (open: boolean) => void
-    setTransferDocument?: (data: IDocument) => void
-    setIsTransferModalOpen?: (open: boolean) => void
-    setTransferMode?: (mode: "copy" | "move") => void,
-    setSharedDocument?: (doc: IDocument) => void
-    setIsShareModalOpen?: (open: boolean) => void
 };
 
 const Document = ({
     data,
     permission,
-    setLoadingDetail,
-    setDocumentDetail,
-    setIsSheetOpen,
     isMultiSelectMode,
     selectedDocs,
-    setSelectedDocs,
-    setSharedUrlDocument,
-    setIsUrlModalOpen,
-    setTransferDocument,
-    setIsTransferModalOpen,
-    setTransferMode,
-    setSharedDocument,
-    setIsShareModalOpen
+    setSelectedDocs
 }: Props) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const [downloading, setDownloading] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false)
     const dispatch = useAppDispatch();
-    const Icon = getIconComponentByMimeType(data.mimeType);
+    const { icon: Icon, color } = getIconComponentByMimeType(data.mimeType);
 
     const handleDropdownToggle = (open: boolean) => {
         setIsDropdownOpen(open);
@@ -68,17 +49,8 @@ const Document = ({
         }
     };
 
-    const handleViewDetail = async () => {
-        try {
-            setLoadingDetail(true);
-            const res = await authApis().get(endpoints["document-detail"](data.id));
-            setDocumentDetail(res.data.data);
-            setIsSheetOpen(true);
-        } catch (error) {
-            console.error("Lỗi khi tải chi tiết tài liệu", error);
-        } finally {
-            setLoadingDetail(false);
-        }
+    const handleViewDetail = () => {
+        dispatch(openDocumentDetail({ data: data }))
     };
 
     const handleDownload = async () => {
@@ -182,20 +154,16 @@ const Document = ({
     }
 
     const handleOpenShareUrl = () => {
-        setSharedUrlDocument?.(data)
-        setIsUrlModalOpen?.(true)
+        dispatch(openShareUrlModal({ data: data }))
     }
 
     const handleOpenShare = () => {
-        setSharedDocument?.(data)
-        setIsShareModalOpen?.(true)
+        dispatch(openShareModal({ data: data }))
         dispatch(setPermission(permission))
     }
 
     const handleOpenTransfer = (mode: "copy" | "move") => {
-        setTransferDocument?.(data)
-        setIsTransferModalOpen?.(true)
-        setTransferMode?.(mode)
+        dispatch(openTransferModal({ data: data, mode: mode }))
     }
 
     return (
@@ -205,8 +173,8 @@ const Document = ({
         >
             <CardHeader className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <Icon size={22} />
-                    <Label className="truncate max-w-[110px]">{data.name}</Label>
+                    <Icon size={22} color={color} />
+                    <Label className="truncate max-w-[130px]">{data.name}</Label>
                 </div>
                 <div>
                     {loading ? <Spinner /> : (
@@ -238,7 +206,7 @@ const Document = ({
             </CardHeader>
             <CardContent>
                 <div className="flex justify-center items-center h-[150px] bg-muted rounded-xl ">
-                    <Icon size={50} />
+                    <Icon size={50} color={color}/>
                 </div>
             </CardContent>
         </Card>

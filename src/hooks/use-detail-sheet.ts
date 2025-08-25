@@ -6,9 +6,6 @@ export const useDetailSheet = () => {
     const [folderDetail, setFolderDetail] = useState<IFolder | null>(null);
     const [loadingFolderDetail, setLoadingFolderDetail] = useState(false);
 
-    const [isDocumentSheetOpen, setIsDocumentSheetOpen] = useState(false);
-    const [documentDetail, setDocumentDetail] = useState<IDocument | null>(null);
-    const [loadingDocumentDetail, setLoadingDocumentDetail] = useState(false);
 
     return {
         isFolderSheetOpen,
@@ -17,11 +14,5 @@ export const useDetailSheet = () => {
         setFolderDetail,
         loadingFolderDetail,
         setLoadingFolderDetail,
-        isDocumentSheetOpen,
-        setIsDocumentSheetOpen,
-        documentDetail,
-        setDocumentDetail,
-        loadingDocumentDetail,
-        setLoadingDocumentDetail,
     };
 };

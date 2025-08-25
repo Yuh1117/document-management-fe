@@ -5,7 +5,7 @@ type Props = {
     permission: string,
     handleDropdownToggle: (open: boolean) => void,
     handleDownload: () => Promise<void>,
-    handleViewDetail: () => Promise<void>,
+    handleViewDetail: () => void,
     handleOpenEdit: () => void,
     handleSoftDelete: () => Promise<void>,
     handleOpenShareUrl?: () => void

@@ -5,31 +5,36 @@ import { LuFileText, LuAudioLines } from "react-icons/lu";
 import { MdOndemandVideo } from "react-icons/md";
 
 export const getIconComponentByMimeType = (mimeType: string) => {
-    if (!mimeType) return AiOutlineFileUnknown;
+    if (!mimeType) return { icon: AiOutlineFileUnknown, color: "text-gray-500" };
 
     const [type, subtype] = mimeType.split("/");
 
     switch (type) {
         case "text":
-            if (subtype === "plain") return LuFileText;
-            if (subtype === "html") return FaHtml5;
-            if (subtype === "css") return FaCss3Alt;
-            if (subtype === "md") return FaMarkdown;
+            if (subtype === "plain") return { icon: LuFileText, color: "#333333" };
+            if (subtype === "html") return { icon: FaHtml5, color: "#e44d26" };
+            if (subtype === "css") return { icon: FaCss3Alt, color: "#2980b9" };
+            if (subtype === "md") return { icon: FaMarkdown, color: "#3e8a9d" };
             break;
         case "image":
-            return FaRegImage;
+            return { icon: FaRegImage, color: "#50b3f1" };
         case "audio":
-            return LuAudioLines;
+            return { icon: LuAudioLines, color: "#6c757d" };
         case "video":
-            return MdOndemandVideo;
+            return { icon: MdOndemandVideo, color: "#6c6f74" };
         case "application":
-            if (subtype === "pdf") return FaRegFilePdf;
-            if (subtype === "zip") return FaRegFileZipper;
-            if (subtype in ["msword", "vnd.openxmlformats-officedocument.wordprocessingml.document"]) return FaRegFileWord;
-            if (subtype in ["ms-excel", "vnd.openxmlformats-officedocument.wordprocessingml.document"]) return FaRegFileExcel;
-            if (subtype in ["powerpoint", "vnd.openxmlformats-officedocument.wordprocessingml.document"]) return FaRegFilePowerpoint;
+            if (subtype === "pdf")
+                return { icon: FaRegFilePdf, color: "#e74c3c" };
+            if (["zip", "x-zip-compressed", "vnd.rar", "x-7z-compressed"].includes(subtype))
+                return { icon: FaRegFileZipper, color: "#95a5a6" };
+            if (["msword", "vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(subtype))
+                return { icon: FaRegFileWord, color: "#3498db" };
+            if (["ms-excel", "vnd.openxmlformats-officedocument.spreadsheetml.sheet"].includes(subtype))
+                return { icon: FaRegFileExcel, color: "#2ecc71" };
+            if (["powerpoint", "vnd.openxmlformats-officedocument.presentationml.presentation"].includes(subtype))
+                return { icon: FaRegFilePowerpoint, color: "#f39c12" };
             break;
     }
 
-    return AiOutlineFileUnknown;
+    return { icon: AiOutlineFileUnknown, color: "text-gray-500" };
 };

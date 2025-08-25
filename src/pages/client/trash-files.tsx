@@ -8,7 +8,6 @@ import { toast, Toaster } from "sonner";
 import Document from "@/components/client/document/document";
 import Folder from "@/components/client/folder/folder";
 import { useFilesLoader } from "@/hooks/use-files-loader";
-import { useDetailSheet } from "@/hooks/use-detail-sheet";
 import { triggerReload } from "@/redux/reducers/filesSlice";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -16,7 +15,6 @@ import { Button } from "@/components/ui/button";
 const TrashFilesPage = () => {
     const { reloadFlag } = useAppSelector(state => state.files);
     const { files, loading, hasMore, observerRef } = useFilesLoader(endpoints["trash-files"], reloadFlag);
-    const details = useDetailSheet();
     const [cleaning, setCleaning] = useState<boolean>(false);
     const [open, setOpen] = useState<boolean>(false)
     const dispatch = useAppDispatch()
@@ -80,9 +78,6 @@ const TrashFilesPage = () => {
                                             key={`folder-${f.folder.id}`}
                                             data={f.folder}
                                             permission={f.permission}
-                                            setLoadingDetail={details.setLoadingFolderDetail}
-                                            setFolderDetail={details.setFolderDetail}
-                                            setIsSheetOpen={details.setIsFolderSheetOpen}
                                         />
                                     ))}
                                 </div>
@@ -98,9 +93,6 @@ const TrashFilesPage = () => {
                                             key={`doc-${f.document.id}`}
                                             data={f.document}
                                             permission={f.permission}
-                                            setIsSheetOpen={details.setIsDocumentSheetOpen}
-                                            setDocumentDetail={details.setDocumentDetail}
-                                            setLoadingDetail={details.setLoadingDocumentDetail}
                                         />
                                     ))}
                                 </div>
