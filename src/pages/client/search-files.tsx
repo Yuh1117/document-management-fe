@@ -25,14 +25,28 @@ import { closeFolderDetail, closeFolderModal } from "@/redux/reducers/folderSlic
 import { useLocation } from "react-router";
 
 const SearchFilesPage = () => {
-    const location = useLocation()
+    const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    const query = queryParams.get("kw") || "";
+    const pathname = location.pathname;
+
+    const isAdvanced = pathname.includes("/advanced-search");
+
+    const basicQuery = queryParams.get("kw") || "";
+    const advancedQuery = {
+        kw: queryParams.get("kw") || "",
+        kwType: queryParams.get("kwType") || "",
+        type: queryParams.get("type") || "",
+        size: queryParams.get("size") || "",
+        sizeType: queryParams.get("sizeType") || ""
+    };
+
+    const query = isAdvanced ? advancedQuery : basicQuery;
+    const endpoint = isAdvanced ? endpoints["advanced-search"] : endpoints["search-files"];
 
     const fileState = useAppSelector(state => state.files);
     const documentState = useAppSelector(state => state.documents)
     const folderState = useAppSelector(state => state.folders)
-    const { files, loading, hasMore, observerRef } = useFilesLoader(endpoints["search-files"], fileState.reloadFlag, query);
+    const { files, loading, hasMore, observerRef } = useFilesLoader(endpoint, fileState.reloadFlag, query);
     const multi = useMultiSelect();
     const { downloading, download } = useDownloadFiles();
     const dispatch = useAppDispatch();

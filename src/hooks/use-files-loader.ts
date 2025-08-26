@@ -1,22 +1,34 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { IFileItem } from "@/types/type";
 import { authApis } from "@/config/Api";
 
-export function useFilesLoader(endpoint: string | null, reloadFlag?: any, query?: string) {
+export function useFilesLoader(endpoint: string | null, reloadFlag?: any, query?: string | Record<string, string>) {
     const [files, setFiles] = useState<IFileItem[]>([]);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const observerRef = useRef<HTMLDivElement | null>(null);
 
+    const stableQuery = useMemo(() => {
+        const params = new URLSearchParams();
+        if (query && typeof query === "string") {
+            params.set("kw", query);
+        } else if (query && typeof query === "object") {
+            for (const [key, value] of Object.entries(query)) {
+                if (value) params.set(key, value);
+            }
+        }
+        return params;
+    }, [JSON.stringify(query)]);
+
     const loadFiles = async () => {
         try {
             setLoading(true);
 
-            let url = `${endpoint}?page=${page}`
-            if (query) {
-                url = `${url}&kw=${query}`
-            }
+            const params = new URLSearchParams(stableQuery);
+            params.set("page", page.toString());
+
+            const url = `${endpoint}?${params.toString()}`;
             const res = await authApis().get(url);
             const data = res.data.data;
 
@@ -37,13 +49,13 @@ export function useFilesLoader(endpoint: string | null, reloadFlag?: any, query?
     useEffect(() => {
         if (endpoint && page > 0)
             loadFiles();
-    }, [page, endpoint, query]);
+    }, [page, endpoint, stableQuery]);
 
     useEffect(() => {
         setFiles([]);
         setPage(1);
         setHasMore(true);
-    }, [reloadFlag, endpoint, query]);
+    }, [reloadFlag, endpoint, stableQuery]);
 
     useEffect(() => {
         if (!hasMore || loading) return;

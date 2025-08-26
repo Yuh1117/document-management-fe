@@ -68,6 +68,10 @@ const router = createBrowserRouter([
         element: <Files mode="search" />,
       },
       {
+        path: "/advanced-search",
+        element: <Files mode="search" />,
+      },
+      {
         path: "/folders/:id",
         element: <Files mode="folder" />,
       },
