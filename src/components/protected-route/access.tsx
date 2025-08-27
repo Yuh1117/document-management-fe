@@ -18,7 +18,7 @@ const Access = ({ children, permission, hideChildren = false }: Props) => {
 
     return (
         <>
-            {allow === true || import.meta.env.VITE_NO_ACCESS === 'false' ?
+            {allow === true || import.meta.env.VITE_CHECK_ACCESS === 'false' ?
                 <>{children}</>
                 :
                 <>

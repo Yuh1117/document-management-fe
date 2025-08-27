@@ -19,7 +19,7 @@ const SearchBar = () => {
     const [kwType, setKwType] = useState<string>("exact")
     const [type, setType] = useState("any")
     const [size, setSize] = useState<number>()
-    const [sizeType, setSizeType] = useState("gt")
+    const [sizeType, setSizeType] = useState("minSize")
 
     const handleSearch = (value: string) => {
         const trimmed = value.trim()
@@ -32,8 +32,32 @@ const SearchBar = () => {
             localStorage.setItem("search-history", JSON.stringify(updatedHistory))
         }
 
-        nav(`/search?kw=${encodeURIComponent(trimmed)}`);
+        const query = new URLSearchParams()
+        query.set("kw", trimmed)
+
+        nav(`/search?${query.toString()}`)
         setIsOpen(false)
+    }
+
+    const handleAdvancedSearch = () => {
+        const query = new URLSearchParams()
+
+        const trimmedKw = kw.trim()
+        if (trimmedKw) {
+            query.set("kw", trimmedKw)
+            query.set("kwType", kwType)
+        }
+        if (type !== "any") {
+            query.set("type", type)
+        }
+        if (size) {
+            query.set("size", size.toString())
+            query.set("sizeType", sizeType)
+        }
+
+        nav(`/advanced-search/?${query.toString()}`)
+        setSearchValue("")
+        setShowAdvanced(false)
     }
 
     const deleteHistoryItem = (indexToRemove: number) => {
@@ -60,7 +84,7 @@ const SearchBar = () => {
         setKwType("exact")
         setType("any")
         setSize(undefined)
-        setSizeType("gt")
+        setSizeType("minSize")
     }
 
     useEffect(() => {
@@ -68,7 +92,6 @@ const SearchBar = () => {
         if (stored) {
             setSearchHistory(JSON.parse(stored))
         }
-        reset()
     }, [showAdvanced])
 
     const filteredHistory = searchValue.trim()
@@ -165,9 +188,8 @@ const SearchBar = () => {
                                 <SelectContent>
                                     <SelectItem value="any">Bất kỳ</SelectItem>
                                     <SelectItem value="pdf">PDF</SelectItem>
-                                    <SelectItem value="docx">DOCX</SelectItem>
+                                    <SelectItem value="word">DOC</SelectItem>
                                     <SelectItem value="image">Hình ảnh</SelectItem>
-                                    <SelectItem value="folder">Thư mục</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -179,12 +201,12 @@ const SearchBar = () => {
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="gt">Lớn hơn</SelectItem>
-                                    <SelectItem value="lt">Nhỏ hơn</SelectItem>
+                                    <SelectItem value="minSize">Lớn hơn</SelectItem>
+                                    <SelectItem value="maxSize">Nhỏ hơn</SelectItem>
                                 </SelectContent>
                             </Select>
-                            <Input type="number" placeholder="MB" className="w-32"
-                                  value={size ?? ""} onChange={(e) => setSize(parseFloat(e.target.value))} />
+                            <Input type="number" placeholder="MB" className="w-32" min={0}
+                                value={size ?? ""} onChange={(e) => setSize(parseFloat(e.target.value))} />
                         </div>
 
                         <Label className="col-span-4">Từ khóa</Label>
@@ -212,7 +234,7 @@ const SearchBar = () => {
                         <Button variant="outline" onClick={reset}>
                             Đặt lại
                         </Button>
-                        <Button onClick={() => setShowAdvanced(false)}>Tìm kiếm</Button>
+                        <Button onClick={handleAdvancedSearch}>Tìm kiếm</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

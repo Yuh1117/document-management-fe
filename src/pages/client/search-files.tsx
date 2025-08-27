@@ -22,17 +22,31 @@ import ShareModal from "@/components/client/share-modal";
 import { closeDocumentDetail, closeDocumentModal, closeShareUrlModal } from "@/redux/reducers/documentSlice";
 import { closeShareModal, closeTransferModal } from "@/redux/reducers/filesSlice";
 import { closeFolderDetail, closeFolderModal } from "@/redux/reducers/folderSlice";
-import { useLocation } from "react-router";
+import { useLocation, useSearchParams } from "react-router";
 
 const SearchFilesPage = () => {
-    const location = useLocation()
-    const queryParams = new URLSearchParams(location.search);
-    const query = queryParams.get("kw") || "";
+    const location = useLocation();
+    const pathname = location.pathname;
+    
+    const isAdvanced = pathname.includes("/advanced-search");
+
+    const [queryParams] = useSearchParams()
+    const basicQuery = queryParams.get("kw") || "";
+    const advancedQuery = {
+        kw: queryParams.get("kw") || "",
+        kwType: queryParams.get("kwType") || "",
+        type: queryParams.get("type") || "",
+        size: queryParams.get("size") || "",
+        sizeType: queryParams.get("sizeType") || ""
+    };
+
+    const query = isAdvanced ? advancedQuery : basicQuery;
+    const endpoint = isAdvanced ? endpoints["advanced-search"] : endpoints["search-files"];
 
     const fileState = useAppSelector(state => state.files);
     const documentState = useAppSelector(state => state.documents)
     const folderState = useAppSelector(state => state.folders)
-    const { files, loading, hasMore, observerRef } = useFilesLoader(endpoints["search-files"], fileState.reloadFlag, query);
+    const { files, loading, hasMore, observerRef } = useFilesLoader(endpoint, fileState.reloadFlag, query);
     const multi = useMultiSelect();
     const { downloading, download } = useDownloadFiles();
     const dispatch = useAppDispatch();
