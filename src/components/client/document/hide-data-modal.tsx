@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState, type ChangeEvent } from "react";
 import { useForm } from "react-hook-form";
 import { AlertCircleIcon } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface IForm {
     content: string;
@@ -30,6 +31,8 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
     const form = useForm<IForm>();
     const [loading, setLoading] = useState<boolean>(false);
     const [msg, setMsg] = useState<string>("");
+    const [decryptedData, setDecryptedData] = useState<string | null>(null);
+    const [currentTab, setCurrentTab] = useState<string>("hide");
 
     const setError = (field: keyof IForm, message: string): void => {
         form.setError(field, { type: "manual", message: message });
@@ -75,23 +78,31 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
         form.clearErrors();
         setMsg("");
 
-        if (validate(data)) {
-            try {
-                setLoading(true);
-                setMsg("Dữ liệu đã được ẩn thành công!");
-            } catch (error: any) {
-                setMsg("Lỗi hệ thống hoặc kết nối.");
-            } finally {
-                setLoading(false);
+        if (currentTab === "hide") {
+            if (validate(data)) {
+                try {
+                    setLoading(true);
+                    setMsg("Dữ liệu đã được ẩn thành công!");
+                } catch (error: any) {
+                    setMsg("Lỗi hệ thống hoặc kết nối.");
+                } finally {
+                    setLoading(false);
+                }
+            }
+        } else {
+            if (validateImage(data.file)) {
+                setDecryptedData("data")
             }
         }
+
     };
 
     useEffect(() => {
         if (open) {
-            form.unregister()
+            form.reset()
+            setDecryptedData("")
         }
-    }, [open])
+    }, [open, currentTab])
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -105,75 +116,149 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
                         <AlertDescription>{msg}</AlertDescription>
                     </Alert>
                 )}
-                <Form {...form}>
-                    <form className="p-1" onSubmit={form.handleSubmit(onSubmit)}>
-                        <div className="flex flex-col gap-6">
-                            <FormField
-                                control={form.control}
-                                name="file"
-                                render={() => (
-                                    <FormItem>
-                                        <FormLabel>File</FormLabel>
-                                        <FormControl>
-                                            <Input type="file" accept="application/pdf"
-                                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                    const file = e.target.files?.[0];
-                                                    form.setValue("file", file!);
-                                                    validateImage(file!);
-                                                }} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                <Tabs defaultValue="hide" value={currentTab} onValueChange={(value) => setCurrentTab(value)}>
+                    <TabsList className="mb-1">
+                        <TabsTrigger value="hide">Ẩn</TabsTrigger>
+                        <TabsTrigger value="unhide">Giải</TabsTrigger>
+                    </TabsList>
 
-                            <FormField
-                                control={form.control}
-                                name="content"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>{fieldNames.content}</FormLabel>
-                                        <FormControl>
-                                            <Textarea
-                                                {...field}
-                                                value={field.value || ""}
-                                                onChange={(e) => form.setValue("content", e.target.value)}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                    <TabsContent value="hide">
+                        <Form {...form}>
+                            <form className="p-1" onSubmit={form.handleSubmit(onSubmit)}>
+                                <div className="flex flex-col gap-6">
+                                    <FormField
+                                        control={form.control}
+                                        name="file"
+                                        render={() => (
+                                            <FormItem>
+                                                <FormLabel>{fieldNames.file}</FormLabel>
+                                                <FormControl>
+                                                    <Input type="file" accept="application/pdf"
+                                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                            const file = e.target.files?.[0];
+                                                            form.setValue("file", file!);
+                                                            validateImage(file!);
+                                                        }} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
 
-                            <FormField
-                                control={form.control}
-                                name="password"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>{fieldNames.password}</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="password"
-                                                {...field}
-                                                value={field.value || ""}
-                                                onChange={(e) => form.setValue("password", e.target.value)}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-                    </form>
-                </Form>
-                <DialogFooter>
-                    <Button variant="outline" onClick={() => onOpenChange(false)}>
-                        Hủy
-                    </Button>
-                    <Button onClick={() => form.handleSubmit(onSubmit)()} disabled={loading}>
-                        {loading ? <Spinner size={16} /> : "Xác nhận"}
-                    </Button>
-                </DialogFooter>
+                                    <FormField
+                                        control={form.control}
+                                        name="content"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>{fieldNames.content}</FormLabel>
+                                                <FormControl>
+                                                    <Textarea
+                                                        {...field}
+                                                        value={field.value || ""}
+                                                        onChange={(e) => form.setValue("content", e.target.value)}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="password"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>{fieldNames.password}</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="password"
+                                                        {...field}
+                                                        value={field.value || ""}
+                                                        onChange={(e) => form.setValue("password", e.target.value)}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                            </form>
+                        </Form>
+
+                        <DialogFooter className="mt-5">
+                            <Button variant="outline" onClick={() => onOpenChange(false)}>
+                                Hủy
+                            </Button>
+                            <Button onClick={() => form.handleSubmit(onSubmit)()} disabled={loading}>
+                                {loading ? <Spinner size={16} /> : "Ẩn"}
+                            </Button>
+                        </DialogFooter>
+
+                    </TabsContent>
+
+                    <TabsContent value="unhide">
+                        <Form {...form}>
+                            <form className="p-1" onSubmit={form.handleSubmit(onSubmit)}>
+                                <div className="flex flex-col gap-6">
+                                    <FormField
+                                        control={form.control}
+                                        name="file"
+                                        render={() => (
+                                            <FormItem>
+                                                <FormLabel>{fieldNames.file}</FormLabel>
+                                                <FormControl>
+                                                    <Input type="file" accept="application/pdf"
+                                                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                            const file = e.target.files?.[0];
+                                                            form.setValue("file", file!);
+                                                            validateImage(file!);
+                                                        }} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="password"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>{fieldNames.password}</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="password"
+                                                        {...field}
+                                                        value={field.value || ""}
+                                                        onChange={(e) => form.setValue("password", e.target.value)}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                            </form>
+                        </Form>
+
+                        {decryptedData && (
+                            <div className="mt-4 p-2 border rounded-md bg-gray-100">
+                                <h3 className="font-semibold">Dữ liệu giải mã:</h3>
+                                <p>{decryptedData}</p>
+                            </div>
+                        )}
+
+                        <DialogFooter className="mt-5">
+                            <Button variant="outline" onClick={() => onOpenChange(false)}>
+                                Hủy
+                            </Button>
+                            <Button onClick={() => form.handleSubmit(onSubmit)()} disabled={loading}>
+                                {loading ? <Spinner size={16} /> : "Giải"}
+                            </Button>
+                        </DialogFooter>
+
+                    </TabsContent>
+                </Tabs>
             </DialogContent>
         </Dialog>
     );

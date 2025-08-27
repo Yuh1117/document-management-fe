@@ -91,7 +91,7 @@ const DocumentModal = ({
             if (data) {
                 form.reset(data);
             } else {
-                form.unregister();
+                form.reset();
             }
             form.clearErrors();
             setMsg("");

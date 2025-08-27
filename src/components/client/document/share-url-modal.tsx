@@ -64,7 +64,7 @@ const ShareUrlModal = ({ open, onOpenChange, doc }: Props) => {
                 form.setValue("id", doc.id);
                 form.setValue("expiredTime", 3);
             } else {
-                form.unregister();
+                form.reset();
             }
             form.clearErrors();
         }

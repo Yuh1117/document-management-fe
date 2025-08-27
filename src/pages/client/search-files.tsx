@@ -22,15 +22,15 @@ import ShareModal from "@/components/client/share-modal";
 import { closeDocumentDetail, closeDocumentModal, closeShareUrlModal } from "@/redux/reducers/documentSlice";
 import { closeShareModal, closeTransferModal } from "@/redux/reducers/filesSlice";
 import { closeFolderDetail, closeFolderModal } from "@/redux/reducers/folderSlice";
-import { useLocation } from "react-router";
+import { useLocation, useSearchParams } from "react-router";
 
 const SearchFilesPage = () => {
     const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
     const pathname = location.pathname;
-
+    
     const isAdvanced = pathname.includes("/advanced-search");
 
+    const [queryParams] = useSearchParams()
     const basicQuery = queryParams.get("kw") || "";
     const advancedQuery = {
         kw: queryParams.get("kw") || "",
