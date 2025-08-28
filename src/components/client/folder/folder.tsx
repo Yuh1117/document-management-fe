@@ -90,7 +90,7 @@ const Folder = ({
             await authApis().patch(endpoints["folders"], req);
 
             dispatch(triggerReload())
-            toast.success("Đã chuyền vào thùng rác", {
+            toast.success("Đã chuyển vào thùng rác", {
                 duration: 2000
             })
         } catch (error) {

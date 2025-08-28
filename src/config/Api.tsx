@@ -56,7 +56,9 @@ export const endpoints = {
     "share-doc": "/api/secure/documents/share",
     "share-folder": "/api/secure/folders/share",
     "share-doc-detail": (documentId: string | number) => `/api/secure/documents/share/${documentId}`,
-    "share-folder-detail": (folderId: string | number) => `/api/secure/folders/share/${folderId}`
+    "share-folder-detail": (folderId: string | number) => `/api/secure/folders/share/${folderId}`,
+    "hide-data": "/api/secure/documents/hide-data",
+    "extract-data": "/api/secure/documents/extract-data",
 }
 
 export const authApis = () => {

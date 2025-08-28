@@ -1,4 +1,3 @@
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -7,12 +6,13 @@ import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState, type ChangeEvent } from "react";
 import { useForm } from "react-hook-form";
-import { AlertCircleIcon } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { authApis, endpoints } from "@/config/Api";
+import { toast } from "sonner";
 
 interface IForm {
     content: string;
-    password: string,
+    password?: string,
     file: File
 }
 
@@ -30,7 +30,6 @@ type Props = {
 const HideDataModal = ({ open, onOpenChange }: Props) => {
     const form = useForm<IForm>();
     const [loading, setLoading] = useState<boolean>(false);
-    const [msg, setMsg] = useState<string>("");
     const [decryptedData, setDecryptedData] = useState<string | null>(null);
     const [currentTab, setCurrentTab] = useState<string>("hide");
 
@@ -76,22 +75,69 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
 
     const onSubmit = async (data: IForm) => {
         form.clearErrors();
-        setMsg("");
+        setDecryptedData("")
 
         if (currentTab === "hide") {
             if (validate(data)) {
                 try {
                     setLoading(true);
-                    setMsg("Dữ liệu đã được ẩn thành công!");
-                } catch (error: any) {
-                    setMsg("Lỗi hệ thống hoặc kết nối.");
+
+                    let form = new FormData();
+                    Object.entries(data).forEach(([key, value]) => {
+                        form.append(key, value);
+                    });
+
+                    const res = await authApis().post(endpoints["hide-data"], form, {
+                        responseType: "blob"
+                    });
+
+                    const url = window.URL.createObjectURL(new Blob([res.data]));
+                    const link = document.createElement("a");
+
+                    link.href = url;
+                    link.setAttribute("download", data.file.name);
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                    window.URL.revokeObjectURL(url);
+
+                    toast.success("Thành công", {
+                        duration: 2000
+                    })
+                    onOpenChange(false)
+                } catch (error) {
+                    console.error("Lỗi", error);
+                    toast.error("Thất bại", {
+                        duration: 2000
+                    })
                 } finally {
                     setLoading(false);
                 }
             }
         } else {
             if (validateImage(data.file)) {
-                setDecryptedData("data")
+                try {
+                    setLoading(true);
+
+                    let form = new FormData();
+                    Object.entries(data).forEach(([key, value]) => {
+                        form.append(key, value);
+                    });
+
+                    const res: any = await authApis().post(endpoints["extract-data"], form);
+                    setDecryptedData(res.data.data)
+
+                    toast.success("Thành công", {
+                        duration: 2000
+                    })
+                } catch (error) {
+                    console.error("Lỗi:", error);
+                    toast.error("Thất bại", {
+                        duration: 2000
+                    })
+                } finally {
+                    setLoading(false);
+                }
             }
         }
 
@@ -110,12 +156,7 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
                 <DialogHeader>
                     <DialogTitle>Ẩn Dữ Liệu</DialogTitle>
                 </DialogHeader>
-                {msg && (
-                    <Alert className="border-red-500" variant="destructive">
-                        <AlertCircleIcon />
-                        <AlertDescription>{msg}</AlertDescription>
-                    </Alert>
-                )}
+
                 <Tabs defaultValue="hide" value={currentTab} onValueChange={(value) => setCurrentTab(value)}>
                     <TabsList className="mb-1">
                         <TabsTrigger value="hide">Ẩn</TabsTrigger>
@@ -242,7 +283,7 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
                         </Form>
 
                         {decryptedData && (
-                            <div className="mt-4 p-2 border rounded-md bg-gray-100">
+                            <div className="mt-4 p-2 border rounded-xl bg-gray-100">
                                 <h3 className="font-semibold">Dữ liệu giải mã:</h3>
                                 <p>{decryptedData}</p>
                             </div>

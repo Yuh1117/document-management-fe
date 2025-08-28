@@ -4,9 +4,10 @@ import { authApis } from "@/config/Api";
 
 export function useFilesLoader(endpoint: string | null, reloadFlag?: any, query?: string | Record<string, string>) {
     const [files, setFiles] = useState<IFileItem[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [page, setPage] = useState(1);
-    const [hasMore, setHasMore] = useState(true);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [page, setPage] = useState<number>(0);
+    const [hasMore, setHasMore] = useState<boolean>(true);
+    const [loadKey, setLoadKey] = useState<boolean>(false);
     const observerRef = useRef<HTMLDivElement | null>(null);
 
     const stableQuery = useMemo(() => {
@@ -49,24 +50,25 @@ export function useFilesLoader(endpoint: string | null, reloadFlag?: any, query?
     useEffect(() => {
         if (endpoint && page > 0)
             loadFiles();
-    }, [page, endpoint, stableQuery]);
+    }, [page, loadKey]);
 
     useEffect(() => {
         setFiles([]);
-        setPage(1);
+        setPage(1)
         setHasMore(true);
+        setLoadKey((prev) => !prev);
     }, [reloadFlag, endpoint, stableQuery]);
 
     useEffect(() => {
         if (!hasMore || loading) return;
-        const scrollViewport = document.querySelector('[data-slot="scroll-area-viewport"]');
+
         const observer = new IntersectionObserver(
             (entries) => {
                 if (entries[0].isIntersecting && page > 0 && !loading) {
                     setPage((prev) => prev + 1);
                 }
             },
-            { root: scrollViewport, threshold: 1.0 }
+            { threshold: 1.0 }
         );
         if (observerRef.current) observer.observe(observerRef.current);
         return () => {

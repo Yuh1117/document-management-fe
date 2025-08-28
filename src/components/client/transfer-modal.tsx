@@ -44,7 +44,6 @@ const TransferModal = ({
     const [transfering, setTransfering] = useState<boolean>(false)
     const { files, loading, hasMore, observerRef } = useFilesLoader(currentEndpoint, open)
 
-
     const handleTransfer = async () => {
         if (selectedFolder === null) return
         try {
