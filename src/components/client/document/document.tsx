@@ -96,7 +96,7 @@ const Document = ({
             await authApis().patch(endpoints["documents"], req);
 
             dispatch(triggerReload())
-            toast.success("Đã chuyền vào thùng rác", {
+            toast.success("Đã chuyển vào thùng rác", {
                 duration: 2000
             })
         } catch (error) {

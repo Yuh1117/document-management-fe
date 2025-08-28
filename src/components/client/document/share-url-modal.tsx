@@ -22,38 +22,28 @@ const ShareUrlModal = ({ open, onOpenChange, doc }: Props) => {
     const [signedUrl, setSignedUrl] = useState<string | null>(null);
     const [sharing, setSharing] = useState<boolean>(false)
 
-    const createSignedUrl = async (id: number, expiredTime: number): Promise<string> => {
+    const onSubmit = async (data: { id: number, expiredTime: number }) => {
         try {
             setSharing(true);
 
             const req: { documentId: number, expiredTime: number } = {
-                documentId: id,
-                expiredTime: expiredTime
+                documentId: data.id,
+                expiredTime: data.expiredTime
             }
 
-            const res = await authApis().post(endpoints["share-url"], req);
+            const res: any = await authApis().post(endpoints["share-url"], req);
+            setSignedUrl(res.data.data)
 
             toast.success("Đã tạo link thành công", {
                 duration: 2000
             })
-            return res.data.data;
         } catch (error) {
             console.error("Lỗi khi chia sẻ", error);
             toast.error("Chia sẻ thất bại", {
                 duration: 2000
             })
-            return ""
         } finally {
             setSharing(false);
-        }
-    };
-
-    const onSubmit = async (data: { id: number, expiredTime: number }) => {
-        const url = await createSignedUrl(data.id, data.expiredTime)
-        if (url) {
-            setSignedUrl(url);
-        } else {
-            onOpenChange(false);
         }
     }
 

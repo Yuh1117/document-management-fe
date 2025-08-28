@@ -11,7 +11,7 @@ export const getIconComponentByMimeType = (mimeType: string) => {
 
     switch (type) {
         case "text":
-            if (subtype === "plain") return { icon: LuFileText, color: "#333333" };
+            if (subtype === "plain") return { icon: LuFileText, color: "#696969ff" };
             if (subtype === "html") return { icon: FaHtml5, color: "#e44d26" };
             if (subtype === "css") return { icon: FaCss3Alt, color: "#2980b9" };
             if (subtype === "md") return { icon: FaMarkdown, color: "#3e8a9d" };
