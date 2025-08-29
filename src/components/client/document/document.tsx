@@ -173,7 +173,7 @@ const Document = ({
         >
             <CardHeader className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <Icon size={22} color={color} />
+                    <Icon size={20} color={color} />
                     <Label className="truncate max-w-[130px]">{data.name}</Label>
                 </div>
                 <div>
@@ -205,7 +205,7 @@ const Document = ({
                 </div>
             </CardHeader>
             <CardContent>
-                <div className="flex justify-center items-center h-[150px] bg-muted rounded-xl ">
+                <div className="flex justify-center items-center h-[150px] bg-muted rounded-xl">
                     <Icon size={50} color={color}/>
                 </div>
             </CardContent>

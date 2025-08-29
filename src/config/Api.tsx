@@ -28,6 +28,7 @@ export const endpoints = {
     "search-files": "/api/secure/files/search",
     "advanced-search": "/api/secure/files/advanced-search",
     "shared-files": "/api/secure/files/shared",
+    "recent-files": "/api/secure/files/recent",
 
     "folders": "/api/secure/folders",
     "documents": "/api/secure/documents",

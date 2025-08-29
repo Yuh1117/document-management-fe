@@ -19,133 +19,137 @@ import RoleAdminPage from './pages/admin/role'
 import Files from './pages/client/files'
 
 const homeLoader = async () => {
-  return { message: "Home page hehe" };
+    return { message: "Home page hehe" };
 };
 
 const MainLayout = () => (
-  <>
-    <Header />
-    <SidebarProvider className="min-h-0">
-      <AppSidebar className="border-none pt-18" />
-      <SidebarInset className="pe-2">
-        <Outlet />
-      </SidebarInset>
-    </SidebarProvider>
-  </>
+    <>
+        <Header />
+        <SidebarProvider className="min-h-0">
+            <AppSidebar className="border-none pt-18" />
+            <SidebarInset className="pe-2">
+                <Outlet />
+            </SidebarInset>
+        </SidebarProvider>
+    </>
 );
 
 const AdminLayout = () => (
-  <>
-    <SidebarProvider>
-      <AdminSidebar />
-      <SidebarInset>
-        <Outlet />
-      </SidebarInset>
-    </SidebarProvider>
-  </>
+    <>
+        <SidebarProvider>
+            <AdminSidebar />
+            <SidebarInset>
+                <Outlet />
+            </SidebarInset>
+        </SidebarProvider>
+    </>
 );
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: (
-      <ProtectedRoute>
-        <MainLayout />
-      </ProtectedRoute>
-    ),
-    children: [
-      {
-        index: true,
-        Component: Home,
-        loader: homeLoader,
-      },
-      {
-        path: "/my-files",
-        element: <Files mode="my-files" />,
-      },
-      {
-        path: "/search",
-        element: <Files mode="search" />,
-      },
-      {
-        path: "/advanced-search",
-        element: <Files mode="search" />,
-      },
-      {
-        path: "/folders/:id",
-        element: <Files mode="folder" />,
-      },
-      {
-        path: "/shared",
-        element: <Files mode="shared" />,
-      },
-      {
-        path: "/trash",
-        element: <Files mode="trash" />,
-      }
-    ],
-  },
-  {
-    path: "/admin",
-    element: (
-      <AdminRoute>
-        <AdminLayout />
-      </AdminRoute>
-    ),
-    children: [
-      {
-        index: true,
-        Component: DashBoard,
-        loader: homeLoader,
-      },
-      {
-        path: "settings",
-        Component: SettingAdminPage,
-      },
-      {
-        path: "users",
-        Component: UserAdminPage,
-      },
-      {
-        path: "roles",
-        Component: RoleAdminPage,
-      },
-      {
-        path: "permissions",
-        Component: PermissionAdminPage,
-      },
-    ],
-  },
-  {
-    path: "/login",
-    element: (
-      <AuthRoute>
-        <Login />
-      </AuthRoute>
-    ),
-  },
-  {
-    path: "/signup",
-    element: (
-      <AuthRoute>
-        <Signup />
-      </AuthRoute>
-    ),
-  },
+    {
+        path: "/",
+        element: (
+            <ProtectedRoute>
+                <MainLayout />
+            </ProtectedRoute>
+        ),
+        children: [
+            {
+                index: true,
+                Component: Home,
+                loader: homeLoader,
+            },
+            {
+                path: "/my-files",
+                element: <Files mode="my-files" />,
+            },
+            {
+                path: "/search",
+                element: <Files mode="search" />,
+            },
+            {
+                path: "/advanced-search",
+                element: <Files mode="search" />,
+            },
+            {
+                path: "/folders/:id",
+                element: <Files mode="folder" />,
+            },
+            {
+                path: "/recent",
+                element: <Files mode="recent" />,
+            },
+            {
+                path: "/shared",
+                element: <Files mode="shared" />,
+            },
+            {
+                path: "/trash",
+                element: <Files mode="trash" />,
+            }
+        ],
+    },
+    {
+        path: "/admin",
+        element: (
+            <AdminRoute>
+                <AdminLayout />
+            </AdminRoute>
+        ),
+        children: [
+            {
+                index: true,
+                Component: DashBoard,
+                loader: homeLoader,
+            },
+            {
+                path: "settings",
+                Component: SettingAdminPage,
+            },
+            {
+                path: "users",
+                Component: UserAdminPage,
+            },
+            {
+                path: "roles",
+                Component: RoleAdminPage,
+            },
+            {
+                path: "permissions",
+                Component: PermissionAdminPage,
+            },
+        ],
+    },
+    {
+        path: "/login",
+        element: (
+            <AuthRoute>
+                <Login />
+            </AuthRoute>
+        ),
+    },
+    {
+        path: "/signup",
+        element: (
+            <AuthRoute>
+                <Signup />
+            </AuthRoute>
+        ),
+    },
 ]);
 
 function App() {
-  const dispatch = useAppDispatch();
+    const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    dispatch(getProfile())
-  }, [])
+    useEffect(() => {
+        dispatch(getProfile())
+    }, [])
 
-  return (
-    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-      <RouterProvider router={router} />
-    </ThemeProvider>
-  );
+    return (
+        <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+            <RouterProvider router={router} />
+        </ThemeProvider>
+    );
 }
 
 export default App
