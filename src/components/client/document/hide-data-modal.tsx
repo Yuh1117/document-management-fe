@@ -160,7 +160,7 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
                 <Tabs defaultValue="hide" value={currentTab} onValueChange={(value) => setCurrentTab(value)}>
                     <TabsList className="mb-1">
                         <TabsTrigger value="hide">Ẩn</TabsTrigger>
-                        <TabsTrigger value="unhide">Giải</TabsTrigger>
+                        <TabsTrigger value="extract">Trích xuất</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="hide">
@@ -226,18 +226,9 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
                             </form>
                         </Form>
 
-                        <DialogFooter className="mt-5">
-                            <Button variant="outline" onClick={() => onOpenChange(false)}>
-                                Hủy
-                            </Button>
-                            <Button onClick={() => form.handleSubmit(onSubmit)()} disabled={loading}>
-                                {loading ? <Spinner size={16} /> : "Ẩn"}
-                            </Button>
-                        </DialogFooter>
-
                     </TabsContent>
 
-                    <TabsContent value="unhide">
+                    <TabsContent value="extract">
                         <Form {...form}>
                             <form className="p-1" onSubmit={form.handleSubmit(onSubmit)}>
                                 <div className="flex flex-col gap-6">
@@ -289,17 +280,18 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
                             </div>
                         )}
 
-                        <DialogFooter className="mt-5">
-                            <Button variant="outline" onClick={() => onOpenChange(false)}>
-                                Hủy
-                            </Button>
-                            <Button onClick={() => form.handleSubmit(onSubmit)()} disabled={loading}>
-                                {loading ? <Spinner size={16} /> : "Giải"}
-                            </Button>
-                        </DialogFooter>
-
                     </TabsContent>
                 </Tabs>
+
+                <DialogFooter className="mt-5">
+                    <Button variant="outline" onClick={() => onOpenChange(false)}>
+                        Hủy
+                    </Button>
+                    <Button onClick={() => form.handleSubmit(onSubmit)()} disabled={loading}>
+                        {loading ? <Spinner size={16} /> : "Xác nhận"}
+                    </Button>
+                </DialogFooter>
+
             </DialogContent>
         </Dialog>
     );

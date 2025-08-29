@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Folder as FolderIcon } from "lucide-react";
 import type { IFolder } from "@/types/type";
@@ -21,6 +21,7 @@ type Props = {
     isMultiSelectMode?: boolean;
     selectedFolders?: number[];
     setSelectedFolders?: (data: number[]) => void;
+    withCardContent?: boolean
 }
 
 const Folder = ({
@@ -28,7 +29,8 @@ const Folder = ({
     permission,
     isMultiSelectMode,
     selectedFolders,
-    setSelectedFolders
+    setSelectedFolders,
+    withCardContent = false
 }: Props) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const nav = useNavigate();
@@ -164,7 +166,7 @@ const Folder = ({
         >
             <CardHeader className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <FolderIcon />
+                    <FolderIcon size={20} />
                     <Label className="truncate max-w-[110px]">{data.name}</Label>
                 </div>
                 <div>
@@ -194,6 +196,11 @@ const Folder = ({
                     }
                 </div>
             </CardHeader>
+            {withCardContent && <CardContent>
+                <div className="flex justify-center items-center h-[150px] bg-muted rounded-xl">
+                    <FolderIcon size={50} />
+                </div>
+            </CardContent>}
         </Card>
     );
 };

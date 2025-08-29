@@ -4,6 +4,7 @@ import {
   Box,
   Users,
   Trash,
+  Clock,
 } from "lucide-react"
 
 import { NavMain } from "@/components/client/layout/nav-main"
@@ -27,6 +28,12 @@ const navMainItems: NavItem[] = [
     title: "Files của tôi",
     url: "/my-files",
     icon: Box,
+    access: true
+  },
+  {
+    title: "Gần đây",
+    url: "/recent",
+    icon: Clock,
     access: true
   },
   {
