@@ -183,6 +183,7 @@ const Folder = ({
                                     onCheckedChange={handleToggleCheck}
                                 />
                             ) : <EllipsisDropDown
+                                type={"folder"}
                                 permission={permission}
                                 handleDropdownToggle={handleDropdownToggle}
                                 handleDownload={handleDownload}

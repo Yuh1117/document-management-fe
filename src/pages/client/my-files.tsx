@@ -19,9 +19,11 @@ import { useDownloadFiles } from "@/hooks/use-download-files";
 import ShareUrlModal from "@/components/client/document/share-url-modal";
 import TransferModal from "@/components/client/transfer-modal";
 import ShareModal from "@/components/client/share-modal";
-import { closeDocumentDetail, closeDocumentModal, closeShareUrlModal } from "@/redux/reducers/documentSlice";
-import { closeShareModal, closeTransferModal } from "@/redux/reducers/filesSlice";
+import { closeDocumentDetail, closeDocumentModal, closeShareUrlModal, closeVersionModal } from "@/redux/reducers/documentSlice";
+import { closeShareModal, closeTransferModal, closeUploadModeModal } from "@/redux/reducers/filesSlice";
 import { closeFolderDetail, closeFolderModal } from "@/redux/reducers/folderSlice";
+import UploadModeModal from "@/components/client/upload-mode-modal";
+import DocumentVersionModal from "@/components/client/document/document-version-modal";
 
 const MyFilesPage = () => {
     const fileState = useAppSelector(state => state.files);
@@ -135,6 +137,12 @@ const MyFilesPage = () => {
                 </div>
             )}
 
+            <UploadModeModal
+                files={fileState.uploadModeModal.files}
+                open={fileState.uploadModeModal.open}
+                onOpenChange={(open) => !open && dispatch(closeUploadModeModal())}
+            />
+
             <FolderDetail
                 data={folderState.folderDetail.data}
                 isSheetOpen={folderState.folderDetail.open}
@@ -174,6 +182,12 @@ const MyFilesPage = () => {
                 open={fileState.transferModal.open}
                 onOpenChange={(open) => !open && dispatch(closeTransferModal())}
                 mode={fileState.transferModal.mode}
+            />
+
+            <DocumentVersionModal
+                data={documentState.documentVersion.data}
+                open={documentState.documentVersion.open}
+                onOpenChange={(open) => !open && dispatch(closeVersionModal())}
             />
 
         </div>

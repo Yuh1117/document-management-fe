@@ -13,6 +13,13 @@ export const store = configureStore({
         documents: documentSlice,
         folders: folderSlice
     },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            serializableCheck: {
+                ignoredActions: ["files/openUploadModeModal"],
+                ignoredPaths: ["files.uploadModeModal.files"],
+            },
+        }),
 })
 
 export type RootState = ReturnType<typeof store.getState>

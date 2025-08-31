@@ -10,7 +10,7 @@ import { FileUp, FolderPlus, FolderUp, Plus } from "lucide-react"
 import { useSidebar } from "../ui/sidebar"
 import { useParams } from "react-router"
 import { useAppDispatch } from "@/redux/hooks"
-import { triggerReload } from "@/redux/reducers/filesSlice"
+import { openUploadModeModal, triggerReload } from "@/redux/reducers/filesSlice"
 import { authApis, endpoints } from "@/config/Api"
 import { toast } from "sonner"
 import { useState } from "react"
@@ -39,13 +39,19 @@ const NewDropDown = () => {
                 formData.append("folderId", id)
             }
 
-            await authApis().post(endpoints["upload-multiple-documents"], formData)
-            dispatch(triggerReload())
+            const res = await authApis().post(endpoints["upload-multiple-documents"], formData)
 
-            toast.success("Tải lên thành công", {
-                duration: 2000
-            })
-
+            const conflicts = res.data.data.conflicts
+            if (conflicts?.length) {
+                dispatch(openUploadModeModal({
+                    files: Array.from(files).filter(f => conflicts.includes(f.name))
+                }))
+            } else {
+                dispatch(triggerReload())
+                toast.success("Tải lên thành công", {
+                    duration: 2000
+                })
+            }
         } catch (error: any) {
             console.error("Upload file failed: ", error)
 

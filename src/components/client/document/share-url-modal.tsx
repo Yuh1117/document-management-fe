@@ -64,7 +64,7 @@ const ShareUrlModal = ({ open, onOpenChange, doc }: Props) => {
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent aria-describedby={undefined}>
                 <DialogHeader>
-                    <DialogTitle>{signedUrl ? "Link chia sẻ" : "Tạo link chia sẻ"} ({doc?.name})</DialogTitle>
+                    <DialogTitle>{signedUrl ? "Link chia sẻ" : "Tạo link chia sẻ"} "{doc?.name}"</DialogTitle>
                 </DialogHeader>
                 {signedUrl ? <div className="flex items-center gap-2">
                     <div className="grid flex-1 gap-2">
