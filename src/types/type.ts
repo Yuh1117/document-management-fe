@@ -112,3 +112,16 @@ export interface IFolderShare {
     user: IUser,
     shareType: string
 }
+
+export interface IDocumentVersion {
+    id: number,
+    name: string,
+    storedFilename: string,
+    filePath: string,
+    fileSize: number,
+    mimeType: string,
+    versionNumber: number,
+    document: IDocument,
+    createdAt?: string,
+    updatedAt?: string
+}

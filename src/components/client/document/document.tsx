@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import EllipsisDropDownDeleted from "../ellipsis-dropdown-deleted";
 import { Spinner } from "@/components/ui/spinner";
 import { getIconComponentByMimeType } from "@/config/file-icons";
-import { openDocumentDetail, openDocumentModal, openShareUrlModal } from "@/redux/reducers/documentSlice";
+import { openDocumentDetail, openDocumentModal, openShareUrlModal, openVersionModal } from "@/redux/reducers/documentSlice";
 
 type Props = {
     data: IDocument,
@@ -166,6 +166,10 @@ const Document = ({
         dispatch(openTransferModal({ data: data, mode: mode }))
     }
 
+    const handleOpenVersion = () => {
+        dispatch(openVersionModal({ data: data }))
+    }
+
     return (
         <Card
             onClick={handleToggleCheck}
@@ -190,6 +194,7 @@ const Document = ({
                                     onCheckedChange={handleToggleCheck}
                                 />
                             ) : <EllipsisDropDown
+                                type={"document"}
                                 permission={permission}
                                 handleDropdownToggle={handleDropdownToggle}
                                 handleDownload={handleDownload}
@@ -199,6 +204,7 @@ const Document = ({
                                 handleOpenShareUrl={handleOpenShareUrl}
                                 handleOpenTransfer={handleOpenTransfer}
                                 handleOpenShare={handleOpenShare}
+                                handleOpenVersion={handleOpenVersion}
                             />
                         ))
                     }
@@ -206,7 +212,7 @@ const Document = ({
             </CardHeader>
             <CardContent>
                 <div className="flex justify-center items-center h-[150px] bg-muted rounded-xl">
-                    <Icon size={50} color={color}/>
+                    <Icon size={50} color={color} />
                 </div>
             </CardContent>
         </Card>

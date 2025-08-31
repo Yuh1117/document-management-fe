@@ -12,6 +12,10 @@ interface FilesState {
         data: IDocument | IFolder | null;
         mode: "move" | "copy" | null;
     };
+    uploadModeModal: {
+        open: boolean;
+        files: File[] | null
+    }
     permission: string | null;
 }
 
@@ -27,6 +31,10 @@ const initialState: FilesState = {
         data: null,
         mode: null,
     },
+    uploadModeModal: {
+        open: false,
+        files: null
+    }
 }
 
 const filesSlice = createSlice({
@@ -57,6 +65,15 @@ const filesSlice = createSlice({
             state.transferModal.mode = null;
         },
 
+        openUploadModeModal: (state, action: PayloadAction<{ files: File[] }>) => {
+            state.uploadModeModal.open = true;
+            state.uploadModeModal.files = action.payload.files
+        },
+        closeUploadModeModal: (state) => {
+            state.uploadModeModal.open = false;
+            state.uploadModeModal.files = null;
+        },
+
         setPermission: (state, action: PayloadAction<string | null>) => {
             console.log(action.payload)
             state.permission = action.payload
@@ -67,5 +84,14 @@ const filesSlice = createSlice({
     },
 })
 
-export const { triggerReload, setPermission, resetPermission, openShareModal, closeShareModal, openTransferModal, closeTransferModal } = filesSlice.actions
+export const { triggerReload,
+    setPermission,
+    resetPermission,
+    openShareModal,
+    closeShareModal,
+    openTransferModal,
+    closeTransferModal,
+    openUploadModeModal,
+    closeUploadModeModal
+} = filesSlice.actions
 export default filesSlice.reducer

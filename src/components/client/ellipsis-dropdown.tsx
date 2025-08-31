@@ -1,7 +1,8 @@
-import { Copy, Download, EllipsisVertical, FolderOpen, FolderSymlink, Info, Link2, PenLine, Trash, UserRoundPlus } from "lucide-react";
+import { Copy, Download, EllipsisVertical, FolderOpen, FolderSymlink, History, Info, Link2, PenLine, Trash, UserRoundPlus } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
 type Props = {
+    type: string,
     permission: string,
     handleDropdownToggle: (open: boolean) => void,
     handleDownload: () => Promise<void>,
@@ -10,11 +11,12 @@ type Props = {
     handleSoftDelete: () => Promise<void>,
     handleOpenShareUrl?: () => void
     handleOpenTransfer?: (mode: "copy" | "move") => void,
-    handleOpenShare?: () => void
+    handleOpenShare?: () => void,
+    handleOpenVersion?: () => void
 }
 
-const EllipsisDropDown = ({ permission, handleDropdownToggle, handleDownload, handleViewDetail,
-    handleOpenEdit, handleSoftDelete, handleOpenShareUrl, handleOpenTransfer, handleOpenShare }: Props) => {
+const EllipsisDropDown = ({ type, permission, handleDropdownToggle, handleDownload, handleViewDetail,
+    handleOpenEdit, handleSoftDelete, handleOpenShareUrl, handleOpenTransfer, handleOpenShare, handleOpenVersion }: Props) => {
     return (
         <DropdownMenu onOpenChange={handleDropdownToggle}>
             <DropdownMenuTrigger asChild>
@@ -52,10 +54,10 @@ const EllipsisDropDown = ({ permission, handleDropdownToggle, handleDownload, ha
                                     <UserRoundPlus className="text-black-900" />
                                     Chia sẻ
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={handleOpenShareUrl}>
+                                {type === "document" && <DropdownMenuItem onClick={handleOpenShareUrl}>
                                     <Link2 className="text-black-900" />
                                     URL
-                                </DropdownMenuItem>
+                                </DropdownMenuItem>}
                             </DropdownMenuSubContent>
                         </DropdownMenuPortal>
                     </DropdownMenuSub>
@@ -76,10 +78,24 @@ const EllipsisDropDown = ({ permission, handleDropdownToggle, handleDownload, ha
                             </DropdownMenuSubContent>
                         </DropdownMenuPortal>
                     </DropdownMenuSub>
-                    <DropdownMenuItem onClick={handleViewDetail}>
-                        <Info className="text-black-900" />
-                        Chi tiết
-                    </DropdownMenuItem>
+                    <DropdownMenuSub>
+                        <DropdownMenuSubTrigger>
+                            <Info className="size-4 me-2" />
+                            Thông tin
+                        </DropdownMenuSubTrigger>
+                        <DropdownMenuPortal>
+                            <DropdownMenuSubContent>
+                                <DropdownMenuItem onClick={handleViewDetail}>
+                                    <Info className="text-black-900" />
+                                    Chi tiết
+                                </DropdownMenuItem>
+                                {type === "document" && <DropdownMenuItem onClick={handleOpenVersion}>
+                                    <History className="text-black-900" />
+                                    Quản lý phiên bản
+                                </DropdownMenuItem>}
+                            </DropdownMenuSubContent>
+                        </DropdownMenuPortal>
+                    </DropdownMenuSub>
                 </DropdownMenuGroup>
                 {(permission === "OWNER") && (
                     <>

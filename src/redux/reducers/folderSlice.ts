@@ -10,11 +10,7 @@ interface FolderState {
     folderDetail: {
         open: boolean;
         data: IFolder | null;
-    };
-    shareUrlModal: {
-        open: boolean;
-        data: IFolder | null;
-    };
+    }
 }
 
 const initialState: FolderState = {
@@ -24,10 +20,6 @@ const initialState: FolderState = {
         isEditing: false
     },
     folderDetail: {
-        open: false,
-        data: null,
-    },
-    shareUrlModal: {
         open: false,
         data: null,
     }

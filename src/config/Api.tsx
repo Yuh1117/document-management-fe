@@ -39,9 +39,12 @@ export const endpoints = {
     "files-delete-permanent": "/api/secure/files/permanent",
     "folder-detail": (folderId: string | number) => `/api/secure/folders/${folderId}`,
     "document-detail": (documentId: string | number) => `/api/secure/documents/${documentId}`,
+    "document-version": (documentId: number) => `/api/secure/document/${documentId}/versions`,
 
     "upload-multiple-documents": "/api/secure/documents/upload",
     "upload-folder": "api/secure/folders/upload",
+    "upload-replace-doc": "/api/secure/documents/upload-replace",
+    "upload-keep-doc": "/api/secure/documents/upload-keep",
 
     "download-single-document": (documentId: string | number) => `/api/secure/documents/download/${documentId}`,
     "download-multiple-documents": "/api/secure/documents/download/multiple",
