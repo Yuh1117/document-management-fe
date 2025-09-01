@@ -17,6 +17,10 @@ interface DocumentState {
     documentVersion: {
         open: boolean;
         data: IDocument | null;
+    };
+    previewModal: {
+        open: boolean;
+        data: IDocument | null;
     }
 }
 
@@ -34,6 +38,10 @@ const initialState: DocumentState = {
         data: null,
     },
     documentVersion: {
+        open: false,
+        data: null
+    },
+    previewModal: {
         open: false,
         data: null
     }
@@ -78,6 +86,15 @@ const documentSlice = createSlice({
             state.documentVersion.open = false;
             state.documentVersion.data = null;
         },
+
+        openPreviewModal: (state, action: PayloadAction<{ data: IDocument | null }>) => {
+            state.previewModal.open = true;
+            state.previewModal.data = action.payload.data;
+        },
+        closePreviewModal: (state) => {
+            state.previewModal.open = false;
+            state.previewModal.data = null;
+        },
     },
 })
 
@@ -89,7 +106,9 @@ export const {
     openShareUrlModal,
     closeShareUrlModal,
     openVersionModal,
-    closeVersionModal
+    closeVersionModal,
+    openPreviewModal,
+    closePreviewModal
 } = documentSlice.actions;
 
 export default documentSlice.reducer

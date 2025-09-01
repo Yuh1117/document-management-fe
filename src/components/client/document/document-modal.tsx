@@ -11,7 +11,7 @@ import { closeDocumentModal } from "@/redux/reducers/documentSlice";
 import { triggerReload } from "@/redux/reducers/filesSlice";
 import type { IDocument } from "@/types/type";
 import { AlertCircleIcon } from "lucide-react";
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { useForm } from "react-hook-form";
 
 const fieldNames: { [key: string]: string } = {
@@ -33,6 +33,7 @@ const DocumentModal = ({
     const [loading, setLoading] = useState<boolean>(false)
     const [msg, setMsg] = useState<string>("")
     const dispatch = useAppDispatch()
+    const nameInputRef = useRef<HTMLInputElement | null>(null);
 
     const setError = (field: keyof IDocument, message: string): void => {
         form.setError(field, { type: "manual", message: message })
@@ -90,6 +91,20 @@ const DocumentModal = ({
         if (open) {
             if (data) {
                 form.reset(data);
+                requestAnimationFrame(() => {
+                    const input = nameInputRef.current;
+                    if (input) {
+                        const value = input.value;
+                        const dotIndex = value.lastIndexOf(".");
+                        if (dotIndex > 0) {
+                            input.focus();
+                            input.setSelectionRange(0, dotIndex);
+                        } else {
+                            input.focus();
+                            input.select();
+                        }
+                    }
+                });
             } else {
                 form.reset();
             }
@@ -123,11 +138,14 @@ const DocumentModal = ({
                                     <FormItem>
                                         <FormLabel>Tên</FormLabel>
                                         <FormControl>
-                                            <Input {...field}
+                                            <Input
+                                                {...field}
+                                                ref={nameInputRef}
                                                 value={field.value || ""}
                                                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                                                     form.setValue('name', e.target.value)
-                                                }} />
+                                                }}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

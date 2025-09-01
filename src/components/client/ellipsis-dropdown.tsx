@@ -1,4 +1,4 @@
-import { Copy, Download, EllipsisVertical, FolderOpen, FolderSymlink, History, Info, Link2, PenLine, Trash, UserRoundPlus } from "lucide-react";
+import { Copy, Download, EllipsisVertical, Eye, FolderOpen, FolderSymlink, History, Info, Link2, PenLine, Trash, UserRoundPlus } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
 type Props = {
@@ -12,11 +12,12 @@ type Props = {
     handleOpenShareUrl?: () => void
     handleOpenTransfer?: (mode: "copy" | "move") => void,
     handleOpenShare?: () => void,
-    handleOpenVersion?: () => void
+    handleOpenVersion?: () => void,
+    handlePreview?: () => void
 }
 
 const EllipsisDropDown = ({ type, permission, handleDropdownToggle, handleDownload, handleViewDetail,
-    handleOpenEdit, handleSoftDelete, handleOpenShareUrl, handleOpenTransfer, handleOpenShare, handleOpenVersion }: Props) => {
+    handleOpenEdit, handleSoftDelete, handleOpenShareUrl, handleOpenTransfer, handleOpenShare, handleOpenVersion, handlePreview }: Props) => {
     return (
         <DropdownMenu onOpenChange={handleDropdownToggle}>
             <DropdownMenuTrigger asChild>
@@ -26,6 +27,13 @@ const EllipsisDropDown = ({ type, permission, handleDropdownToggle, handleDownlo
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
                 <DropdownMenuGroup>
+                    {type === "document" && <>
+                        <DropdownMenuItem onClick={handlePreview}>
+                            <Eye className="text-black-900" />
+                            Xem
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                    </>}
                     <DropdownMenuItem onClick={handleDownload}>
                         <Download className="text-black-900" />
                         Tải xuống
