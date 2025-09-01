@@ -73,8 +73,15 @@ const Folder = ({
             link.click();
             link.remove();
             window.URL.revokeObjectURL(url);
+
+            toast.success("Tải về thành công", {
+                duration: 2000
+            })
         } catch (error) {
-            console.error("Tải xuống thất bại:", error);
+            console.error("Tải về thất bại:", error);
+            toast.error("Tải về thất bại", {
+                duration: 2000
+            })
         } finally {
             setDownloading(false)
         }

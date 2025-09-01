@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import EllipsisDropDownDeleted from "../ellipsis-dropdown-deleted";
 import { Spinner } from "@/components/ui/spinner";
 import { getIconComponentByMimeType } from "@/config/file-icons";
-import { openDocumentDetail, openDocumentModal, openShareUrlModal, openVersionModal } from "@/redux/reducers/documentSlice";
+import { openDocumentDetail, openDocumentModal, openPreviewModal, openShareUrlModal, openVersionModal } from "@/redux/reducers/documentSlice";
 
 type Props = {
     data: IDocument,
@@ -53,6 +53,10 @@ const Document = ({
         dispatch(openDocumentDetail({ data: data }))
     };
 
+    const handlePreview = () => {
+        dispatch(openPreviewModal({ data: data }))
+    }
+
     const handleDownload = async () => {
         try {
             setDownloading(true)
@@ -65,7 +69,7 @@ const Document = ({
             const link = document.createElement("a");
 
             link.href = url;
-            link.setAttribute("download", data.originalFilename || data.name);
+            link.setAttribute("download", data.name);
             document.body.appendChild(link);
             link.click();
             link.remove();
@@ -172,6 +176,7 @@ const Document = ({
 
     return (
         <Card
+            onDoubleClick={() => { if (!isMultiSelectMode) handlePreview() }}
             onClick={handleToggleCheck}
             className={cn("bg-background hover:bg-input/50 py-4 rounded-xl border-1 transition-all duration-200", isDropdownOpen && "bg-input/50")}
         >
@@ -205,6 +210,7 @@ const Document = ({
                                 handleOpenTransfer={handleOpenTransfer}
                                 handleOpenShare={handleOpenShare}
                                 handleOpenVersion={handleOpenVersion}
+                                handlePreview={handlePreview}
                             />
                         ))
                     }
