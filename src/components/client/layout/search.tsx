@@ -195,7 +195,7 @@ const SearchBar = () => {
                             </Select>
                         </div>
 
-                        <Label className="col-span-1">Dung lượng file</Label>
+                        <Label className="col-span-1">Kích thước file</Label>
                         <div className="col-span-3 flex items-center gap-4">
                             <Select value={sizeType} onValueChange={(s: string) => setSizeType(s)}>
                                 <SelectTrigger>

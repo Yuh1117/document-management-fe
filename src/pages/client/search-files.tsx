@@ -19,10 +19,13 @@ import { useDownloadFiles } from "@/hooks/use-download-files";
 import ShareUrlModal from "@/components/client/document/share-url-modal";
 import TransferModal from "@/components/client/transfer-modal";
 import ShareModal from "@/components/client/share-modal";
-import { closeDocumentDetail, closeDocumentModal, closeShareUrlModal } from "@/redux/reducers/documentSlice";
-import { closeShareModal, closeTransferModal } from "@/redux/reducers/filesSlice";
+import { closeDocumentDetail, closeDocumentModal, closePreviewModal, closeShareUrlModal, closeVersionModal } from "@/redux/reducers/documentSlice";
+import { closeShareModal, closeTransferModal, closeUploadModeModal } from "@/redux/reducers/filesSlice";
 import { closeFolderDetail, closeFolderModal } from "@/redux/reducers/folderSlice";
 import { useLocation, useSearchParams } from "react-router";
+import DocumentVersionModal from "@/components/client/document/document-version-modal";
+import DocumentPreviewModal from "@/components/client/document/document-preview-modal";
+import UploadModeModal from "@/components/client/upload-mode-modal";
 
 const SearchFilesPage = () => {
     const location = useLocation();
@@ -155,6 +158,12 @@ const SearchFilesPage = () => {
                 </div>
             )}
 
+            <UploadModeModal
+                files={fileState.uploadModeModal.files}
+                open={fileState.uploadModeModal.open}
+                onOpenChange={(open) => !open && dispatch(closeUploadModeModal())}
+            />
+
             <FolderDetail
                 data={folderState.folderDetail.data}
                 isSheetOpen={folderState.folderDetail.open}
@@ -164,6 +173,12 @@ const SearchFilesPage = () => {
                 data={documentState.documentDetail.data}
                 isSheetOpen={documentState.documentDetail.open}
                 setIsSheetOpen={(open) => !open && dispatch(closeDocumentDetail())}
+            />
+
+            <DocumentPreviewModal
+                data={documentState.previewModal.data}
+                open={documentState.previewModal.open}
+                onOpenChange={(open) => !open && dispatch(closePreviewModal())}
             />
 
             <FolderModal
@@ -194,6 +209,12 @@ const SearchFilesPage = () => {
                 open={fileState.transferModal.open}
                 onOpenChange={(open) => !open && dispatch(closeTransferModal())}
                 mode={fileState.transferModal.mode}
+            />
+
+            <DocumentVersionModal
+                data={documentState.documentVersion.data}
+                open={documentState.documentVersion.open}
+                onOpenChange={(open) => !open && dispatch(closeVersionModal())}
             />
 
         </div>
