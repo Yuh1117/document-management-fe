@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
-import { SearchCheck, SearchIcon, SlidersHorizontal, Underline, X } from "lucide-react"
+import { SearchCheck, SearchIcon, SlidersHorizontal, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Label } from "@/components/ui/label"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
@@ -66,15 +66,16 @@ const SearchBar = () => {
         localStorage.setItem("search-history", JSON.stringify(updated))
     }
 
-    const handleClick = () => {
-        handleSearch(searchValue)
-        setIsOpen(false)
-    }
-
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
             handleSearch(searchValue)
-            setIsOpen(false)
+            e.currentTarget.blur()
+        }
+    }
+
+    const handleAvKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            handleAdvancedSearch()
             e.currentTarget.blur()
         }
     }
@@ -111,7 +112,7 @@ const SearchBar = () => {
                     onChange={(e) => setSearchValue(e.target.value)}
                     onKeyDown={handleKeyDown}
                 />
-                {isOpen && <SearchCheck className="size-4 cursor-pointer" onClick={handleClick} />}
+                {isOpen && <SearchCheck className="size-4 cursor-pointer" onClick={() => handleSearch(searchValue)} />}
             </div>
 
             {isOpen && (
@@ -194,7 +195,7 @@ const SearchBar = () => {
                             </Select>
                         </div>
 
-                        <Label className="col-span-1">Dung lượng file</Label>
+                        <Label className="col-span-1">Kích thước file</Label>
                         <div className="col-span-3 flex items-center gap-4">
                             <Select value={sizeType} onValueChange={(s: string) => setSizeType(s)}>
                                 <SelectTrigger>
@@ -206,7 +207,8 @@ const SearchBar = () => {
                                 </SelectContent>
                             </Select>
                             <Input type="number" placeholder="MB" className="w-32" min={0}
-                                value={size ?? ""} onChange={(e) => setSize(parseFloat(e.target.value))} />
+                                value={size ?? ""} onChange={(e) => setSize(parseFloat(e.target.value))}
+                                onKeyDown={handleAvKeyDown} />
                         </div>
 
                         <Label className="col-span-4">Từ khóa</Label>
@@ -225,6 +227,7 @@ const SearchBar = () => {
                             <Input placeholder="Nhập từ khóa"
                                 value={kw}
                                 onChange={(e) => setKw(e.target.value)}
+                                onKeyDown={handleAvKeyDown}
                             />
                         </div>
                     </div>

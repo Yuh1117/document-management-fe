@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Menu } from "lucide-react";
+import { Menu, Shield } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, } from "@/components/ui/navigation-menu";
@@ -76,18 +76,15 @@ const Header = () => {
             <NavigationMenu>
                 <NavigationMenuList>
                     <NavigationMenuItem>
-                        <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
+                        <NavigationMenuTrigger>Khác</NavigationMenuTrigger>
                         <NavigationMenuContent>
-                            <ul>
-                                <li>
-                                    <NavigationMenuLink asChild onClick={() => setOpenModal(true)}>
-                                        <Link to="#">Hide data</Link>
-                                    </NavigationMenuLink>
+                            <ul className="grid w-[120px] gap-4">
+                                <li onClick={() => setOpenModal(true)} className="cursor-pointer">
                                     <NavigationMenuLink asChild>
-                                        <Link to="#">Documentation</Link>
-                                    </NavigationMenuLink>
-                                    <NavigationMenuLink asChild>
-                                        <Link to="#">Blocks</Link>
+                                        <div className="flex-row items-center gap-2">
+                                            <Shield className="text-black-900" />
+                                            Ẩn dữ liệu
+                                        </div>
                                     </NavigationMenuLink>
                                 </li>
                             </ul>

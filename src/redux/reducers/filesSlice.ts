@@ -21,7 +21,6 @@ interface FilesState {
 
 const initialState: FilesState = {
     reloadFlag: false,
-    permission: null,
     shareModal: {
         open: false,
         data: null,
@@ -34,7 +33,8 @@ const initialState: FilesState = {
     uploadModeModal: {
         open: false,
         files: null
-    }
+    },
+    permission: null
 }
 
 const filesSlice = createSlice({

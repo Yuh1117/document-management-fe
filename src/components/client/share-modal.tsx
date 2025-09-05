@@ -279,12 +279,28 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
                                 <div className="flex justify-center items-center py-10">
                                     <Spinner size={28} />
                                 </div>
-                            ) : people.length === 0 ? (
-                                <div className="flex justify-center items-center py-10 text-sm">
-                                    Chưa chia sẻ cho ai
-                                </div>
                             ) : <ScrollArea className="h-50 p-3">
                                 <div className="grid gap-6">
+                                    <div key={data?.createdBy?.id} className="flex items-center justify-between gap-4">
+                                        <div className="flex items-center gap-4">
+                                            <Avatar className="w-10 h-10">
+                                                <AvatarImage src={data?.createdBy?.avatar as string || "/placeholder.svg"} alt="avatar" />
+                                                <AvatarFallback className="rounded-lg">a</AvatarFallback>
+                                            </Avatar>
+                                            <div>
+                                                <p className="text-sm font-medium leading-none">
+                                                    {`${data?.createdBy?.lastName} ${data?.createdBy?.firstName}`}
+                                                </p>
+                                                <p className="text-sm text-muted-foreground">
+                                                    {data?.createdBy?.email}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-muted p-2 text-sm rounded-lg">
+                                            Chủ sở hữu
+                                        </div>
+                                    </div>
                                     {people.map((person, index) => (
                                         <div key={person.id} className="flex items-center justify-between gap-4">
                                             <div className="flex items-center gap-4">

@@ -91,7 +91,7 @@ const DocumentVersionModal = ({ data, open, onOpenChange }: Props) => {
                 </DialogHeader>
 
                 <DialogDescription>
-                    Các phiên bản cũ.
+                    Các phiên bản.
                 </DialogDescription>
 
                 <ScrollArea className="h-64 border rounded-lg select-none">
