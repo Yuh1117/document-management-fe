@@ -13,6 +13,7 @@ import EllipsisDropDownDeleted from "../ellipsis-dropdown-deleted";
 import { Spinner } from "@/components/ui/spinner";
 import { getIconComponentByMimeType } from "@/config/file-icons";
 import { openDocumentDetail, openDocumentModal, openPreviewModal, openShareUrlModal, openVersionModal } from "@/redux/reducers/documentSlice";
+import { truncateFileName } from "@/config/utils";
 
 type Props = {
     data: IDocument,
@@ -84,7 +85,7 @@ const Document = ({
                 duration: 2000
             })
         } finally {
-            setDownloading(true)
+            setDownloading(false)
         }
     };
 
@@ -183,7 +184,7 @@ const Document = ({
             <CardHeader className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <Icon size={20} color={color} />
-                    <Label className="truncate max-w-[130px]">{data.name}</Label>
+                    <Label className="whitespace-nowrap">{truncateFileName(data.name)}</Label>
                 </div>
                 <div>
                     {loading ? <Spinner /> : (

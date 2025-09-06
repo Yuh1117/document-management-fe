@@ -69,23 +69,23 @@ const EllipsisDropDown = ({ type, permission, handleDropdownToggle, handleDownlo
                             </DropdownMenuSubContent>
                         </DropdownMenuPortal>
                     </DropdownMenuSub>
-                    <DropdownMenuSub>
-                        <DropdownMenuSubTrigger>
-                            <FolderOpen className="size-4 me-2" />
-                            Sắp xếp
-                        </DropdownMenuSubTrigger>
-                        <DropdownMenuPortal>
-                            <DropdownMenuSubContent>
-                                {(permission === "OWNER") && (
+                    {(permission === "OWNER") && (
+                        <DropdownMenuSub>
+                            <DropdownMenuSubTrigger>
+                                <FolderOpen className="size-4 me-2" />
+                                Sắp xếp
+                            </DropdownMenuSubTrigger>
+                            <DropdownMenuPortal>
+                                <DropdownMenuSubContent>
+
                                     <DropdownMenuItem onClick={() => handleOpenTransfer?.("move")}>
                                         <FolderSymlink className="text-black-900" />
                                         Di chuyển
                                     </DropdownMenuItem>
-                                )}
-                                <DropdownMenuItem>...</DropdownMenuItem>
-                            </DropdownMenuSubContent>
-                        </DropdownMenuPortal>
-                    </DropdownMenuSub>
+                                </DropdownMenuSubContent>
+                            </DropdownMenuPortal>
+                        </DropdownMenuSub>
+                    )}
                     <DropdownMenuSub>
                         <DropdownMenuSubTrigger>
                             <Info className="size-4 me-2" />
