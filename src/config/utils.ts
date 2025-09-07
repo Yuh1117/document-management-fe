@@ -100,6 +100,12 @@ export function formatFileSize(bytes: number): string {
     return (bytes / Math.pow(1024, i)).toFixed(2) + ' ' + sizes[i];
 }
 
+export function truncateFileName(name: string): string {
+    if (name.length <= 12) return name;
+    const end = name.substring(name.lastIndexOf("."));
+    const start = name.substring(0, 12);
+    return `${start}...${end}`
+}
 
 export function isDocument(data: any): data is IDocument {
     return data && "originalFilename" in data && "mimeType" in data;

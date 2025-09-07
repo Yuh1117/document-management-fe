@@ -39,8 +39,8 @@ export const endpoints = {
     "files-delete-permanent": "/api/secure/files/permanent",
     "folder-detail": (folderId: string | number) => `/api/secure/folders/${folderId}`,
     "document-detail": (documentId: string | number) => `/api/secure/documents/${documentId}`,
-    "document-version": (documentId: number) => `/api/secure/documents/${documentId}/versions`,
-    "document-preview": (documentId: number) => `/api/secure/documents/${documentId}/preview`,
+    "document-version": (documentId: string | number) => `/api/secure/documents/${documentId}/versions`,
+    "document-preview": (documentId: string | number) => `/api/secure/documents/${documentId}/preview`,
 
     "upload-multiple-documents": "/api/secure/documents/upload",
     "upload-folder": "api/secure/folders/upload",
@@ -52,6 +52,7 @@ export const endpoints = {
     "download-single-folder": (folderId: string | number) => `/api/secure/folders/download/${folderId}`,
     "download-multiple-folders": "/api/secure/folders/download/multiple",
     "download-multiple-files": "/api/secure/files/download/multiple",
+    "download-document-version": (documentId: string | number, versionId: string | number) => `/api/secure/documents/${documentId}/versions/${versionId}/download`,
 
     "share-url": "/api/secure/documents/share-url",
     "copy-doc": "/api/secure/documents/copy",
