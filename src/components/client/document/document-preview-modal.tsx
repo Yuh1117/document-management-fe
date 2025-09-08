@@ -94,6 +94,26 @@ const DocumentPreviewModal = ({ data, open, onOpenChange }: Props) => {
             );
         }
 
+        if (data?.mimeType.startsWith("video/")) {
+            return (
+                <div className="flex justify-center items-center h-full">
+                    <video controls className="w-full h-[80vh] rounded-xl shadow-md">
+                        <source src={previewUrl} type={data?.mimeType} />
+                    </video>
+                </div>
+            );
+        }
+
+        if (data?.mimeType.startsWith("audio/")) {
+            return (
+                <div className="flex justify-center items-center h-full">
+                    <audio controls className="w-full h-full">
+                        <source src={previewUrl} type={data?.mimeType} />
+                    </audio>
+                </div>
+            );
+        }
+
         return (
             <div className="flex flex-col justify-center items-center h-full text-muted-foreground">
                 Không hỗ trợ xem cho loại file này.
