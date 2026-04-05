@@ -16,7 +16,7 @@ const SearchBar = () => {
     const nav = useNavigate()
     const [showAdvanced, setShowAdvanced] = useState(false)
     const [kw, setKw] = useState<string>("")
-    const [kwType, setKwType] = useState<string>("exact")
+    const [kwType, setKwType] = useState<string>("hybrid")
     const [type, setType] = useState("any")
     const [size, setSize] = useState<number>()
     const [sizeType, setSizeType] = useState("minSize")
@@ -82,7 +82,7 @@ const SearchBar = () => {
 
     const reset = () => {
         setKw("")
-        setKwType("exact")
+        setKwType("hybrid")
         setType("any")
         setSize(undefined)
         setSizeType("minSize")
@@ -218,8 +218,9 @@ const SearchBar = () => {
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="exact">Chính xác</SelectItem>
-                                    <SelectItem value="similar">Gần giống</SelectItem>
+                                    <SelectItem value="hybrid">Tự động</SelectItem>
+                                    <SelectItem value="full_text">Chính xác</SelectItem>
+                                    <SelectItem value="semantic">Gần giống</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>

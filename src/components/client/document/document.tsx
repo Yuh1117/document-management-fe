@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import EllipsisDropDownDeleted from "../ellipsis-dropdown-deleted";
 import { Spinner } from "@/components/ui/spinner";
 import { getIconComponentByMimeType } from "@/config/file-icons";
-import { openDocumentDetail, openDocumentModal, openPreviewModal, openShareUrlModal, openVersionModal } from "@/redux/reducers/documentSlice";
+import { openDocumentDetail, openDocumentModal, openPreviewModal, openShareUrlModal, openSummarizeModal, openVersionModal } from "@/redux/reducers/documentSlice";
 import { truncateFileName } from "@/config/utils";
 
 type Props = {
@@ -31,7 +31,7 @@ const Document = ({
     setSelectedDocs
 }: Props) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-    const [downloading, setDownloading] = useState<boolean>(false);
+    const [, setDownloading] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false)
     const dispatch = useAppDispatch();
     const { icon: Icon, color } = getIconComponentByMimeType(data.mimeType);
@@ -175,6 +175,10 @@ const Document = ({
         dispatch(openVersionModal({ data: data }))
     }
 
+    const handleOpenSummarize = () => {
+        dispatch(openSummarizeModal({ data }))
+    }
+
     return (
         <Card
             onDoubleClick={() => { if (!isMultiSelectMode) handlePreview() }}
@@ -212,6 +216,7 @@ const Document = ({
                                 handleOpenShare={handleOpenShare}
                                 handleOpenVersion={handleOpenVersion}
                                 handlePreview={handlePreview}
+                                handleOpenSummarize={handleOpenSummarize}
                             />
                         ))
                     }

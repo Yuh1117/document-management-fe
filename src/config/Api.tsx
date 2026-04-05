@@ -2,6 +2,12 @@ import axios from "axios";
 import cookies from "react-cookies"
 
 const BASE_URL = 'http://localhost:8080/';
+const LANGUAGE_STORAGE_KEY = "language";
+
+export function getAcceptLanguage(): string {
+    if (typeof window === "undefined") return "vi";
+    return localStorage.getItem(LANGUAGE_STORAGE_KEY) || "vi";
+}
 
 export const endpoints = {
     "login": "/api/login",
@@ -41,6 +47,7 @@ export const endpoints = {
     "document-detail": (documentId: string | number) => `/api/secure/documents/${documentId}`,
     "document-version": (documentId: string | number) => `/api/secure/documents/${documentId}/versions`,
     "document-preview": (documentId: string | number) => `/api/secure/documents/${documentId}/preview`,
+    "document-summarize": (documentId: string | number) => `/api/secure/documents/${documentId}/summarize`,
 
     "upload-multiple-documents": "/api/secure/documents/upload",
     "upload-folder": "api/secure/folders/upload",
@@ -71,11 +78,19 @@ export const authApis = () => {
     return axios.create({
         baseURL: BASE_URL,
         headers: {
-            'Authorization': `Bearer ${cookies.load('token')}`
-        }
-    })
-}
+            "Authorization": `Bearer ${cookies.load("token")}`,
+            "Accept-Language": getAcceptLanguage(),
+        },
+    });
+};
 
-export default axios.create({
-    baseURL: BASE_URL
+const api = axios.create({
+    baseURL: BASE_URL,
 });
+
+api.interceptors.request.use((config) => {
+    config.headers["Accept-Language"] = getAcceptLanguage();
+    return config;
+});
+
+export default api;

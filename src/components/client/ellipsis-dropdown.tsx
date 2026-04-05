@@ -1,4 +1,4 @@
-import { Copy, Download, EllipsisVertical, Eye, FolderOpen, FolderSymlink, History, Info, Link2, PenLine, Trash, UserRoundPlus } from "lucide-react";
+import { Copy, Download, EllipsisVertical, Eye, FolderOpen, FolderSymlink, History, Info, Link2, PenLine, Sparkles, Trash, UserRoundPlus } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
 type Props = {
@@ -13,11 +13,12 @@ type Props = {
     handleOpenTransfer?: (mode: "copy" | "move") => void,
     handleOpenShare?: () => void,
     handleOpenVersion?: () => void,
-    handlePreview?: () => void
+    handlePreview?: () => void,
+    handleOpenSummarize?: () => void,
 }
 
 const EllipsisDropDown = ({ type, permission, handleDropdownToggle, handleDownload, handleViewDetail,
-    handleOpenEdit, handleSoftDelete, handleOpenShareUrl, handleOpenTransfer, handleOpenShare, handleOpenVersion, handlePreview }: Props) => {
+    handleOpenEdit, handleSoftDelete, handleOpenShareUrl, handleOpenTransfer, handleOpenShare, handleOpenVersion, handlePreview, handleOpenSummarize }: Props) => {
     return (
         <DropdownMenu onOpenChange={handleDropdownToggle}>
             <DropdownMenuTrigger asChild>
@@ -32,6 +33,12 @@ const EllipsisDropDown = ({ type, permission, handleDropdownToggle, handleDownlo
                             <Eye className="text-black-900" />
                             Xem
                         </DropdownMenuItem>
+                        {handleOpenSummarize && (
+                            <DropdownMenuItem onClick={handleOpenSummarize}>
+                                <Sparkles className="text-black-900" />
+                                Tóm tắt
+                            </DropdownMenuItem>
+                        )}
                         <DropdownMenuSeparator />
                     </>}
                     <DropdownMenuItem onClick={handleDownload}>

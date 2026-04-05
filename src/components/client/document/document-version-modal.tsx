@@ -30,7 +30,7 @@ const DocumentVersionModal = ({ data, open, onOpenChange }: Props) => {
     const [page, setPage] = useState<number>(1);
     const [loadKey, setLoadKey] = useState<boolean>(false);
     const [hasMore, setHasMore] = useState<boolean>(true);
-    const [downloading, setDownloading] = useState<boolean>(false);
+    const [, setDownloading] = useState<boolean>(false);
     const [dropdownOpen, setDropdownOpen] = useState<string | number | null>(null);
     const observerRef = useRef<HTMLDivElement | null>(null);
 

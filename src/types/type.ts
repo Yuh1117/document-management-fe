@@ -69,6 +69,13 @@ export interface IDocument {
     updatedBy?: IUser,
 }
 
+export interface IDocumentSummarize {
+    id: number
+    summaryText: string
+    modelName: string | null
+    promptVersion: string | null
+}
+
 export interface IFolder {
     id: number,
     name: string,

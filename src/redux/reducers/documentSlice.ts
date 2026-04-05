@@ -21,7 +21,11 @@ interface DocumentState {
     previewModal: {
         open: boolean;
         data: IDocument | null;
-    }
+    };
+    summarizeModal: {
+        open: boolean;
+        data: IDocument | null;
+    };
 }
 
 const initialState: DocumentState = {
@@ -42,6 +46,10 @@ const initialState: DocumentState = {
         data: null
     },
     previewModal: {
+        open: false,
+        data: null
+    },
+    summarizeModal: {
         open: false,
         data: null
     }
@@ -95,6 +103,15 @@ const documentSlice = createSlice({
             state.previewModal.open = false;
             state.previewModal.data = null;
         },
+
+        openSummarizeModal: (state, action: PayloadAction<{ data: IDocument | null }>) => {
+            state.summarizeModal.open = true;
+            state.summarizeModal.data = action.payload.data;
+        },
+        closeSummarizeModal: (state) => {
+            state.summarizeModal.open = false;
+            state.summarizeModal.data = null;
+        },
     },
 })
 
@@ -108,7 +125,9 @@ export const {
     openVersionModal,
     closeVersionModal,
     openPreviewModal,
-    closePreviewModal
+    closePreviewModal,
+    openSummarizeModal,
+    closeSummarizeModal
 } = documentSlice.actions;
 
 export default documentSlice.reducer
