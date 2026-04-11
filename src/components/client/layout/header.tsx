@@ -1,19 +1,19 @@
 import { useMemo, useState } from "react";
 import { Menu, Shield } from "lucide-react";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, } from "@/components/ui/navigation-menu";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, } from "@/components/ui/sheet";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "../../ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, } from "@/components/ui/Accordion";
+import { Button } from "@/components/ui/Button";
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, } from "@/components/ui/NavigationMenu";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, } from "@/components/ui/Sheet";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "../../ui/DropdownMenu";
+import { Avatar, AvatarFallback, AvatarImage } from "../../ui/Avatar";
 import { Link, useNavigate } from "react-router";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { logout } from "@/redux/reducers/userSlice";
 import logoImg from "@/assets/react.svg";
-import Setting from "@/components/shared/settings/setting-button";
+import Setting from "@/components/shared/settings/SettingButton";
 import type { IAccount } from "@/types/type";
-import SearchBar from "./search";
-import HideDataModal from "../document/hide-data-modal";
+import SearchBar from "./Search";
+import HideDataModal from "../document/HideDataModal";
 
 const logo = {
     url: "",

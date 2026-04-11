@@ -1,17 +1,17 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader } from "@/components/ui/Card";
+import { Label } from "@/components/ui/Label";
 import { Folder as FolderIcon } from "lucide-react";
 import type { IFolder } from "@/types/type";
-import { authApis, endpoints } from "@/config/Api";
+import { authApis, endpoints } from "@/config/api";
 import { useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
-import { Checkbox } from "@/components/ui/checkbox";
-import EllipsisDropDown from "../ellipsis-dropdown";
+import { Checkbox } from "@/components/ui/Checkbox";
+import EllipsisDropDown from "../EllipsisDropdown";
 import { useAppDispatch } from "@/redux/hooks";
 import { openShareModal, openTransferModal, setPermission, triggerReload } from "@/redux/reducers/filesSlice";
-import EllipsisDropDownDeleted from "../ellipsis-dropdown-deleted";
-import { Spinner } from "@/components/ui/spinner";
+import EllipsisDropDownDeleted from "../EllipsisDropdownDeleted";
+import { Spinner } from "@/components/ui/Spinner";
 import { toast } from "sonner";
 import { openFolderDetail, openFolderModal } from "@/redux/reducers/folderSlice";
 

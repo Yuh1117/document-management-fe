@@ -1,0 +1,187 @@
+import { Alert, AlertDescription } from "@/components/ui/Alert";
+import { Button } from "@/components/ui/Button";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/Dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/Form";
+import { Input } from "@/components/ui/Input";
+import { Spinner } from "@/components/ui/Spinner";
+import { Textarea } from "@/components/ui/Textarea";
+import { authApis, endpoints } from "@/config/api";
+import { useAppDispatch } from "@/redux/hooks";
+import { closeDocumentModal } from "@/redux/reducers/documentSlice";
+import { triggerReload } from "@/redux/reducers/filesSlice";
+import type { IDocument } from "@/types/type";
+import { AlertCircleIcon } from "lucide-react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { useForm } from "react-hook-form";
+
+const fieldNames: { [key: string]: string } = {
+    name: "Tên"
+};
+
+type Props = {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    data: IDocument | null | undefined
+};
+
+const DocumentModal = ({
+    open,
+    onOpenChange,
+    data
+}: Props) => {
+    const form = useForm<IDocument>();
+    const [loading, setLoading] = useState<boolean>(false)
+    const [msg, setMsg] = useState<string>("")
+    const dispatch = useAppDispatch()
+    const nameInputRef = useRef<HTMLInputElement | null>(null);
+
+    const setError = (field: keyof IDocument, message: string): void => {
+        form.setError(field, { type: "manual", message: message })
+    }
+
+    const validateEmpty = (field: keyof IDocument, value: string): boolean => {
+        form.clearErrors(field)
+        if (!value) {
+            setError(field, `${fieldNames[field]} không được để trống`);
+            return false;
+        }
+        return true
+    }
+
+    const validate = (data: IDocument): boolean => {
+        let flag = true;
+        if (!validateEmpty("name", data.name)) {
+            flag = false;
+        }
+
+        return flag;
+    }
+
+    const onSubmit = async (data: IDocument) => {
+        form.clearErrors()
+        setMsg("")
+
+        if (validate(data) === true) {
+            try {
+                setLoading(true);
+
+                await authApis().patch(endpoints["document-detail"](data.id), data);
+                dispatch(closeDocumentModal())
+                dispatch(triggerReload())
+            } catch (error: any) {
+                const errors = error.response.data.error;
+                if (error.response?.status === 400) {
+                    if (Array.isArray(errors)) {
+                        errors.forEach((err: any) => {
+                            setError(err.field, err.message);
+                        });
+                    } else {
+                        setMsg(errors)
+                    }
+                } else {
+                    setMsg("Lỗi hệ thống hoặc kết nối.");
+                }
+            } finally {
+                setLoading(false);
+            }
+        }
+    }
+
+    useEffect(() => {
+        if (open) {
+            if (data) {
+                form.reset(data);
+                requestAnimationFrame(() => {
+                    const input = nameInputRef.current;
+                    if (input) {
+                        const value = input.value;
+                        const dotIndex = value.lastIndexOf(".");
+                        if (dotIndex > 0) {
+                            input.focus();
+                            input.setSelectionRange(0, dotIndex);
+                        } else {
+                            input.focus();
+                            input.select();
+                        }
+                    }
+                });
+            } else {
+                form.reset();
+            }
+            form.clearErrors();
+            setMsg("");
+        }
+    }, [open]);
+
+
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent aria-describedby={undefined}>
+                <DialogHeader>
+                    <DialogTitle>Đổi tên tài liệu</DialogTitle>
+                </DialogHeader>
+                {msg &&
+                    <Alert className="border-red-500" variant="destructive">
+                        <AlertCircleIcon />
+                        <AlertDescription>
+                            {msg}
+                        </AlertDescription>
+                    </Alert>
+                }
+                <Form {...form}>
+                    <form className="p-1" onSubmit={form.handleSubmit(onSubmit)}>
+                        <div className="flex flex-col gap-6">
+                            <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Tên</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                ref={nameInputRef}
+                                                value={field.value || ""}
+                                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                                                    form.setValue('name', e.target.value)
+                                                }}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="description"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Mô tả</FormLabel>
+                                        <FormControl>
+                                            <Textarea {...field}
+                                                value={field.value || ""}
+                                                onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+                                                    form.setValue('description', e.target.value)
+                                                }} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                        </div>
+                    </form>
+                </Form>
+                <DialogFooter>
+                    <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
+                    <Button onClick={() => form.handleSubmit(onSubmit)()} disabled={loading}>
+                        {loading ? <Spinner size={16} /> : "Lưu"}
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+};
+
+export default DocumentModal;

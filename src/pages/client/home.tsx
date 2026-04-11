@@ -1,7 +1,7 @@
-import { Card, CardHeader } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Card, CardHeader } from "@/components/ui/Card";
+import { Label } from "@/components/ui/Label";
+import { ScrollArea } from "@/components/ui/ScrollArea";
+import { SidebarTrigger } from "@/components/ui/Sidebar";
 import { Box, Clock, Trash, Users } from "lucide-react";
 import { Link, useLoaderData } from "react-router";
 
