@@ -116,11 +116,11 @@ const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
                     </p>
                 )}
                 {result ? (
-                    <ScrollArea className="max-h-[min(360px,50vh)] rounded-md border p-3">
+                    <ScrollArea className="max-h-[min(360px,50vh)] rounded-xl border p-3">
                         <p className="text-sm whitespace-pre-wrap">{result.summaryText}</p>
                     </ScrollArea>
                 ) : (
-                    <div className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
+                    <div className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
                         Nhấn &quot;Tạo tóm tắt&quot; để tạo nội dung tóm tắt.
                     </div>
                 )}

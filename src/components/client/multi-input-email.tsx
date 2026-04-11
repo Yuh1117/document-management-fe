@@ -38,7 +38,7 @@ const MultiEmailInput = ({ emails, setEmails }: Props) => {
     return (
         <div
             className={cn(
-                "flex flex-wrap items-center gap-2 rounded-md border px-2 focus-within:ring-2 focus-within:ring-ring"
+                "flex flex-wrap items-center gap-2 rounded-xl border px-2 focus-within:ring-2 focus-within:ring-ring"
             )}
         >
             {emails.map((email) => (
