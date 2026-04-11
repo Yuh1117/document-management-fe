@@ -1,8 +1,8 @@
-import { Badge } from "@/components/ui/Badge";
-import { Label } from "@/components/ui/Label";
-import { Separator } from "@/components/ui/Separator";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/Sheet";
-import { Spinner } from "@/components/ui/Spinner";
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Spinner } from "@/components/ui/spinner";
 import { authApis, endpoints } from "@/config/api";
 import { formatTime } from "@/config/utils";
 import { useAppSelector } from "@/redux/hooks";

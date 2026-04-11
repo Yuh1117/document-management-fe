@@ -1,8 +1,8 @@
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/Popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ChangeLanguage } from "./ChangeLanguage";
 import { ModeToggle } from "./ThemeToggle";
 import { Settings } from "lucide-react";
-import { Label } from "@/components/ui/Label";
+import { Label } from "@/components/ui/label";
 
 const Setting = () => {
     return (

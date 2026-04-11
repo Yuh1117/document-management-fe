@@ -6,16 +6,16 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from "@/components/ui/Dialog";
-import { Button } from "@/components/ui/Button";
-import { ScrollArea } from "@/components/ui/ScrollArea";
-import { Spinner } from "@/components/ui/Spinner";
-import { Textarea } from "@/components/ui/Textarea";
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Spinner } from "@/components/ui/spinner";
+import { Textarea } from "@/components/ui/textarea";
 import { authApis, endpoints } from "@/config/api";
 import type { IDocument, IDocumentSummarize, ISummaryFeedbackDocumentStats, ISummaryFeedbackRes } from "@/types/type";
 import { Sparkles, ThumbsDown, ThumbsUp } from "lucide-react";
 import { toast } from "sonner";
-import { Separator } from "@/components/ui/Separator";
+import { Separator } from "@/components/ui/separator";
 
 type Props = {
     data: IDocument | null;

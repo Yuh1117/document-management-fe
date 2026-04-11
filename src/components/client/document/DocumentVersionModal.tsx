@@ -6,16 +6,16 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from "@/components/ui/Dialog"
-import { Button } from "@/components/ui/Button"
-import { ScrollArea } from "@/components/ui/ScrollArea"
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { Download, EllipsisVertical } from "lucide-react"
 import type { IDocument, IDocumentVersion } from "@/types/type"
 import { authApis, endpoints } from "@/config/api"
 import { cn } from "@/lib/utils"
-import { Spinner } from "@/components/ui/Spinner"
+import { Spinner } from "@/components/ui/spinner"
 import { formatTime } from "@/config/utils"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/DropdownMenu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { toast } from "sonner"
 
 type Props = {

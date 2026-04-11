@@ -7,7 +7,7 @@ import type { Dispatch, SetStateAction } from "react";
 import { login } from "@/redux/reducers/userSlice";
 import { useTranslation } from "react-i18next";
 import { FcGoogle } from "react-icons/fc";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 
 const GoogleLoginButton = ({ setMsg }: { setMsg: Dispatch<SetStateAction<string>> }) => {
     const dispatch = useAppDispatch()

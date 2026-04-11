@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Input } from "@/components/ui/Input"
+import { Input } from "@/components/ui/input"
 import { X } from "lucide-react"
 import { cn } from "@/lib/utils"
 

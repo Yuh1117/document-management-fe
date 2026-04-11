@@ -1,6 +1,6 @@
-import { Card, CardContent } from '@/components/ui/Card';
+import { Card, CardContent } from '@/components/ui/card';
 import { ShieldAlert } from 'lucide-react';
-import { Spinner } from '../ui/Spinner';
+import { Spinner } from '../ui/spinner';
 import { useAppSelector } from '@/redux/hooks';
 
 type Props = {

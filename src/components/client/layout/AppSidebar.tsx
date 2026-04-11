@@ -13,7 +13,7 @@ import {
   SidebarContent,
   SidebarHeader,
   SidebarRail
-} from "@/components/ui/Sidebar"
+} from "@/components/ui/sidebar"
 import { NewDropDown } from "../NewDropdown"
 import type { NavItem } from "@/components/admin/layout/AdminSidebar"
 

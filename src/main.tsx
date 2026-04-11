@@ -1,9 +1,9 @@
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import App from './App.tsx'
+import App from './App'
 import './i18n';
 import { Provider } from 'react-redux';
-import { store } from './redux/store.ts';
+import { store } from './redux/store';
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;

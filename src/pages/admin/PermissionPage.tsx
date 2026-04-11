@@ -1,23 +1,24 @@
 import DeleteModal from "@/components/admin/DeleteModal";
-import RoleModal from "@/components/admin/role/RoleModal";
+import PermissionModal from "@/components/admin/permission/PermissionModal";
 import Access from "@/components/protected-route/Access";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/Pagination";
-import { Spinner } from "@/components/ui/Spinner";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/Table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { Spinner } from "@/components/ui/spinner";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { authApis, endpoints } from "@/config/api";
 import { ALL_PERMISSIONS } from "@/config/permissions";
+import { getMethodColor } from "@/config/utils";
 import { useAppDispatch } from "@/redux/hooks";
 import { fetchPermissions } from "@/redux/reducers/permissionSlice";
-import type { IRole } from "@/types/type";
+import type { IPermission } from "@/types/type";
 import { PencilLine, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 
-const RoleAdminPage = () => {
-    const [roles, setRoles] = useState<IRole[]>([])
+const PermissionAdminPage = () => {
+    const [permissions, setPermissions] = useState<IPermission[]>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [q, setQ] = useSearchParams();
     const page = parseInt(q.get("page") || "1");
@@ -25,22 +26,22 @@ const RoleAdminPage = () => {
     const [totalPages, setTotalPages] = useState<number>(1);
     const [showModal, setShowModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [data, setData] = useState<IRole | null>()
+    const [data, setData] = useState<IPermission | null>()
     const [deletingId, setDeletingId] = useState<number | null>(null);
     const dispatch = useAppDispatch();
 
-    const loadRoles = async () => {
+    const loadPermissions = async () => {
         try {
             setLoading(true)
 
-            let url = `${endpoints['roles']}?page=${page}`;
+            let url = `${endpoints['permissions']}?page=${page}`;
 
             if (kwInput) {
                 url = `${url}&kw=${kwInput}`;
             }
 
             const res = await authApis().get(url);
-            setRoles(res.data.data.result);
+            setPermissions(res.data.data.result);
             setTotalPages(res.data.data.totalPages)
 
         } catch (error) {
@@ -77,7 +78,7 @@ const RoleAdminPage = () => {
         setData(null)
     };
 
-    const handleOpenEdit = (setting: IRole) => {
+    const handleOpenEdit = (setting: IPermission) => {
         setIsEditing(true);
         setShowModal(true);
         setData(setting)
@@ -89,16 +90,16 @@ const RoleAdminPage = () => {
 
     useEffect(() => {
         if (page > 0) {
-            loadRoles();
+            loadPermissions();
         }
     }, [q]);
 
     useEffect(() => {
         const permissionsToCheck = [
-            ALL_PERMISSIONS.ROLES.LIST,
-            ALL_PERMISSIONS.ROLES.CREATE,
-            ALL_PERMISSIONS.ROLES.UPDATE,
-            ALL_PERMISSIONS.ROLES.DELETE,
+            ALL_PERMISSIONS.PERMISSIONS.LIST,
+            ALL_PERMISSIONS.PERMISSIONS.CREATE,
+            ALL_PERMISSIONS.PERMISSIONS.UPDATE,
+            ALL_PERMISSIONS.PERMISSIONS.DELETE,
         ].map(({ apiPath, method }) => ({ apiPath, method }));
 
         dispatch(fetchPermissions(permissionsToCheck));
@@ -108,10 +109,10 @@ const RoleAdminPage = () => {
         <div className="px-4">
             <header className="flex h-16 shrink-0 items-center gap-2">
                 <div className="flex items-center gap-2">
-                    <span>Vai trò</span>
+                    <span>Quyền</span>
                 </div>
             </header>
-            <Access permission={ALL_PERMISSIONS.ROLES.LIST}>
+            <Access permission={ALL_PERMISSIONS.PERMISSIONS.LIST}>
                 <div className="mx-5">
                     <div className="flex items-center gap-2 border rounded-xl p-5  shadow-xs">
                         <Label>Tên:</Label>
@@ -128,8 +129,8 @@ const RoleAdminPage = () => {
                     </div>
                     <div className="border rounded-xl mt-5 p-5 shadow-xs">
                         <div className="flex justify-between items-center mb-3">
-                            <span className="font-medium">Danh sách vai trò</span>
-                            <Access permission={ALL_PERMISSIONS.ROLES.CREATE} hideChildren>
+                            <span className="font-medium">Danh sách quyền</span>
+                            <Access permission={ALL_PERMISSIONS.PERMISSIONS.CREATE} hideChildren>
                                 <Button className="bg-blue-500 dark:bg-blue-500 hover:bg-blue-500/90 dark:hover:bg-blue-500/90" onClick={handleOpenAdd}>
                                     <Plus strokeWidth={3} /> Thêm mới
                                 </Button>
@@ -140,7 +141,9 @@ const RoleAdminPage = () => {
                                 <TableRow>
                                     <TableHead>Id</TableHead>
                                     <TableHead>Tên</TableHead>
-                                    <TableHead>Mô tả</TableHead>
+                                    <TableHead>Module</TableHead>
+                                    <TableHead>Method</TableHead>
+                                    <TableHead>Api path</TableHead>
                                     <TableHead></TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -153,29 +156,33 @@ const RoleAdminPage = () => {
                                             </div>
                                         </TableCell>
                                     </TableRow>
-                                ) : roles.length === 0 ? (
+                                ) : permissions.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={5} className="text-center text-sm text-muted-foreground py-10">
                                             Không có dữ liệu
                                         </TableCell>
                                     </TableRow>
                                 ) : (
-                                    roles.map(r => (
-                                        <TableRow key={r.id}>
-                                            <TableCell className="font-medium">{r.id}</TableCell>
-                                            <TableCell>{r.name}</TableCell>
-                                            <TableCell>{r.description}</TableCell>
+                                    permissions.map(s => (
+                                        <TableRow key={s.id}>
+                                            <TableCell className="font-medium">{s.id}</TableCell>
+                                            <TableCell>{s.name}</TableCell>
+                                            <TableCell>{s.module}</TableCell>
+                                            <TableCell>
+                                                <span className={`${getMethodColor(s.method)} font-medium`}>{s.method}</span>
+                                            </TableCell>
+                                            <TableCell className="whitespace-normal break-words max-w-xs">{s.apiPath}</TableCell>
                                             <TableCell className="gap-2 flex justify-end">
-                                                <Access permission={ALL_PERMISSIONS.ROLES.UPDATE} hideChildren>
+                                                <Access permission={ALL_PERMISSIONS.PERMISSIONS.UPDATE} hideChildren>
                                                     <PencilLine
                                                         className="text-yellow-500 hover:text-yellow-500/50 cursor-pointer me-1"
-                                                        onClick={() => handleOpenEdit(r)}
+                                                        onClick={() => handleOpenEdit(s)}
                                                     />
                                                 </Access>
-                                                <Access permission={ALL_PERMISSIONS.ROLES.DELETE} hideChildren>
+                                                <Access permission={ALL_PERMISSIONS.PERMISSIONS.DELETE} hideChildren>
                                                     <Trash2
                                                         className="text-red-500 hover:text-red-500/50 cursor-pointer"
-                                                        onClick={() => handleDelete(r.id)}
+                                                        onClick={() => handleDelete(s.id)}
                                                     />
                                                 </Access>
                                             </TableCell>
@@ -186,7 +193,7 @@ const RoleAdminPage = () => {
 
                         </Table>
                     </div>
-                    {roles.length !== 0 &&
+                    {permissions.length !== 0 &&
                         <Pagination className="mt-3">
                             <PaginationContent>
                                 <PaginationItem>
@@ -216,21 +223,21 @@ const RoleAdminPage = () => {
                     }
                 </div>
 
-                <RoleModal
+                <PermissionModal
                     open={showModal}
                     onOpenChange={setShowModal}
                     isEditing={isEditing}
                     data={data}
-                    loadRoles={loadRoles}
+                    loadPermissions={loadPermissions}
                 />
 
                 <DeleteModal
                     open={!!deletingId}
                     deletingId={deletingId}
                     onCancel={() => setDeletingId(null)}
-                    name={"vai trò"}
-                    load={loadRoles}
-                    endpoint={endpoints["roles-detail"]}
+                    name={"quyền"}
+                    load={loadPermissions}
+                    endpoint={endpoints["permissions-detail"]}
                 />
             </Access>
 
@@ -238,4 +245,4 @@ const RoleAdminPage = () => {
     )
 }
 
-export default RoleAdminPage;
+export default PermissionAdminPage;

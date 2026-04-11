@@ -5,10 +5,10 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from "@/components/ui/Dialog"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/Tabs"
-import { Button } from "@/components/ui/Button"
-import { ScrollArea } from "@/components/ui/ScrollArea"
+} from "@/components/ui/dialog"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { ChevronRight, ArrowLeft, Folder } from "lucide-react"
 import type { IDocument, IFolder } from "@/types/type"
 import { toast } from "sonner"
@@ -16,7 +16,7 @@ import { useAppDispatch } from "@/redux/hooks"
 import { triggerReload } from "@/redux/reducers/filesSlice"
 import { authApis, endpoints } from "@/config/api"
 import { useFilesLoader } from "@/hooks/useFilesLoader"
-import { Spinner } from "../ui/Spinner"
+import { Spinner } from "../ui/spinner"
 import { cn } from "@/lib/utils"
 import { isDocument, isFolder } from "@/config/utils"
 

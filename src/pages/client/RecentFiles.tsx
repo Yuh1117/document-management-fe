@@ -1,9 +1,9 @@
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { endpoints } from "@/config/api";
-import { Spinner } from "@/components/ui/Spinner";
-import { Button } from "@/components/ui/Button";
-import { SidebarTrigger } from "@/components/ui/Sidebar";
-import { ScrollArea } from "@/components/ui/ScrollArea";
+import { Spinner } from "@/components/ui/spinner";
+import { Button } from "@/components/ui/button";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Download, ListChecks, X } from "lucide-react";
 import { Toaster } from "sonner";
 import Document from "@/components/client/document/Document";

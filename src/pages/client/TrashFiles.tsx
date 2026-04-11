@@ -1,16 +1,16 @@
 import { useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { authApis, endpoints } from "@/config/api";
-import { Spinner } from "@/components/ui/Spinner";
-import { SidebarTrigger } from "@/components/ui/Sidebar";
-import { ScrollArea } from "@/components/ui/ScrollArea";
+import { Spinner } from "@/components/ui/spinner";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast, Toaster } from "sonner";
 import Document from "@/components/client/document/Document";
 import Folder from "@/components/client/folder/Folder";
 import { useFilesLoader } from "@/hooks/useFilesLoader";
 import { triggerReload } from "@/redux/reducers/filesSlice";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/Dialog";
-import { Button } from "@/components/ui/Button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 const TrashFilesPage = () => {
     const { reloadFlag } = useAppSelector(state => state.files);

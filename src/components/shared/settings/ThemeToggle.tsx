@@ -1,6 +1,6 @@
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "./ThemeProvider"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/Select"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export function ModeToggle() {
     const { theme, setTheme } = useTheme()

@@ -1,24 +1,24 @@
 import DeleteModal from "@/components/admin/DeleteModal";
-import PermissionModal from "@/components/admin/permission/PermissionModal";
+import SettingModal from "@/components/admin/setting/SettingModal";
 import Access from "@/components/protected-route/Access";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/Pagination";
-import { Spinner } from "@/components/ui/Spinner";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/Table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { Spinner } from "@/components/ui/spinner";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { authApis, endpoints } from "@/config/api";
 import { ALL_PERMISSIONS } from "@/config/permissions";
-import { getMethodColor } from "@/config/utils";
 import { useAppDispatch } from "@/redux/hooks";
 import { fetchPermissions } from "@/redux/reducers/permissionSlice";
-import type { IPermission } from "@/types/type";
+import type { ISetting } from "@/types/type";
 import { PencilLine, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 
-const PermissionAdminPage = () => {
-    const [permissions, setPermissions] = useState<IPermission[]>([])
+const SettingAdminPage = () => {
+    const [settings, setSettings] = useState<ISetting[]>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [q, setQ] = useSearchParams();
     const page = parseInt(q.get("page") || "1");
@@ -26,22 +26,22 @@ const PermissionAdminPage = () => {
     const [totalPages, setTotalPages] = useState<number>(1);
     const [showModal, setShowModal] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [data, setData] = useState<IPermission | null>()
+    const [data, setData] = useState<ISetting | null>()
     const [deletingId, setDeletingId] = useState<number | null>(null);
-    const dispatch = useAppDispatch();
+    const dispatch = useAppDispatch()
 
-    const loadPermissions = async () => {
+    const loadSettings = async () => {
         try {
             setLoading(true)
-
-            let url = `${endpoints['permissions']}?page=${page}`;
+            
+            let url = `${endpoints['settings']}?page=${page}`;
 
             if (kwInput) {
                 url = `${url}&kw=${kwInput}`;
             }
 
             const res = await authApis().get(url);
-            setPermissions(res.data.data.result);
+            setSettings(res.data.data.result);
             setTotalPages(res.data.data.totalPages)
 
         } catch (error) {
@@ -78,7 +78,7 @@ const PermissionAdminPage = () => {
         setData(null)
     };
 
-    const handleOpenEdit = (setting: IPermission) => {
+    const handleOpenEdit = (setting: ISetting) => {
         setIsEditing(true);
         setShowModal(true);
         setData(setting)
@@ -90,16 +90,16 @@ const PermissionAdminPage = () => {
 
     useEffect(() => {
         if (page > 0) {
-            loadPermissions();
+            loadSettings();
         }
     }, [q]);
 
     useEffect(() => {
         const permissionsToCheck = [
-            ALL_PERMISSIONS.PERMISSIONS.LIST,
-            ALL_PERMISSIONS.PERMISSIONS.CREATE,
-            ALL_PERMISSIONS.PERMISSIONS.UPDATE,
-            ALL_PERMISSIONS.PERMISSIONS.DELETE,
+            ALL_PERMISSIONS.SETTINGS.LIST,
+            ALL_PERMISSIONS.SETTINGS.CREATE,
+            ALL_PERMISSIONS.SETTINGS.UPDATE,
+            ALL_PERMISSIONS.SETTINGS.DELETE,
         ].map(({ apiPath, method }) => ({ apiPath, method }));
 
         dispatch(fetchPermissions(permissionsToCheck));
@@ -109,18 +109,18 @@ const PermissionAdminPage = () => {
         <div className="px-4">
             <header className="flex h-16 shrink-0 items-center gap-2">
                 <div className="flex items-center gap-2">
-                    <span>Quyền</span>
+                    <span>Cài đặt</span>
                 </div>
             </header>
-            <Access permission={ALL_PERMISSIONS.PERMISSIONS.LIST}>
+            <Access permission={ALL_PERMISSIONS.SETTINGS.LIST}>
                 <div className="mx-5">
                     <div className="flex items-center gap-2 border rounded-xl p-5  shadow-xs">
-                        <Label>Tên:</Label>
+                        <Label>Key:</Label>
                         <Input
                             className="w-sm"
                             type="text"
-                            placeholder="Nhập tên"
-                            id="name"
+                            placeholder="Nhập key"
+                            id="key"
                             value={kwInput}
                             onChange={(e) => setKwInput(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -129,8 +129,8 @@ const PermissionAdminPage = () => {
                     </div>
                     <div className="border rounded-xl mt-5 p-5 shadow-xs">
                         <div className="flex justify-between items-center mb-3">
-                            <span className="font-medium">Danh sách quyền</span>
-                            <Access permission={ALL_PERMISSIONS.PERMISSIONS.CREATE} hideChildren>
+                            <span className="font-medium">Danh sách cài đặt</span>
+                            <Access permission={ALL_PERMISSIONS.SETTINGS.CREATE} hideChildren>
                                 <Button className="bg-blue-500 dark:bg-blue-500 hover:bg-blue-500/90 dark:hover:bg-blue-500/90" onClick={handleOpenAdd}>
                                     <Plus strokeWidth={3} /> Thêm mới
                                 </Button>
@@ -140,10 +140,9 @@ const PermissionAdminPage = () => {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Id</TableHead>
-                                    <TableHead>Tên</TableHead>
-                                    <TableHead>Module</TableHead>
-                                    <TableHead>Method</TableHead>
-                                    <TableHead>Api path</TableHead>
+                                    <TableHead>Key</TableHead>
+                                    <TableHead>Value</TableHead>
+                                    <TableHead>Mô tả</TableHead>
                                     <TableHead></TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -156,30 +155,33 @@ const PermissionAdminPage = () => {
                                             </div>
                                         </TableCell>
                                     </TableRow>
-                                ) : permissions.length === 0 ? (
+                                ) : settings.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={5} className="text-center text-sm text-muted-foreground py-10">
                                             Không có dữ liệu
                                         </TableCell>
                                     </TableRow>
                                 ) : (
-                                    permissions.map(s => (
+                                    settings.map(s => (
                                         <TableRow key={s.id}>
                                             <TableCell className="font-medium">{s.id}</TableCell>
-                                            <TableCell>{s.name}</TableCell>
-                                            <TableCell>{s.module}</TableCell>
-                                            <TableCell>
-                                                <span className={`${getMethodColor(s.method)} font-medium`}>{s.method}</span>
+                                            <TableCell>{s.key}</TableCell>
+                                            <TableCell className="whitespace-normal break-words max-w-xs">
+                                                {s.key === "allowedFileType" ? <>{s.value.split(";").map((type, index) => (
+                                                    <Badge key={index} variant="secondary" className="my-1 me-1">
+                                                        {type}
+                                                    </Badge>
+                                                ))}</> : <>{s.value}</>}
                                             </TableCell>
-                                            <TableCell className="whitespace-normal break-words max-w-xs">{s.apiPath}</TableCell>
+                                            <TableCell>{s.description}</TableCell>
                                             <TableCell className="gap-2 flex justify-end">
-                                                <Access permission={ALL_PERMISSIONS.PERMISSIONS.UPDATE} hideChildren>
+                                                <Access permission={ALL_PERMISSIONS.SETTINGS.UPDATE} hideChildren>
                                                     <PencilLine
                                                         className="text-yellow-500 hover:text-yellow-500/50 cursor-pointer me-1"
                                                         onClick={() => handleOpenEdit(s)}
                                                     />
                                                 </Access>
-                                                <Access permission={ALL_PERMISSIONS.PERMISSIONS.DELETE} hideChildren>
+                                                <Access permission={ALL_PERMISSIONS.SETTINGS.DELETE} hideChildren>
                                                     <Trash2
                                                         className="text-red-500 hover:text-red-500/50 cursor-pointer"
                                                         onClick={() => handleDelete(s.id)}
@@ -193,7 +195,7 @@ const PermissionAdminPage = () => {
 
                         </Table>
                     </div>
-                    {permissions.length !== 0 &&
+                    {settings.length !== 0 &&
                         <Pagination className="mt-3">
                             <PaginationContent>
                                 <PaginationItem>
@@ -223,21 +225,21 @@ const PermissionAdminPage = () => {
                     }
                 </div>
 
-                <PermissionModal
+                <SettingModal
                     open={showModal}
                     onOpenChange={setShowModal}
                     isEditing={isEditing}
                     data={data}
-                    loadPermissions={loadPermissions}
+                    loadSettings={loadSettings}
                 />
 
                 <DeleteModal
                     open={!!deletingId}
                     deletingId={deletingId}
                     onCancel={() => setDeletingId(null)}
-                    name={"quyền"}
-                    load={loadPermissions}
-                    endpoint={endpoints["permissions-detail"]}
+                    name={"cài đặt"}
+                    load={loadSettings}
+                    endpoint={endpoints["settings-detail"]}
                 />
             </Access>
 
@@ -245,4 +247,4 @@ const PermissionAdminPage = () => {
     )
 }
 
-export default PermissionAdminPage;
+export default SettingAdminPage;

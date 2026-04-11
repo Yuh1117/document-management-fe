@@ -1,5 +1,5 @@
 import { BrushCleaning, EllipsisVertical, History } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "../ui/DropdownMenu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
 type Props = {
     handleDropdownToggle: (open: boolean) => void,

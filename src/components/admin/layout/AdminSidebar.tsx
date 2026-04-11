@@ -17,7 +17,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/Sidebar"
+} from "@/components/ui/sidebar"
 import { NavUser } from "./NavUser"
 import { NavMain } from "./AdminNavMain"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"

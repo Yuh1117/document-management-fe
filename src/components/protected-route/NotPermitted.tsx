@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
-import { Button } from '../ui/Button';
-import { Card, CardContent } from '../ui/Card';
+import { Button } from '../ui/button';
+import { Card, CardContent } from '../ui/card';
 import { ShieldAlert } from 'lucide-react';
 import { ChangeLanguage } from '../shared/settings/ChangeLanguage';
 import { ModeToggle } from '../shared/settings/ThemeToggle';

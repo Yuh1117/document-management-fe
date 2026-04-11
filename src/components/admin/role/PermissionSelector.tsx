@@ -1,9 +1,9 @@
-import { Switch } from "@/components/ui/Switch";
-import { Label } from "@/components/ui/Label";
-import { ScrollArea } from "@/components/ui/ScrollArea";
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/Accordion";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import type { IPermission } from "@/types/type";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/Form";
+import { FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { getMethodColor } from "@/config/utils";
 
 type Props = {

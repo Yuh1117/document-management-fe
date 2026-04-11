@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { authApis, endpoints } from "@/config/api";
 import type { ISummaryFeedbackModelStats } from "@/types/type";
-import { Spinner } from "@/components/ui/Spinner";
+import { Spinner } from "@/components/ui/spinner";
 import {
     Table,
     TableBody,
@@ -9,8 +9,8 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/Table";
-import { Badge } from "@/components/ui/Badge";
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { ThumbsDown, ThumbsUp } from "lucide-react";
 
 const SummaryFeedbackAdminPage = () => {

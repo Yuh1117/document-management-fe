@@ -1,15 +1,15 @@
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/Sheet";
-import { Spinner } from "@/components/ui/Spinner";
-import { Badge } from "@/components/ui/Badge";
-import { Label } from "@/components/ui/Label";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Spinner } from "@/components/ui/spinner";
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
 import type { IDocument } from "@/types/type";
 import { formatFileSize, formatTime } from "@/config/utils";
-import { Separator } from "@/components/ui/Separator";
+import { Separator } from "@/components/ui/separator";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { Textarea } from "@/components/ui/Textarea";
+import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState } from "react";
 import { authApis, endpoints } from "@/config/api";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
 import { openSummarizeModal } from "@/redux/reducers/documentSlice";
 

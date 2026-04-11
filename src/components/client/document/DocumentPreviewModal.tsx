@@ -1,9 +1,9 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/Dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import type { IDocument } from "@/types/type";
 import { toast } from "sonner";
 import { authApis, endpoints } from "@/config/api";
 import { useEffect, useState } from "react";
-import { Spinner } from "@/components/ui/Spinner";
+import { Spinner } from "@/components/ui/spinner";
 
 interface Props {
     data: IDocument | null,

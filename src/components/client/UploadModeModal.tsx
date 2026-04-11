@@ -1,14 +1,14 @@
-import { Button } from "@/components/ui/Button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/Dialog";
-import { Label } from "@/components/ui/Label";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
-import { RadioGroup, RadioGroupItem } from "../ui/RadioGroup";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { useParams } from "react-router";
 import { authApis, endpoints } from "@/config/api";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/redux/hooks";
 import { triggerReload } from "@/redux/reducers/filesSlice";
-import { Spinner } from "../ui/Spinner";
+import { Spinner } from "../ui/spinner";
 
 type Props = {
     files: File[] | null

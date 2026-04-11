@@ -3,19 +3,19 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from "@/components/ui/DropdownMenu"
-import { Button } from "../ui/Button"
+} from "@/components/ui/dropdown-menu"
+import { Button } from "../ui/button"
 import { DropdownMenuGroup } from "@radix-ui/react-dropdown-menu"
 import { FileUp, FolderPlus, FolderUp, Plus } from "lucide-react"
-import { useSidebar } from "../ui/Sidebar"
+import { useSidebar } from "../ui/sidebar"
 import { useParams } from "react-router"
 import { useAppDispatch } from "@/redux/hooks"
 import { openUploadModeModal, triggerReload } from "@/redux/reducers/filesSlice"
 import { authApis, endpoints } from "@/config/api"
 import { toast } from "sonner"
 import { useState } from "react"
-import { Spinner } from "../ui/Spinner"
-import { Separator } from "../ui/Separator"
+import { Spinner } from "../ui/spinner"
+import { Separator } from "../ui/separator"
 import { openFolderModal } from "@/redux/reducers/folderSlice"
 
 const NewDropDown = () => {

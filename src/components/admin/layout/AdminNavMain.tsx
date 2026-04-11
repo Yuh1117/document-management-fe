@@ -3,7 +3,7 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-} from "@/components/ui/Sidebar"
+} from "@/components/ui/sidebar"
 import { Link, useLocation } from "react-router"
 import type { NavItem } from "./AdminSidebar";
 
