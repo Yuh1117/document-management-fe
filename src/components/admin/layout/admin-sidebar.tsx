@@ -2,6 +2,7 @@ import * as React from "react"
 import {
   ChartPie,
   Lock,
+  MessageSquareMore,
   Settings2,
   Shield,
   User,
@@ -70,6 +71,12 @@ const navMainItems: NavItem[] = [
     icon: Lock,
     access: false,
     permission: ALL_PERMISSIONS.PERMISSIONS.LIST
+  },
+  {
+    title: "Phản hồi tóm tắt AI",
+    url: "/admin/summary-feedback",
+    icon: MessageSquareMore,
+    access: true,
   },
 ]
 

@@ -30,7 +30,7 @@ const DocumentVersionModal = ({ data, open, onOpenChange }: Props) => {
     const [page, setPage] = useState<number>(1);
     const [loadKey, setLoadKey] = useState<boolean>(false);
     const [hasMore, setHasMore] = useState<boolean>(true);
-    const [downloading, setDownloading] = useState<boolean>(false);
+    const [, setDownloading] = useState<boolean>(false);
     const [dropdownOpen, setDropdownOpen] = useState<string | number | null>(null);
     const observerRef = useRef<HTMLDivElement | null>(null);
 
@@ -145,7 +145,7 @@ const DocumentVersionModal = ({ data, open, onOpenChange }: Props) => {
 
                 <ScrollArea className="h-64 border rounded-lg select-none">
                     <div className="space-y-1 p-1">
-                        <div className={cn("flex items-center justify-between w-full px-3 py-2 text-left rounded-md hover:bg-accent",
+                        <div className={cn("flex items-center justify-between w-full px-3 py-2 text-left rounded-xl hover:bg-accent",
                             dropdownOpen === "current" && "bg-input/50")}>
                             <div className="flex flex-col">
                                 <div>
@@ -168,7 +168,7 @@ const DocumentVersionModal = ({ data, open, onOpenChange }: Props) => {
                         </div>
 
                         {documentVersions.length > 0 && documentVersions.map((d) => <div key={d.id}
-                            className={cn("flex items-center justify-between w-full px-3 py-2 text-left rounded-md hover:bg-accent",
+                            className={cn("flex items-center justify-between w-full px-3 py-2 text-left rounded-xl hover:bg-accent",
                                 dropdownOpen === d.id && "bg-input/50")}
                         >
                             <div className="flex flex-col">

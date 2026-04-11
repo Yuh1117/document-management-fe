@@ -10,6 +10,7 @@ import { useEffect } from 'react'
 import { getProfile } from './redux/reducers/userSlice'
 import { AppSidebar } from './components/client/layout/app-sidebar'
 import DashBoard from './pages/admin/dashboard'
+import SummaryFeedbackAdminPage from './pages/admin/summary-feedback'
 import { ThemeProvider } from './components/shared/settings/theme-provider'
 import { AdminSidebar } from './components/admin/layout/admin-sidebar'
 import SettingAdminPage from './pages/admin/setting'
@@ -117,6 +118,10 @@ const router = createBrowserRouter([
             {
                 path: "permissions",
                 Component: PermissionAdminPage,
+            },
+            {
+                path: "summary-feedback",
+                Component: SummaryFeedbackAdminPage,
             },
         ],
     },

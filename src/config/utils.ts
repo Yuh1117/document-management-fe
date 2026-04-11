@@ -101,9 +101,10 @@ export function formatFileSize(bytes: number): string {
 }
 
 export function truncateFileName(name: string): string {
-    if (name.length <= 12) return name;
+    const formatName = name.substring(0, name.indexOf("."));
+    if (formatName.length <= 12) return name;
     const end = name.substring(name.lastIndexOf("."));
-    const start = name.substring(0, 12);
+    const start = formatName.substring(0, 12);
     return `${start}...${end}`
 }
 

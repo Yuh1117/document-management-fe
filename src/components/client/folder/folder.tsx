@@ -34,7 +34,7 @@ const Folder = ({
 }: Props) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const nav = useNavigate();
-    const [downloading, setDownloading] = useState<boolean>(false);
+    const [, setDownloading] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false)
     const dispatch = useAppDispatch()
 

@@ -5,10 +5,13 @@ import { Label } from "@/components/ui/label";
 import type { IDocument } from "@/types/type";
 import { formatFileSize, formatTime } from "@/config/utils";
 import { Separator } from "@/components/ui/separator";
-import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState } from "react";
 import { authApis, endpoints } from "@/config/Api";
+import { Button } from "@/components/ui/button";
+import { Sparkles } from "lucide-react";
+import { openSummarizeModal } from "@/redux/reducers/documentSlice";
 
 type Props = {
     data: IDocument | null;
@@ -17,12 +20,13 @@ type Props = {
 };
 
 const DocumentDetail = ({ isSheetOpen, setIsSheetOpen, data }: Props) => {
-    const userId = useAppSelector(state => state.users.user?.id)
-    const [loadingDetail, setLoadingDetail] = useState<boolean>(false)
-    const [documentDetail, setDocumentDetail] = useState<IDocument | null>(null)
+    const dispatch = useAppDispatch();
+    const userId = useAppSelector(state => state.users.user?.id);
+    const [loadingDetail, setLoadingDetail] = useState<boolean>(false);
+    const [documentDetail, setDocumentDetail] = useState<IDocument | null>(null);
 
     const loadViewDetail = async () => {
-        if (!data) return
+        if (!data) return;
 
         try {
             setLoadingDetail(true);
@@ -35,11 +39,18 @@ const DocumentDetail = ({ isSheetOpen, setIsSheetOpen, data }: Props) => {
         }
     };
 
-    useEffect(() => {
-        if (isSheetOpen) {
-            loadViewDetail()
+    const handleOpenSummarize = () => {
+        const doc = documentDetail ?? data;
+        if (doc) {
+            dispatch(openSummarizeModal({ data: doc }));
         }
-    }, [isSheetOpen])
+    };
+
+    useEffect(() => {
+        if (isSheetOpen && data) {
+            loadViewDetail();
+        }
+    }, [isSheetOpen, data?.id]);
 
     return (
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
@@ -87,6 +98,14 @@ const DocumentDetail = ({ isSheetOpen, setIsSheetOpen, data }: Props) => {
                                         <Label className="me-2 medium text-md">Cập nhật lúc:</Label>
                                         <Badge variant="secondary">{formatTime(documentDetail?.updatedAt)}</Badge>
                                     </div></div>
+                                <Separator />
+                                <div className="flex flex-wrap items-center justify-between gap-2">
+                                    <Label className="medium text-md">Tóm tắt (AI)</Label>
+                                    <Button type="button" variant="secondary" size="sm" onClick={handleOpenSummarize}>
+                                        <Sparkles className="size-4 me-1.5" />
+                                        Tóm tắt
+                                    </Button>
+                                </div>
                             </div>
                         ) : (
                             <p>Không tìm thấy chi tiết.</p>

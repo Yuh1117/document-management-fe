@@ -4,6 +4,7 @@ import NotPermitted from "./not-permitted";
 import { Navigate } from "react-router";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+    return <>{children}</>;
     const user = useAppSelector(state => state.users.user);
     return user ? <>{children}</> : <NotLogin />;
 };

@@ -18,11 +18,12 @@ import { useDownloadFiles } from "@/hooks/use-download-files";
 import ShareUrlModal from "@/components/client/document/share-url-modal";
 import TransferModal from "@/components/client/transfer-modal";
 import ShareModal from "@/components/client/share-modal";
-import { closeDocumentDetail, closeDocumentModal, closePreviewModal, closeShareUrlModal, closeVersionModal } from "@/redux/reducers/documentSlice";
+import { closeDocumentDetail, closeDocumentModal, closePreviewModal, closeShareUrlModal, closeSummarizeModal, closeVersionModal } from "@/redux/reducers/documentSlice";
 import { closeShareModal, closeTransferModal, closeUploadModeModal } from "@/redux/reducers/filesSlice";
 import { closeFolderDetail, closeFolderModal } from "@/redux/reducers/folderSlice";
 import DocumentVersionModal from "@/components/client/document/document-version-modal";
 import DocumentPreviewModal from "@/components/client/document/document-preview-modal";
+import DocumentSummarizeModal from "@/components/client/document/document-summarize-modal";
 import UploadModeModal from "@/components/client/upload-mode-modal";
 
 const RecentFilesPage = () => {
@@ -182,6 +183,12 @@ const RecentFilesPage = () => {
                 data={documentState.documentVersion.data}
                 open={documentState.documentVersion.open}
                 onOpenChange={(open) => !open && dispatch(closeVersionModal())}
+            />
+
+            <DocumentSummarizeModal
+                data={documentState.summarizeModal.data}
+                open={documentState.summarizeModal.open}
+                onOpenChange={(open) => !open && dispatch(closeSummarizeModal())}
             />
 
         </div>

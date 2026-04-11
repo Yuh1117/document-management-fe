@@ -69,6 +69,13 @@ export interface IDocument {
     updatedBy?: IUser,
 }
 
+export interface IDocumentSummarize {
+    id: number
+    summaryText: string
+    modelName: string | null
+    promptVersion: string | null
+}
+
 export interface IFolder {
     id: number,
     name: string,
@@ -124,4 +131,28 @@ export interface IDocumentVersion {
     document: IDocument,
     createdAt?: string,
     updatedAt?: string
+}
+
+export interface ISummaryFeedbackRes {
+    id: number,
+    documentId: number,
+    isHelpful: boolean,
+    comment?: string,
+    modelName?: string,
+    promptVersion?: string,
+    createdAt?: string,
+}
+
+export interface ISummaryFeedbackDocumentStats {
+    documentId: number,
+    helpfulCount: number,
+    notHelpfulCount: number,
+    totalCount: number,
+}
+
+export interface ISummaryFeedbackModelStats {
+    modelName: string,
+    totalCount: number,
+    helpfulCount: number,
+    notHelpfulCount: number,
 }

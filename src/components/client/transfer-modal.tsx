@@ -145,7 +145,7 @@ const TransferModal = ({
                                 <div
                                     key={root.id}
                                     className={cn(
-                                        "flex items-center justify-between w-full px-3 py-2 text-left rounded-md hover:bg-accent",
+                                        "flex items-center justify-between w-full px-3 py-2 text-left rounded-xl hover:bg-accent",
                                         selectedFolder === root.id ? "bg-accent" : ""
                                     )}
                                     onClick={() => setSelectedFolder(root.id)}
@@ -169,7 +169,7 @@ const TransferModal = ({
                                 return <div
                                     key={f.folder.id}
                                     className={cn(
-                                        "flex items-center justify-between w-full px-3 py-2 text-left rounded-md",
+                                        "flex items-center justify-between w-full px-3 py-2 text-left rounded-xl",
                                         selectedFolder === f.folder.id ? "bg-accent" : "", isInvalid ? "text-muted-foreground cursor-not-allowed" : "hover:bg-accent",
                                     )}
                                     onClick={() => {
