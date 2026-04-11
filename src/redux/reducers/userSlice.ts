@@ -1,4 +1,4 @@
-import { authApis, endpoints } from '@/config/Api';
+import { authApis, endpoints } from '@/config/api';
 import type { IAccount } from '@/types/type';
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import cookies from 'react-cookies';

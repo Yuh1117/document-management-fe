@@ -1,19 +1,19 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/Button";
+import { Card, CardContent } from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
 import { Link, useLocation, useNavigate } from "react-router";
 import { useForm } from "react-hook-form"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/Form";
 import { useEffect, useState, type ChangeEvent } from "react";
 import { AlertCircleIcon, Loader2Icon } from "lucide-react"
 import { useTranslation } from "react-i18next";
-import type { LoginFormValues } from "./login";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import Api, { endpoints } from "@/config/Api";
+import type { LoginFormValues } from "./Login";
+import { Alert, AlertDescription } from "@/components/ui/Alert";
+import Api, { endpoints } from "@/config/api";
 import { toast, Toaster } from "sonner";
-import GoogleLoginButton from "@/components/client/google-login-button";
-import { ChangeLanguage } from "@/components/shared/settings/change-language";
-import { ModeToggle } from "@/components/shared/settings/theme-toggle";
+import GoogleLoginButton from "@/components/client/GoogleLoginButton";
+import { ChangeLanguage } from "@/components/shared/settings/ChangeLanguage";
+import { ModeToggle } from "@/components/shared/settings/ThemeToggle";
 
 interface SignupFormValues extends LoginFormValues {
     confirmPassword: string,

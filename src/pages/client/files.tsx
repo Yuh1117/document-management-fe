@@ -1,9 +1,9 @@
-import MyFilesPage from "./my-files";
-import FolderFilesPage from "./folder-files";
-import TrashFilesPage from "./trash-files";
-import SearchFilesPage from "./search-files";
-import SharedFilesPage from "./shared-files";
-import RecentFilesPage from "./recent-files";
+import MyFilesPage from "./MyFiles";
+import FolderFilesPage from "./FolderFiles";
+import TrashFilesPage from "./TrashFiles";
+import SearchFilesPage from "./SearchFiles";
+import SharedFilesPage from "./SharedFiles";
+import RecentFilesPage from "./RecentFiles";
 
 const Files = ({ mode }: { mode: string }) => {
     switch (mode) {

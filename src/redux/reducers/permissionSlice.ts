@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { authApis, endpoints } from '@/config/Api';
+import { authApis, endpoints } from '@/config/api';
 import { logout } from './userSlice';
 
 interface PermissionsState {

@@ -1,26 +1,26 @@
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router'
-import Home from './pages/client/home'
-import Login from './pages/login'
-import Signup from './pages/signup'
-import Header from './components/client/layout/header'
-import { SidebarInset, SidebarProvider } from './components/ui/sidebar'
-import { AdminRoute, AuthRoute, ProtectedRoute } from './components/protected-route/protected-route'
+import Home from './pages/client/Home'
+import Login from './pages/Login'
+import Signup from './pages/Signup'
+import Header from './components/client/layout/Header'
+import { SidebarInset, SidebarProvider } from './components/ui/Sidebar'
+import { AdminRoute, AuthRoute, ProtectedRoute } from './components/protected-route/ProtectedRoute'
 import { useAppDispatch } from './redux/hooks'
 import { useEffect } from 'react'
 import { getProfile } from './redux/reducers/userSlice'
-import { AppSidebar } from './components/client/layout/app-sidebar'
-import DashBoard from './pages/admin/dashboard'
-import SummaryFeedbackAdminPage from './pages/admin/summary-feedback'
-import { ThemeProvider } from './components/shared/settings/theme-provider'
-import { AdminSidebar } from './components/admin/layout/admin-sidebar'
-import SettingAdminPage from './pages/admin/setting'
-import UserAdminPage from './pages/admin/user'
-import PermissionAdminPage from './pages/admin/permission'
-import RoleAdminPage from './pages/admin/role'
-import Files from './pages/client/files'
+import { AppSidebar } from './components/client/layout/AppSidebar'
+import DashBoard from './pages/admin/Dashboard'
+import SummaryFeedbackAdminPage from './pages/admin/SummaryFeedback'
+import { ThemeProvider } from './components/shared/settings/ThemeProvider'
+import { AdminSidebar } from './components/admin/layout/AdminSidebar'
+import SettingAdminPage from './pages/admin/Setting'
+import UserAdminPage from './pages/admin/User'
+import PermissionAdminPage from './pages/admin/Permission'
+import RoleAdminPage from './pages/admin/Role'
+import Files from './pages/client/Files'
 
 const homeLoader = async () => {
-    return { message: "Home page hehe" };
+    return { message: "Trang chủ" };
 };
 
 const MainLayout = () => (

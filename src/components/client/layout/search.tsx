@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react"
-import { Input } from "@/components/ui/input"
+import { Input } from "@/components/ui/Input"
 import { SearchCheck, SearchIcon, SlidersHorizontal, X } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { Label } from "@/components/ui/label"
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
-import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/Label"
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/HoverCard"
+import { Button } from "@/components/ui/Button"
 import { useNavigate } from "react-router"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/Select"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/Dialog"
 
 const SearchBar = () => {
     const [isOpen, setIsOpen] = useState(false)
