@@ -218,7 +218,7 @@ const SearchBar = () => {
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="hybrid">Tự động</SelectItem>
+                                    <SelectItem value="hybrid">Mặc định</SelectItem>
                                     <SelectItem value="full_text">Chính xác</SelectItem>
                                     <SelectItem value="semantic">Gần giống</SelectItem>
                                 </SelectContent>
