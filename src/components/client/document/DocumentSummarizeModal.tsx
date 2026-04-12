@@ -49,7 +49,7 @@ const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
         try {
             const res = await authApis().get(endpoints["document-summary-feedback"](data.id));
             setFeedbackStats(res.data.data as ISummaryFeedbackDocumentStats);
-        } catch (err){
+        } catch (err) {
             console.error(err);
         }
     };
@@ -61,6 +61,7 @@ const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
             const res = await authApis().get(endpoints["document-summarize"](data.id));
             setResult(res.data.data as IDocumentSummarize);
             await loadFeedbackStats();
+            setMyFeedback(null);
         } catch (error: unknown) {
             console.error("Lỗi khi tóm tắt tài liệu", error);
             toast.error("Tóm tắt thất bại", { duration: 3000 });
@@ -77,10 +78,11 @@ const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
     };
 
     const submitFeedback = async () => {
-        if (!data || pendingVote === null) return;
+        if (!data || pendingVote === null || !result) return;
         try {
             setSubmittingFeedback(true);
             const res = await authApis().post(endpoints["document-summary-feedback"](data.id), {
+                summaryId: result.id,
                 isHelpful: pendingVote,
                 comment: comment.trim() || undefined,
             });
@@ -183,7 +185,7 @@ const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
                             )}
                             {feedbackStats && feedbackStats.totalCount > 0 && (
                                 <p className="text-xs text-muted-foreground">
-                                    {feedbackStats.helpfulCount}/{feedbackStats.totalCount} người thấy hữu ích
+                                    {feedbackStats.helpfulCount}/{feedbackStats.totalCount} đánh giá hữu ích
                                 </p>
                             )}
                         </div>

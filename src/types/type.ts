@@ -138,8 +138,6 @@ export interface ISummaryFeedbackRes {
     documentId: number,
     isHelpful: boolean,
     comment?: string,
-    modelName?: string,
-    promptVersion?: string,
     createdAt?: string,
 }
 
