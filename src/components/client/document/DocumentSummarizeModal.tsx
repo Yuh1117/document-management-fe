@@ -77,10 +77,11 @@ const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
     };
 
     const submitFeedback = async () => {
-        if (!data || pendingVote === null) return;
+        if (!data || pendingVote === null || !result) return;
         try {
             setSubmittingFeedback(true);
             const res = await authApis().post(endpoints["document-summary-feedback"](data.id), {
+                summaryId: result.id,
                 isHelpful: pendingVote,
                 comment: comment.trim() || undefined,
             });
