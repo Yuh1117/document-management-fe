@@ -148,6 +148,13 @@ export interface ISummaryFeedbackDocumentStats {
     totalCount: number,
 }
 
+export interface ISummarizeModel {
+    version: string,
+    modelName: string,
+    isActive: boolean,
+    createdAt: string,
+}
+
 export interface ISummaryFeedbackModelStats {
     modelName: string,
     totalCount: number,

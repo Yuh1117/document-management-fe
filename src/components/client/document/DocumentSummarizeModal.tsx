@@ -118,8 +118,8 @@ const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
                     </p>
                 )}
                 {result ? (
-                    <ScrollArea className="max-h-[min(360px,50vh)] rounded-xl border p-3">
-                        <p className="text-sm whitespace-pre-wrap">{result.summaryText}</p>
+                    <ScrollArea className="max-h-[min(360px,50vh)] rounded-lg border p-3">
+                        <span className="text-sm whitespace-pre-wrap">{result.summaryText}</span>
                     </ScrollArea>
                 ) : (
                     <div className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
