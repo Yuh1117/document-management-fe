@@ -75,6 +75,8 @@ export const endpoints = {
 
     "document-summary-feedback": (documentId: string | number) => `/api/secure/documents/${documentId}/summary-feedback`,
     "summary-feedback-stats": "/api/secure/documents/summary-feedback/stats",
+    "summarize-models": "/api/admin/documents/summarize/models",
+    "summarize-models-reload": "/api/admin/documents/summarize/models/reload",
 }
 
 export const authApis = () => {

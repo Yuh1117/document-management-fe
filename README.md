@@ -4,12 +4,12 @@ A modern React + Vite frontend for a document management system. This repository
 
 Key goals:
 - Provide an intuitive interface for uploading, sharing, organizing and managing documents.
-- Support role & permission management, user admin pages, and an accessible, accessible client experience.
+- Support role & permission management, user admin pages, and an accessible client experience.
 
 ## Quick start
 
 Prerequisites
-- Node.js (v16+ recommended)
+- Node.js 20+
 - A package manager: npm, yarn or pnpm
 
 Install dependencies (pick one)
@@ -91,11 +91,12 @@ npx tsc -b --verbose
 - React Router (routing)
 - Tailwind CSS v4 (utility styling)
 - Radix UI + shadcn/ui primitives for accessible components
+- React Hook Form + Zod (form validation)
+- @react-oauth/google (Google OAuth)
 - Sonner for toast notifications
 - Axios for HTTP requests
-- i18next / react-i18next for localization
-
-Note: confirm exact dependency versions in `package.json` — this README uses general names so it doesn't drift from the actual package versions.
+- i18next / react-i18next for localization (EN/VI)
+- Lucide React for icons
 
 ## Project structure (high level)
 
@@ -107,6 +108,7 @@ Top-level `src/` contains the application code. Notable directories:
 - `src/hooks/` — custom React hooks
 - `src/config/` — API clients and app-wide config
 - `src/lib/` — small utilities
+- `src/types/` — shared TypeScript type definitions
 - `public/` — static assets and localized translation files
 
 Because this app includes both admin and client views, files and folders are grouped by feature for clarity (roles, permissions, users, documents, folders, etc.).
@@ -115,16 +117,4 @@ Because this app includes both admin and client views, files and folders are gro
 
 The app uses `i18next` and includes `public/locales/` with `en` and `vi` translation files. Add or edit translations there to update UI text.
 
-## Quick verification (optional)
 
-Check Node and package versions quickly:
-
-```bash
-node -v
-npm -v
-cat package.json | sed -n '1,200p'
-```
-
-## Notes
-
-This README is intentionally conservative — it describes what to change locally and points developers to `package.json` for exact dependency versions. If you'd like, I can open `package.json` and align the README to exact versions (React/Vite/Tailwind) and add a `CONTRIBUTING.md` or CI notes.

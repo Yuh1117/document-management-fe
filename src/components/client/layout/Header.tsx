@@ -100,24 +100,15 @@ const Header = () => {
             <Accordion type="single" collapsible className="flex w-full flex-col gap-4">
                 <AccordionItem value="item-1" className="border-b-0" >
                     <AccordionTrigger className="text-md py-0 font-semibold hover:no-underline">
-                        Resources
+                        Khác
                     </AccordionTrigger>
                     <AccordionContent className="mt-2">
                         <ul>
-                            <li>
-                                <Link to="#" className="flex  rounded-xl p-3 hover:bg-muted hover:text-accent-foreground">
-                                    <span className="text-sm font-medium">Components</span>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="#" className="flex gap-2 rounded-xl p-3 hover:bg-muted hover:text-accent-foreground">
-                                    <span className="text-sm font-medium">Documentation</span>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="#" className="flex gap-2 rounded-xl p-3 hover:bg-muted hover:text-accent-foreground">
-                                    <span className="text-sm font-medium">Blocks</span>
-                                </Link>
+                            <li onClick={() => setOpenModal(true)}>
+                                <div className="flex rounded-xl p-3 hover:bg-muted hover:text-accent-foreground items-center gap-2">
+                                    <Shield className="text-black-900" />
+                                    Ẩn dữ liệu
+                                </div>
                             </li>
                         </ul>
                     </AccordionContent>
@@ -132,8 +123,7 @@ const Header = () => {
                 <nav className="hidden justify-between lg:flex items-center">
                     <div className="flex items-center gap-6">
                         <Link to={logo.url} className="flex items-center gap-2">
-                            <span className="flex items-center gap-3 text-xl font-semibold tracking-tighter">
-                                {logo.icon}
+                            <span className="flex items-center gap-3 text-2xl font-semibold tracking-tighter">
                                 {logo.title}
                             </span>
                         </Link>
