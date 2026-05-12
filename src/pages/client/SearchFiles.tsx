@@ -31,7 +31,7 @@ import UploadModeModal from "@/components/client/UploadModeModal";
 const SearchFilesPage = () => {
     const location = useLocation();
     const pathname = location.pathname;
-    
+
     const isAdvanced = pathname.includes("/advanced-search");
 
     const [queryParams] = useSearchParams()
@@ -104,7 +104,10 @@ const SearchFilesPage = () => {
                         {documents.length > 0 && (
                             <div>
                                 <h2 className="text-lg mb-2">Tài liệu</h2>
-                                <div className="grid grid-cols-[repeat(auto-fill,_minmax(220px,_1fr))] gap-4 px-2 py-4">
+                                <div className={isAdvanced
+                                    ? "grid grid-cols-[repeat(auto-fill,_minmax(420px,_1fr))] gap-4 px-2 py-4 max-[700px]:grid-cols-1"
+                                    : "grid grid-cols-[repeat(auto-fill,_minmax(220px,_1fr))] gap-4 px-2 py-4"
+                                }>
                                     {documents.map((f) => (
                                         <Document
                                             key={`doc-${f.document.id}`}
@@ -113,6 +116,7 @@ const SearchFilesPage = () => {
                                             isMultiSelectMode={multi.isMultiSelectMode}
                                             selectedDocs={multi.selectedDocs}
                                             setSelectedDocs={multi.setSelectedDocs}
+                                            showSnippet={isAdvanced}
                                         />
                                     ))}
                                 </div>

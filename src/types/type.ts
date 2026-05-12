@@ -60,6 +60,7 @@ export interface IDocument {
     filePath: string,
     fileSize: number,
     mimeType: string,
+    snippet?: string | null,
     deleted: boolean,
     folder?: { id: number },
     storageType: string,
