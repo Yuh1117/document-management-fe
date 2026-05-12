@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Fragment, type ReactNode, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import type { IDocument } from "@/types/type";
@@ -21,6 +21,25 @@ type Props = {
     isMultiSelectMode?: boolean;
     selectedDocs?: number[];
     setSelectedDocs?: (data: number[]) => void;
+    showSnippet?: boolean;
+};
+
+const renderSnippet = (snippet: string) => {
+    return snippet.split(/(<mark>|<\/mark>)/g).reduce<ReactNode[]>((nodes, part, index, parts) => {
+        if (part === "<mark>" || part === "</mark>") return nodes;
+
+        const isMarked = parts[index - 1] === "<mark>" && parts[index + 1] === "</mark>";
+        nodes.push(
+            isMarked ? (
+                <mark key={index} className="rounded bg-yellow-200 px-0.5 text-foreground dark:bg-yellow-500/40">
+                    {part}
+                </mark>
+            ) : (
+                <Fragment key={index}>{part}</Fragment>
+            )
+        );
+        return nodes;
+    }, []);
 };
 
 const Document = ({
@@ -28,13 +47,15 @@ const Document = ({
     permission,
     isMultiSelectMode,
     selectedDocs,
-    setSelectedDocs
+    setSelectedDocs,
+    showSnippet = false
 }: Props) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const [, setDownloading] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false)
     const dispatch = useAppDispatch();
     const { icon: Icon, color } = getIconComponentByMimeType(data.mimeType);
+    const snippet = showSnippet ? data.snippet : null;
 
     const handleDropdownToggle = (open: boolean) => {
         setIsDropdownOpen(open);
@@ -183,7 +204,7 @@ const Document = ({
         <Card
             onDoubleClick={() => { if (!isMultiSelectMode) handlePreview() }}
             onClick={handleToggleCheck}
-            className={cn("bg-background hover:bg-input/50 py-4 rounded-xl border-1 transition-all duration-200", isDropdownOpen && "bg-input/50")}
+            className={cn("bg-background hover:bg-input/50 py-4 rounded-xl border-1 transition-all duration-200", snippet && "h-[310px]", isDropdownOpen && "bg-input/50")}
         >
             <CardHeader className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -223,9 +244,20 @@ const Document = ({
                 </div>
             </CardHeader>
             <CardContent>
-                <div className="flex justify-center items-center h-[150px] bg-muted rounded-xl">
-                    <Icon size={50} color={color} />
-                </div>
+                {snippet ? (
+                    <div className="flex h-[190px] gap-3">
+                        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-muted">
+                            <Icon size={40} color={color} />
+                        </div>
+                        <p className="min-w-0 flex-1 overflow-y-auto whitespace-normal break-words rounded-md border bg-muted/50 p-3 text-xs leading-5 text-muted-foreground">
+                            {renderSnippet(snippet)}
+                        </p>
+                    </div>
+                ) : (
+                    <div className="flex h-[150px] items-center justify-center rounded-xl bg-muted">
+                        <Icon size={50} color={color} />
+                    </div>
+                )}
             </CardContent>
         </Card>
     );
