@@ -120,8 +120,8 @@ const Header = () => {
     return (
         <section className="py-3 sticky top-0 z-50 bg-background">
             <div className="mx-auto px-4">
-                <nav className="hidden justify-between lg:flex items-center">
-                    <div className="flex items-center gap-6">
+                <nav className="hidden grid-cols-[minmax(180px,1fr)_minmax(320px,540px)_minmax(120px,1fr)] items-center gap-6 lg:grid">
+                    <div className="flex min-w-0 items-center gap-6">
                         <Link to={logo.url} className="flex items-center gap-2">
                             <span className="flex items-center gap-3 text-2xl font-semibold tracking-tighter">
                                 {logo.title}
@@ -132,18 +132,18 @@ const Header = () => {
                         </div>
                     </div>
 
-                    <div className="flex-1 flex justify-center">
+                    <div className="flex min-w-0 justify-center">
                         <SearchBar />
                     </div>
 
-                    <div className="flex gap-3">
+                    <div className="flex justify-end gap-3">
                         <Setting />
                         <Account user={user} />
                     </div>
                 </nav>
 
                 <div className="block lg:hidden">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-3">
                         <a href={logo.url} className="flex items-center gap-2">
                             <span className="text-lg font-semibold tracking-tighter">
                                 {logo.title}
@@ -168,8 +168,6 @@ const Header = () => {
                                 <div className="flex flex-col gap-6 p-4">
                                     {mobileMenu}
 
-                                    <SearchBar />
-
                                     <div className="flex gap-3">
                                         <Setting />
                                         <Account user={user} />
@@ -177,6 +175,9 @@ const Header = () => {
                                 </div>
                             </SheetContent>
                         </Sheet>
+                    </div>
+                    <div className="mt-3">
+                        <SearchBar />
                     </div>
                 </div>
             </div>

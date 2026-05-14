@@ -60,6 +60,13 @@ const SearchBar = () => {
         setShowAdvanced(false)
     }
 
+    const openAdvancedSearch = () => {
+        if (searchValue.trim())
+            setKw(searchValue.trim())
+        setShowAdvanced(true)
+        setIsOpen(false)
+    }
+
     const deleteHistoryItem = (indexToRemove: number) => {
         const updated = searchHistory.filter((_, i) => i !== indexToRemove)
         setSearchHistory(updated)
@@ -99,7 +106,8 @@ const SearchBar = () => {
         ? searchHistory.filter(item => item.label.toLowerCase().includes(searchValue.toLowerCase())) : searchHistory
 
     return (
-        <div className="relative w-full max-w-lg">
+        <div className="flex w-full max-w-lg items-center gap-2">
+            <div className="relative min-w-0 flex-1">
             <div className={cn("flex items-center rounded-xl border bg-popover px-3 text-popover-foreground", isOpen && "rounded-b-none")}>
                 <SearchIcon className="size-4 opacity-50" />
                 <Input
@@ -114,9 +122,8 @@ const SearchBar = () => {
                 />
                 {isOpen && <SearchCheck className="size-4 cursor-pointer" onClick={() => handleSearch(searchValue)} />}
             </div>
-
             {isOpen && (
-                <div className="absolute top-full z-10 w-full rounded-b-xl border border-t-0 bg-popover shadow-lg">
+                <div className="absolute top-full left-0 z-10 w-full rounded-b-xl border border-t-0 bg-popover shadow-lg">
                     <div className="p-1">
                         <Label className="m-2 text-xs text-muted-foreground">Lịch sử tìm kiếm</Label>
                         <div>
@@ -158,9 +165,7 @@ const SearchBar = () => {
                         <HoverCard >
                             <HoverCardTrigger>
                                 <Button variant="ghost" className="rounded-xl"
-                                    onClick={() => {
-                                        setShowAdvanced(true)
-                                    }}>
+                                    onClick={openAdvancedSearch}>
                                     <SlidersHorizontal className="size-4 opacity-60" />
                                     Tìm kiếm nâng cao
                                 </Button>
@@ -172,9 +177,21 @@ const SearchBar = () => {
                     </div>
                 </div>
             )}
+            </div>
+            <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="shrink-0 rounded-xl"
+                title="Tìm kiếm nâng cao"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={openAdvancedSearch}
+            >
+                <SlidersHorizontal className="size-4" />
+            </Button>
 
             <Dialog open={showAdvanced} onOpenChange={setShowAdvanced}>
-                <DialogContent aria-describedby={undefined} className="top-[30%] left-[55%] w-full md:max-w-xl">
+                <DialogContent aria-describedby={undefined} className="top-[30%] w-full md:max-w-xl">
                     <DialogHeader>
                         <DialogTitle>Tìm kiếm nâng cao</DialogTitle>
                     </DialogHeader>

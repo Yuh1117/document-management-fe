@@ -56,6 +56,7 @@ const Document = ({
     const dispatch = useAppDispatch();
     const { icon: Icon, color } = getIconComponentByMimeType(data.mimeType);
     const snippet = showSnippet ? data.snippet : null;
+    const fileNameMaxLength = snippet ? 32 : 12;
 
     const handleDropdownToggle = (open: boolean) => {
         setIsDropdownOpen(open);
@@ -209,7 +210,7 @@ const Document = ({
             <CardHeader className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <Icon size={20} color={color} />
-                    <Label className="whitespace-nowrap">{truncateFileName(data.name)}</Label>
+                    <Label className="whitespace-nowrap">{truncateFileName(data.name, fileNameMaxLength)}</Label>
                 </div>
                 <div>
                     {loading ? <Spinner /> : (
@@ -249,7 +250,7 @@ const Document = ({
                         <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-muted">
                             <Icon size={40} color={color} />
                         </div>
-                        <p className="min-w-0 flex-1 overflow-y-auto whitespace-normal break-words rounded-md border bg-muted/50 p-3 text-xs leading-5 text-muted-foreground">
+                        <p className="min-w-0 flex-1 overflow-y-auto whitespace-normal break-words rounded-md border bg-muted/50 p-3 text-xs leading-5 text-muted-foreground select-text">
                             {renderSnippet(snippet)}
                         </p>
                     </div>
