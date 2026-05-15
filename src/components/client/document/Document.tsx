@@ -205,7 +205,7 @@ const Document = ({
         <Card
             onDoubleClick={() => { if (!isMultiSelectMode) handlePreview() }}
             onClick={handleToggleCheck}
-            className={cn("bg-background hover:bg-input/50 py-4 rounded-xl border-1 transition-all duration-200", snippet && "h-[310px]", isDropdownOpen && "bg-input/50")}
+            className={cn("bg-background hover:bg-input/50 py-4 rounded-xl border-1 transition-all duration-200", snippet && "h-[280px]", isDropdownOpen && "bg-input/50")}
         >
             <CardHeader className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -246,11 +246,11 @@ const Document = ({
             </CardHeader>
             <CardContent>
                 {snippet ? (
-                    <div className="flex h-[190px] gap-3">
+                    <div className="flex h-[160px] gap-3">
                         <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-muted">
                             <Icon size={40} color={color} />
                         </div>
-                        <p className="min-w-0 flex-1 overflow-y-auto whitespace-normal break-words rounded-md border bg-muted/50 p-3 text-xs leading-5 text-muted-foreground select-text">
+                        <p className="min-w-0 flex-1 overflow-y-auto whitespace-normal break-words rounded-md border bg-muted/50 p-3 text-xs leading-5 text-muted-foreground select-text [scrollbar-color:transparent_transparent] [scrollbar-gutter:stable] [scrollbar-width:thin] hover:[scrollbar-color:hsl(var(--muted-foreground)/0.3)_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-transparent hover:[&::-webkit-scrollbar-thumb]:bg-muted-foreground/30">
                             {renderSnippet(snippet)}
                         </p>
                     </div>
