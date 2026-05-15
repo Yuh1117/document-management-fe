@@ -105,7 +105,7 @@ const SearchFilesPage = () => {
                             <div>
                                 <h2 className="text-lg mb-2">Tài liệu</h2>
                                 <div className={isAdvanced
-                                    ? "grid grid-cols-[repeat(auto-fill,_minmax(420px,_1fr))] gap-4 px-2 py-4 max-[700px]:grid-cols-1"
+                                    ? "grid grid-cols-[repeat(auto-fill,_minmax(560px,_1fr))] gap-4 px-2 py-4 max-[700px]:grid-cols-1"
                                     : "grid grid-cols-[repeat(auto-fill,_minmax(220px,_1fr))] gap-4 px-2 py-4"
                                 }>
                                     {documents.map((f) => (
