@@ -100,10 +100,15 @@ api.interceptors.request.use((config) => {
 });
 
 let isRefreshing = false;
-let refreshSubscribers: ((token: string) => void)[] = [];
+let refreshSubscribers: { resolve: (token: string) => void; reject: (err: unknown) => void }[] = [];
 
 const notifySubscribers = (token: string) => {
-    refreshSubscribers.forEach(cb => cb(token));
+    refreshSubscribers.forEach(({ resolve }) => resolve(token));
+    refreshSubscribers = [];
+};
+
+const rejectSubscribers = (err: unknown) => {
+    refreshSubscribers.forEach(({ reject }) => reject(err));
     refreshSubscribers = [];
 };
 
@@ -123,10 +128,13 @@ api.interceptors.response.use(
         }
 
         if (isRefreshing) {
-            return new Promise((resolve) => {
-                refreshSubscribers.push((token) => {
-                    originalRequest.headers["Authorization"] = `Bearer ${token}`;
-                    resolve(api(originalRequest));
+            return new Promise((resolve, reject) => {
+                refreshSubscribers.push({
+                    resolve: (token) => {
+                        originalRequest.headers["Authorization"] = `Bearer ${token}`;
+                        resolve(api(originalRequest));
+                    },
+                    reject,
                 });
             });
         }
@@ -145,7 +153,8 @@ api.interceptors.response.use(
             notifySubscribers(newToken);
             originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
             return api(originalRequest);
-        } catch {
+        } catch (refreshError) {
+            rejectSubscribers(refreshError);
             store.dispatch(logout());
             window.location.href = "/login";
             return Promise.reject(error);
