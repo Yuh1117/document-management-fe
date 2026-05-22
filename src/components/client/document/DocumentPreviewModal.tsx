@@ -1,8 +1,9 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+﻿import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import type { IDocument } from "@/types/type";
 import { toast } from "sonner";
-import { authApis, endpoints } from "@/config/api";
+import api, { endpoints } from "@/config/api";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Spinner } from "@/components/ui/spinner";
 import { renderAsync } from "docx-preview";
 import * as XLSX from "xlsx";
@@ -17,6 +18,7 @@ const DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingm
 const XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
 const DocumentPreviewModal = ({ data, open, onOpenChange }: Props) => {
+    const { t } = useTranslation();
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [xlsxHtml, setXlsxHtml] = useState<string | null>(null);
@@ -38,7 +40,7 @@ const DocumentPreviewModal = ({ data, open, onOpenChange }: Props) => {
         try {
             setLoading(true);
 
-            const res = await authApis().get(endpoints["document-preview"](data.id), {
+            const res = await api.get(endpoints["document-preview"](data.id), {
                 responseType: "blob",
             });
 
@@ -60,7 +62,7 @@ const DocumentPreviewModal = ({ data, open, onOpenChange }: Props) => {
                 setPreviewUrl(url);
             }
         } catch (err) {
-            toast.error("Không thể xem trước tài liệu");
+            toast.error(t('preview.error'));
         } finally {
             setLoading(false);
         }
@@ -96,7 +98,7 @@ const DocumentPreviewModal = ({ data, open, onOpenChange }: Props) => {
         if (!previewUrl) {
             return (
                 <div className="flex justify-center items-center h-full text-muted-foreground">
-                    Không có dữ liệu để hiển thị
+                    {t('preview.no_data')}
                 </div>
             );
         }
@@ -155,7 +157,7 @@ const DocumentPreviewModal = ({ data, open, onOpenChange }: Props) => {
 
         return (
             <div className="flex flex-col justify-center items-center h-full text-muted-foreground">
-                Không hỗ trợ xem cho loại file này.
+                {t('preview.unsupported')}
             </div>
         );
     };

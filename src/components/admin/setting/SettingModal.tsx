@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+﻿import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -7,18 +7,13 @@ import type { ISetting } from "@/types/type";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useEffect, useState, type ChangeEvent } from "react";
-import { authApis, endpoints } from "@/config/api";
+import api, { endpoints } from "@/config/api";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { formatTime } from "@/config/utils";
-
-const fieldNames: { [key: string]: string } = {
-    key: "Key",
-    value: "Value",
-    description: "Mô tả"
-};
+import { useTranslation } from "react-i18next";
 
 type Props = {
     open: boolean;
@@ -38,6 +33,13 @@ const SettingModal = ({
     const form = useForm<ISetting>();
     const [loading, setLoading] = useState<boolean>(false)
     const [msg, setMsg] = useState<string>("")
+    const { t } = useTranslation();
+
+    const fieldNames: { [key: string]: string } = {
+        key: "Key",
+        value: "Value",
+        description: t('common.description')
+    };
 
     const setError = (field: keyof ISetting, message: string): void => {
         form.setError(field, { type: "manual", message: message })
@@ -46,7 +48,7 @@ const SettingModal = ({
     const validateEmpty = (field: keyof ISetting, value: string): boolean => {
         form.clearErrors(field)
         if (!value) {
-            setError(field, `${fieldNames[field]} không được để trống`);
+            setError(field, t('validation.required', { field: fieldNames[field] }));
             return false;
         }
         return true
@@ -73,11 +75,11 @@ const SettingModal = ({
             try {
                 setLoading(true);
                 if (isEditing) {
-                    await authApis().patch(endpoints["settings-detail"](data.id), data);
+                    await api.patch(endpoints["settings-detail"](data.id), data);
                     onOpenChange(false)
                     loadSettings()
                 } else {
-                    await authApis().post(endpoints["settings"], data);
+                    await api.post(endpoints["settings"], data);
                     onOpenChange(false)
                     loadSettings()
                 }
@@ -89,7 +91,7 @@ const SettingModal = ({
                         setError(err.field, err.message);
                     });
                 } else {
-                    setMsg("Lỗi hệ thống hoặc kết nối.");
+                    setMsg(t('validation.system_error'));
                 }
             } finally {
                 setLoading(false);
@@ -114,7 +116,7 @@ const SettingModal = ({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent aria-describedby={undefined}>
                 <DialogHeader>
-                    <DialogTitle>{isEditing ? "Chỉnh sửa cài đặt" : "Thêm mới cài đặt"}</DialogTitle>
+                    <DialogTitle>{isEditing ? t('admin.setting_title_edit') : t('admin.setting_title_add')}</DialogTitle>
                 </DialogHeader>
                 {msg &&
                     <Alert className="border-red-500" variant="destructive">
@@ -168,7 +170,7 @@ const SettingModal = ({
                                 name="description"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Mô tả</FormLabel>
+                                        <FormLabel>{t('common.description')}</FormLabel>
                                         <FormControl>
                                             <Textarea {...field}
                                                 value={field.value || ""}
@@ -183,22 +185,22 @@ const SettingModal = ({
 
                             {isEditing && <>
                                 <div className="flex items-center">
-                                    <Label className="me-2">Tạo bởi</Label>
+                                    <Label className="me-2">{t('common.created_by')}</Label>
                                     <Badge variant="secondary">{data?.createdBy?.email}</Badge>
                                 </div>
 
                                 <div className="flex items-center">
-                                    <Label className="me-2">Cập nhật bởi</Label>
+                                    <Label className="me-2">{t('common.updated_by')}</Label>
                                     <Badge variant="secondary">{data?.updatedBy?.email}</Badge>
                                 </div>
 
                                 <div className="flex items-center">
-                                    <Label className="me-2">Tạo lúc</Label>
+                                    <Label className="me-2">{t('common.created_at')}</Label>
                                     <Badge variant="secondary">{formatTime(data?.createdAt)}</Badge>
                                 </div>
 
                                 <div className="flex items-center">
-                                    <Label className="me-2">Cập nhật lúc</Label>
+                                    <Label className="me-2">{t('common.updated_at')}</Label>
                                     <Badge variant="secondary">{formatTime(data?.updatedAt)}</Badge>
                                 </div>
                             </>}
@@ -206,11 +208,11 @@ const SettingModal = ({
                     </form>
                 </Form>
                 <DialogFooter>
-                    <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
+                    <Button variant="outline" onClick={() => onOpenChange(false)}>{t('common.cancel')}</Button>
                     <Button onClick={() => form.handleSubmit(onSubmit)()}
                         className={isEditing ? "bg-yellow-500 dark:bg-yellow-500 hover:bg-yellow-500/90 dark:hover:bg-yellow-500/90"
                             : "bg-blue-500 dark:bg-blue-500 hover:bg-blue-500/90 dark:hover:bg-blue-500/90"} disabled={loading}>
-                        {loading ? <Spinner size={16} /> : "Lưu"}
+                        {loading ? <Spinner size={16} /> : t('common.save')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

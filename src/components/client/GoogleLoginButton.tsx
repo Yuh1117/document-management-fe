@@ -1,6 +1,5 @@
 import { useGoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router";
-import cookies from "react-cookies";
 import { useAppDispatch } from "@/redux/hooks";
 import Api, { endpoints } from "@/config/api";
 import type { Dispatch, SetStateAction } from "react";
@@ -22,9 +21,7 @@ const GoogleLoginButton = ({ setMsg }: { setMsg: Dispatch<SetStateAction<string>
                 });
 
                 if (res.data.data.accessToken) {
-                    cookies.save('token', res.data.data.accessToken, { path: "/" });
-
-                    dispatch(login(res.data.data.user))
+                    dispatch(login({ user: res.data.data.user, accessToken: res.data.data.accessToken }))
                     nav("/");
                 } else {
                     nav("/signup", { state: { newUser: res.data.data } });
@@ -33,11 +30,11 @@ const GoogleLoginButton = ({ setMsg }: { setMsg: Dispatch<SetStateAction<string>
                 if (error.response?.status === 401) {
                     setMsg(error.response.data);
                 } else {
-                    setMsg("Lỗi hệ thống hoặc kết nối.");
+                    setMsg(t('validation.system_error'));
                 }
             }
         },
-        onError: () => setMsg("Đăng nhập thất bại."),
+        onError: () => setMsg(t('validation.system_error')),
         flow: "auth-code"
     })
 

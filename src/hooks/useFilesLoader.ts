@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+﻿import { useEffect, useMemo, useRef, useState } from "react";
 import type { IFileItem } from "@/types/type";
-import { authApis } from "@/config/api";
+import api from "@/config/api";
 
 export function useFilesLoader(endpoint: string | null, reloadFlag?: any, query?: string | Record<string, string>) {
     const [files, setFiles] = useState<IFileItem[]>([]);
@@ -30,13 +30,13 @@ export function useFilesLoader(endpoint: string | null, reloadFlag?: any, query?
             params.set("page", page.toString());
 
             const url = `${endpoint}?${params.toString()}`;
-            const res = await authApis().get(url);
+            const res = await api.get(url);
             const data = res.data.data;
 
             setFiles((prev) => [...prev, ...data.result]);
-            setHasMore(data.currentPage < data.totalPages);
+            setHasMore(data.result.length > 0);
 
-            if (data.currentPage >= data.totalPages)
+            if (data.result.length === 0)
                 setPage(0);
         } catch (err) {
             console.error(err);

@@ -26,8 +26,10 @@ import DocumentVersionModal from "@/components/client/document/DocumentVersionMo
 import DocumentPreviewModal from "@/components/client/document/DocumentPreviewModal";
 import DocumentSummarizeModal from "@/components/client/document/DocumentSummarizeModal";
 import UploadModeModal from "@/components/client/UploadModeModal";
+import { useTranslation } from "react-i18next";
 
 const SharedFilesPage = () => {
+    const { t } = useTranslation();
     const fileState = useAppSelector(state => state.files);
     const documentState = useAppSelector(state => state.documents)
     const folderState = useAppSelector(state => state.folders)
@@ -46,7 +48,7 @@ const SharedFilesPage = () => {
             <div className="bg-muted/60 backdrop-blur flex items-center justify-between rounded-xl p-4 border-b">
                 <div className="flex items-center gap-4">
                     <SidebarTrigger />
-                    <h1 className="text-2xl font-semibold">Files được chia sẻ</h1>
+                    <h1 className="text-2xl font-semibold">{t('pages.shared_files')}</h1>
                 </div>
                 <div
                     className="cursor-pointer p-2 rounded-xl hover:bg-input/50 dark:hover:bg-input/50"
@@ -59,13 +61,13 @@ const SharedFilesPage = () => {
             <ScrollArea className="p-2 h-[calc(100vh-160px)]">
                 {files.length === 0 && !loading ? (
                     <div className="flex justify-center items-center py-8 text-muted-foreground">
-                        Không có dữ liệu
+                        {t('common.no_data')}
                     </div>
                 ) : (
                     <>
                         {folders.length > 0 && (
                             <div className="mb-6">
-                                <h2 className="text-lg mb-2">Thư mục</h2>
+                                <h2 className="text-lg mb-2">{t('file.folders')}</h2>
                                 <div className="grid grid-cols-[repeat(auto-fill,_minmax(220px,_1fr))] gap-4 px-2 py-4">
                                     {folders.map((f) => (
                                         <Folder
@@ -83,7 +85,7 @@ const SharedFilesPage = () => {
 
                         {documents.length > 0 && (
                             <div>
-                                <h2 className="text-lg mb-2">Tài liệu</h2>
+                                <h2 className="text-lg mb-2">{t('file.documents')}</h2>
                                 <div className="grid grid-cols-[repeat(auto-fill,_minmax(220px,_1fr))] gap-4 px-2 py-4">
                                     {documents.map((f) => (
                                         <Document
@@ -110,14 +112,14 @@ const SharedFilesPage = () => {
                 {hasMore && !loading && <div ref={observerRef} className="h-10" />}
 
                 {!hasMore && files.length > 0 && (
-                    <p className="text-center text-muted-foreground py-4">Đã tải hết</p>
+                    <p className="text-center text-muted-foreground py-4">{t('common.all_loaded')}</p>
                 )}
             </ScrollArea>
 
             {multi.isMultiSelectMode && (
                 <div className="fixed bottom-0 left-0 right-0 bg-background border-t p-4 flex justify-between items-center z-50 shadow-lg">
                     <span className="text-sm text-muted-foreground">
-                        {multi.selectedFolders.length} thư mục được chọn, {multi.selectedDocs.length} tài liệu được chọn
+                        {t('multiselect.selected_summary', { folders: multi.selectedFolders.length, docs: multi.selectedDocs.length })}
                     </span>
                     <div className="flex gap-2">
                         <Button
@@ -129,11 +131,11 @@ const SharedFilesPage = () => {
                         >
                             {downloading ? <Spinner /> : <>
                                 <Download className="text-black-900" />
-                                Tải xuống (zip)
+                                {t('multiselect.download_zip')}
                             </>}
                         </Button>
                         <Button variant="outline" onClick={multi.reset} disabled={downloading}>
-                            Huỷ
+                            {t('common.cancel')}
                         </Button>
                     </div>
                 </div>

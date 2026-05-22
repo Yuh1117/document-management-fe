@@ -1,8 +1,9 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+﻿import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useEffect, useState } from "react";
-import { authApis } from "@/config/api";
+import api from "@/config/api";
+import { useTranslation } from "react-i18next";
 import { Alert, AlertDescription } from "../ui/alert";
 import { AlertCircleIcon } from "lucide-react";
 
@@ -18,12 +19,13 @@ type Props = {
 const DeleteModal = ({ open, deletingId, onCancel, name, load, endpoint }: Props) => {
     const [loading, setLoading] = useState<boolean>(false);
     const [msg, setMsg] = useState<string>("")
+    const { t } = useTranslation();
 
     const onConfirm = async () => {
         try {
             setLoading(true);
             if (deletingId !== null) {
-                await authApis().delete(endpoint(deletingId));
+                await api.delete(endpoint(deletingId));
                 onCancel()
                 load()
             }
@@ -31,7 +33,7 @@ const DeleteModal = ({ open, deletingId, onCancel, name, load, endpoint }: Props
             if (error.response?.status === 409) {
                 setMsg(error.response.data.error)
             } else {
-                setMsg("Lỗi hệ thống hoặc kết nối.");
+                setMsg(t('validation.system_error'));
             }
         } finally {
             setLoading(false);
@@ -48,7 +50,7 @@ const DeleteModal = ({ open, deletingId, onCancel, name, load, endpoint }: Props
         <Dialog open={open} onOpenChange={onCancel}>
             <DialogContent aria-describedby={undefined}>
                 <DialogHeader>
-                    <DialogTitle>Xác nhận xoá</DialogTitle>
+                    <DialogTitle>{t('admin.delete_confirm_title')}</DialogTitle>
                 </DialogHeader>
                 {msg &&
                     <Alert className="border-red-500" variant="destructive">
@@ -58,12 +60,12 @@ const DeleteModal = ({ open, deletingId, onCancel, name, load, endpoint }: Props
                         </AlertDescription>
                     </Alert>
                 }
-                <div>Bạn có chắc chắn muốn xoá {name} này không?</div>
+                <div>{t('admin.delete_confirm_desc', { name })}</div>
                 <DialogFooter>
-                    <Button variant="outline" onClick={onCancel}>Hủy</Button>
+                    <Button variant="outline" onClick={onCancel}>{t('common.cancel')}</Button>
                     <Button className="bg-red-500 dark:bg-red-500 hover:bg-red-500/90 dark:hover:bg-red-500/90"
                         onClick={onConfirm} disabled={loading}>
-                        {loading ? <Spinner size={16} /> : "Xoá"}
+                        {loading ? <Spinner size={16} /> : t('admin.delete')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

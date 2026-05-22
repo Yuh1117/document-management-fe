@@ -1,4 +1,4 @@
-import {
+﻿import {
     Dialog,
     DialogContent,
     DialogHeader,
@@ -20,29 +20,18 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import MultiEmailInput from "./MultiInputEmail"
 import type { IDocument, IDocumentShare, IFolder, IFolderShare } from "@/types/type"
 import { isDocument } from "@/config/utils"
-import { authApis, endpoints } from "@/config/api"
+import api, { endpoints } from "@/config/api"
 import { Spinner } from "../ui/spinner"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import { resetPermission } from "@/redux/reducers/filesSlice"
 import { toast } from "sonner"
+import { useTranslation } from "react-i18next"
 
 const initialGroups = [
-    {
-        name: "Group 1",
-        permission: "VIEW",
-    },
-    {
-        name: "Group 2",
-        permission: "VIEW",
-    },
-    {
-        name: "Group 3",
-        permission: "VIEW",
-    },
-    {
-        name: "Group 4",
-        permission: "VIEW",
-    },
+    { name: "Group 1", permission: "VIEW" },
+    { name: "Group 2", permission: "VIEW" },
+    { name: "Group 3", permission: "VIEW" },
+    { name: "Group 4", permission: "VIEW" },
 ]
 
 type Props = {
@@ -62,6 +51,7 @@ interface Person {
 }
 
 const ShareModal = ({ data, open, onOpenChange }: Props) => {
+    const { t } = useTranslation();
     const [emails, setEmails] = useState<string[]>([])
     const [people, setPeople] = useState<Person[]>([])
     const [groups, setGroups] = useState(initialGroups)
@@ -81,7 +71,7 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
 
             let res;
             if (isDocument(data)) {
-                res = await authApis().get(endpoints["share-doc-detail"](data.id))
+                res = await api.get(endpoints["share-doc-detail"](data.id))
                 setPeople(
                     res.data.data
                         .filter((item: IDocumentShare) => item.user)
@@ -96,7 +86,7 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
                         }))
                 )
             } else {
-                res = await authApis().get(endpoints["share-folder-detail"](data.id))
+                res = await api.get(endpoints["share-folder-detail"](data.id))
                 setPeople(
                     res.data.data
                         .filter((item: IFolderShare) => item.user)
@@ -124,9 +114,7 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
             setSharing(true);
 
             let url = "";
-            const payload: any = {
-                shares: people
-            };
+            const payload: any = { shares: people };
 
             if (isDocument(data)) {
                 payload["documentId"] = data.id;
@@ -136,11 +124,9 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
                 url = endpoints["share-folder"];
             }
 
-            await authApis().post(url, payload)
+            await api.post(url, payload)
 
-            toast.success("Chia sẻ thành công", {
-                duration: 2000
-            })
+            toast.success(t('share.share_success'), { duration: 2000 })
             return true
         } catch (error: any) {
             console.error("Lỗi khi chia sẻ", error);
@@ -156,13 +142,10 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
                     errorMsg = errors
                 }
             } else {
-                errorMsg = "Lỗi hệ thống hoặc kết nối"
+                errorMsg = t('common.error_system')
             }
 
-            toast.error("Chia sẻ thất bại", {
-                duration: 3000,
-                description: errorMsg
-            });
+            toast.error(t('share.share_failed'), { duration: 3000, description: errorMsg });
             return false
         } finally {
             setSharing(false);
@@ -181,19 +164,13 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
                 url = endpoints["share-folder-detail"](data.id);
             }
 
-            await authApis().delete(url, {
-                data: ids
-            })
+            await api.delete(url, { data: ids })
 
-            toast.success("Đã xoá quyền chia sẻ", {
-                duration: 2000
-            })
+            toast.success(t('share.remove_success'), { duration: 2000 })
             return true
         } catch (error: any) {
             console.error("Lỗi khi xóa", error);
-            toast.error("Xóa quyền thất bại", {
-                duration: 3000,
-            });
+            toast.error(t('share.remove_failed'), { duration: 3000 });
             return false
         } finally {
             setSharing(false);
@@ -244,13 +221,13 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
         }}>
             <DialogContent className="max-w-md">
                 <DialogHeader>
-                    <DialogTitle>Chia sẻ "{data?.name}"</DialogTitle>
-                    <DialogDescription>Thêm người, nhóm và quản lý quyền truy cập.</DialogDescription>
+                    <DialogTitle>{t('share.title', { name: data?.name })}</DialogTitle>
+                    <DialogDescription>{t('share.desc')}</DialogDescription>
                 </DialogHeader>
                 <Tabs defaultValue="people">
                     <TabsList className="mb-1">
-                        <TabsTrigger value="people">Người dùng</TabsTrigger>
-                        <TabsTrigger value="group">Nhóm</TabsTrigger>
+                        <TabsTrigger value="people">{t('share.people_tab')}</TabsTrigger>
+                        <TabsTrigger value="group">{t('share.group_tab')}</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="people">
@@ -265,8 +242,8 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="VIEW">Xem</SelectItem>
-                                    <SelectItem value="EDIT">Chỉnh sửa</SelectItem>
+                                    <SelectItem value="VIEW">{t('share.permission_view')}</SelectItem>
+                                    <SelectItem value="EDIT">{t('share.permission_edit')}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>}
@@ -274,7 +251,7 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
                         <Separator className="my-4" />
 
                         <div className="flex flex-col gap-4">
-                            <div className="text-sm font-medium">Những người có quyền truy cập</div>
+                            <div className="text-sm font-medium">{t('share.people_with_access')}</div>
                             {loading ? (
                                 <div className="flex justify-center items-center py-10">
                                     <Spinner size={28} />
@@ -298,7 +275,7 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
                                         </div>
 
                                         <div className="bg-muted p-2 text-sm rounded-lg">
-                                            Chủ sở hữu
+                                            {t('share.owner')}
                                         </div>
                                     </div>
                                     {people.map((person, index) => (
@@ -338,10 +315,10 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
                                                         <SelectValue />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        <SelectItem value="VIEW">Xem</SelectItem>
-                                                        <SelectItem value="EDIT">Chỉnh sửa</SelectItem>
+                                                        <SelectItem value="VIEW">{t('share.permission_view')}</SelectItem>
+                                                        <SelectItem value="EDIT">{t('share.permission_edit')}</SelectItem>
                                                         <SelectItem value="remove" className="text-red-500 focus:text-red-500 dark:focus:text-red-500">
-                                                            Xóa quyền
+                                                            {t('share.permission_remove')}
                                                         </SelectItem>
                                                     </SelectContent>
                                                 </Select>
@@ -363,7 +340,7 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
                                         aria-expanded={openSelect}
                                         className="w-[200px] justify-between bg-transparent"
                                     >
-                                        {value ? groups.find((g) => g.name === value)?.name : "Chọn nhóm"}
+                                        {value ? groups.find((g) => g.name === value)?.name : t('share.select_group')}
                                         <ChevronsUpDown className="opacity-50" />
                                     </Button>
                                 </PopoverTrigger>
@@ -397,8 +374,8 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="VIEW">Xem</SelectItem>
-                                    <SelectItem value="EDIT">Chỉnh sửa</SelectItem>
+                                    <SelectItem value="VIEW">{t('share.permission_view')}</SelectItem>
+                                    <SelectItem value="EDIT">{t('share.permission_edit')}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -406,7 +383,7 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
                         <Separator className="my-4" />
 
                         <div className="flex flex-col gap-4">
-                            <div className="text-sm font-medium">Những nhóm có quyền truy cập</div>
+                            <div className="text-sm font-medium">{t('share.groups_with_access')}</div>
                             <ScrollArea className="h-50 p-3">
                                 <div className="grid gap-6">
                                     {groups.map((g, index) => (
@@ -427,8 +404,8 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
                                                     <SelectValue />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="VIEW">Xem</SelectItem>
-                                                    <SelectItem value="EDIT">Chỉnh sửa</SelectItem>
+                                                    <SelectItem value="VIEW">{t('share.permission_view')}</SelectItem>
+                                                    <SelectItem value="EDIT">{t('share.permission_edit')}</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>
@@ -446,11 +423,11 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
                         onOpenChange(false)
                         dispatch(resetPermission())
                     }}>
-                        OK
+                        {t('common.ok')}
                     </Button>
                     {(permission === "OWNER" || permission === "EDIT") &&
                         <Button onClick={handleShare} disabled={sharing}>
-                            {sharing ? <Spinner size={16} /> : "Lưu"}
+                            {sharing ? <Spinner size={16} /> : t('common.save')}
                         </Button>
                     }
                 </DialogFooter>

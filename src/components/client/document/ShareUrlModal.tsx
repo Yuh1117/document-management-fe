@@ -1,15 +1,16 @@
-import { Button } from "@/components/ui/button";
+﻿import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
-import { authApis, endpoints } from "@/config/api";
+import api, { endpoints } from "@/config/api";
 import type { IDocument } from "@/types/type";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 type Props = {
     doc: IDocument | null,
@@ -18,6 +19,7 @@ type Props = {
 }
 
 const ShareUrlModal = ({ open, onOpenChange, doc }: Props) => {
+    const { t } = useTranslation();
     const form = useForm<{ id: number; expiredTime: number }>();
     const [signedUrl, setSignedUrl] = useState<string | null>(null);
     const [sharing, setSharing] = useState<boolean>(false)
@@ -31,15 +33,15 @@ const ShareUrlModal = ({ open, onOpenChange, doc }: Props) => {
                 expiredTime: data.expiredTime
             }
 
-            const res: any = await authApis().post(endpoints["share-url"], req);
+            const res: any = await api.post(endpoints["share-url"], req);
             setSignedUrl(res.data.data)
 
-            toast.success("Đã tạo link thành công", {
+            toast.success(t('share_url.create_success'), {
                 duration: 2000
             })
         } catch (error) {
             console.error("Lỗi khi chia sẻ", error);
-            toast.error("Chia sẻ thất bại", {
+            toast.error(t('share_url.create_failed'), {
                 duration: 2000
             })
         } finally {
@@ -64,7 +66,9 @@ const ShareUrlModal = ({ open, onOpenChange, doc }: Props) => {
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent aria-describedby={undefined}>
                 <DialogHeader>
-                    <DialogTitle>{signedUrl ? "Link chia sẻ" : "Tạo link chia sẻ"} "{doc?.name}"</DialogTitle>
+                    <DialogTitle>
+                        {signedUrl ? t('share_url.title_view') : t('share_url.title_create')} &quot;{doc?.name}&quot;
+                    </DialogTitle>
                 </DialogHeader>
                 {signedUrl ? <div className="flex items-center gap-2">
                     <div className="grid flex-1 gap-2">
@@ -82,7 +86,7 @@ const ShareUrlModal = ({ open, onOpenChange, doc }: Props) => {
                                     name="expiredTime"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Thời gian tồn tại</FormLabel>
+                                            <FormLabel>{t('share_url.expiry_label')}</FormLabel>
                                             <Select
                                                 value={field.value.toString()}
                                                 onValueChange={(e: string) => {
@@ -91,22 +95,22 @@ const ShareUrlModal = ({ open, onOpenChange, doc }: Props) => {
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className={`w-full`}>
-                                                        <SelectValue placeholder="Chọn thời gian">
-                                                            {field.value} phút
+                                                        <SelectValue placeholder={t('share_url.expiry_select')}>
+                                                            {t('share_url.expiry_minutes', { count: field.value })}
                                                         </SelectValue>
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
                                                     <SelectGroup>
-                                                        <SelectLabel>Thời gian</SelectLabel>
+                                                        <SelectLabel>{t('share_url.expiry_group_label')}</SelectLabel>
                                                         <SelectItem value="3">
-                                                            3 phút
+                                                            {t('share_url.expiry_minutes', { count: 3 })}
                                                         </SelectItem>
                                                         <SelectItem value="5">
-                                                            5 phút
+                                                            {t('share_url.expiry_minutes', { count: 5 })}
                                                         </SelectItem>
                                                         <SelectItem value="10">
-                                                            10 phút
+                                                            {t('share_url.expiry_minutes', { count: 10 })}
                                                         </SelectItem>
                                                     </SelectGroup>
                                                 </SelectContent>
@@ -121,10 +125,10 @@ const ShareUrlModal = ({ open, onOpenChange, doc }: Props) => {
                     </Form>
                 )}
                 <DialogFooter>
-                    {signedUrl ? <Button variant="outline" onClick={() => navigator.clipboard.writeText(signedUrl)}>Sao chép</Button> : <>
-                        <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
+                    {signedUrl ? <Button variant="outline" onClick={() => navigator.clipboard.writeText(signedUrl)}>{t('share_url.copy')}</Button> : <>
+                        <Button variant="outline" onClick={() => onOpenChange(false)}>{t('common.cancel')}</Button>
                         <Button onClick={() => form.handleSubmit(onSubmit)()} disabled={sharing}>
-                            {sharing ? <Spinner size={16} /> : "Tạo"}
+                            {sharing ? <Spinner size={16} /> : t('share_url.create')}
                         </Button>
                     </>}
                 </DialogFooter>

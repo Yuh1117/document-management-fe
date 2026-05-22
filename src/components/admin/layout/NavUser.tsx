@@ -26,11 +26,13 @@ import { useAppDispatch } from "@/redux/hooks"
 import { logout } from "@/redux/reducers/userSlice"
 import type { IAccount } from "@/types/type"
 import { useNavigate } from "react-router"
+import { useTranslation } from "react-i18next"
 
 export function NavUser({ user }: { user: IAccount | null }) {
   const { isMobile } = useSidebar()
   const dispatch = useAppDispatch();
   const nav = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <SidebarMenu>
@@ -68,12 +70,12 @@ export function NavUser({ user }: { user: IAccount | null }) {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem className="font-medium" onClick={() => nav("/")}>
-                Trang chủ
+                {t('pages.home')}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => dispatch(logout())} className="font-medium">
-              <span className="text-red-500">Đăng xuất</span>
+              <span className="text-red-500">{t('nav.logout')}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

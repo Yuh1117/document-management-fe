@@ -1,4 +1,4 @@
-import DeleteModal from "@/components/admin/DeleteModal";
+﻿import DeleteModal from "@/components/admin/DeleteModal";
 import UserModal from "@/components/admin/user/UserModal";
 import Access from "@/components/protected-route/Access";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Spinner } from "@/components/ui/spinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { authApis, endpoints } from "@/config/api";
+import api, { endpoints } from "@/config/api";
 import { ALL_PERMISSIONS } from "@/config/permissions";
 import { useAppDispatch } from "@/redux/hooks";
 import { fetchPermissions } from "@/redux/reducers/permissionSlice";
@@ -16,8 +16,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { PencilLine, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
+import { useTranslation } from "react-i18next";
 
 const UserAdminPage = () => {
+    const { t } = useTranslation();
     const [users, setUsers] = useState<IUser[]>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [q, setQ] = useSearchParams();
@@ -40,7 +42,7 @@ const UserAdminPage = () => {
                 url = `${url}&kw=${kwInput}`;
             }
 
-            const res = await authApis().get(url);
+            const res = await api.get(url);
             setUsers(res.data.data.result);
             setTotalPages(res.data.data.totalPages)
 
@@ -110,30 +112,30 @@ const UserAdminPage = () => {
         <div className="px-4">
             <header className="flex h-16 shrink-0 items-center gap-2">
                 <div className="flex items-center gap-2">
-                    <span>Người dùng</span>
+                    <span>{t('admin.users')}</span>
                 </div>
             </header>
             <Access permission={ALL_PERMISSIONS.USERS.LIST}>
                 <div className="mx-5">
                     <div className="flex items-center gap-2 border rounded-xl p-5  shadow-xs">
-                        <Label>Tên:</Label>
+                        <Label>{t('common.name')}:</Label>
                         <Input
                             className="w-sm"
                             type="text"
-                            placeholder="Nhập tên"
+                            placeholder={t('signup.first_name_placeholder')}
                             id="name"
                             value={kwInput}
                             onChange={(e) => setKwInput(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                         />
-                        <Button variant="secondary" onClick={handleSearch}>Tìm kiếm</Button>
+                        <Button variant="secondary" onClick={handleSearch}>{t('nav.search')}</Button>
                     </div>
                     <div className="border rounded-xl mt-5 p-5 shadow-xs">
                         <div className="flex justify-between items-center mb-3">
-                            <span className="font-medium">Danh sách người dùng</span>
+                            <span className="font-medium">{t('admin.user_list')}</span>
                             <Access permission={ALL_PERMISSIONS.USERS.CREATE} hideChildren>
                                 <Button className="bg-blue-500 dark:bg-blue-500 hover:bg-blue-500/90 dark:hover:bg-blue-500/90" onClick={handleOpenAdd}>
-                                    <Plus strokeWidth={3} /> Thêm mới
+                                    <Plus strokeWidth={3} /> {t('admin.add_new')}
                                 </Button>
                             </Access>
                         </div>
@@ -142,9 +144,9 @@ const UserAdminPage = () => {
                                 <TableRow>
                                     <TableHead>Id</TableHead>
                                     <TableHead>Avatar</TableHead>
-                                    <TableHead>Họ và tên</TableHead>
+                                    <TableHead>{t('admin.full_name')}</TableHead>
                                     <TableHead>Email</TableHead>
-                                    <TableHead>Vai trò</TableHead>
+                                    <TableHead>{t('admin.roles')}</TableHead>
                                     <TableHead></TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -160,7 +162,7 @@ const UserAdminPage = () => {
                                 ) : users.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={5} className="text-center text-sm text-muted-foreground py-10">
-                                            Không có dữ liệu
+                                            {t('common.no_data')}
                                         </TableCell>
                                     </TableRow>
                                 ) : (
@@ -241,7 +243,7 @@ const UserAdminPage = () => {
                     open={!!deletingId}
                     deletingId={deletingId}
                     onCancel={() => setDeletingId(null)}
-                    name={"người dùng"}
+                    name={t('admin.users')}
                     load={loadUsers}
                     endpoint={endpoints["users-detail"]}
                 />

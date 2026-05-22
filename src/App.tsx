@@ -1,4 +1,4 @@
-import { createBrowserRouter, Outlet, RouterProvider } from 'react-router'
+import { createBrowserRouter, Outlet, RouterProvider, type LoaderFunction } from 'react-router'
 import Home from './pages/client/HomePage'
 import Login from './pages/LoginPage'
 import Signup from './pages/SignupPage'
@@ -7,7 +7,7 @@ import { SidebarInset, SidebarProvider } from './components/ui/sidebar'
 import { AdminRoute, AuthRoute, ProtectedRoute } from './components/protected-route/ProtectedRoute'
 import { useAppDispatch } from './redux/hooks'
 import { useEffect } from 'react'
-import { getProfile } from './redux/reducers/userSlice'
+import { initAuth } from './redux/reducers/userSlice'
 import { AppSidebar } from './components/client/layout/AppSidebar'
 import DashBoard from './pages/admin/DashboardPage'
 import SummaryFeedbackAdminPage from './pages/admin/SummaryFeedbackPage'
@@ -19,8 +19,8 @@ import PermissionAdminPage from './pages/admin/PermissionPage'
 import RoleAdminPage from './pages/admin/RolePage'
 import Files from './pages/client/FilesPage'
 
-const homeLoader = async () => {
-    return { message: "Trang chủ" };
+const homeLoader: LoaderFunction = async () => {
+    return {};
 };
 
 const MainLayout = () => (
@@ -147,7 +147,7 @@ function App() {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        dispatch(getProfile())
+        dispatch(initAuth())
     }, [])
 
     return (

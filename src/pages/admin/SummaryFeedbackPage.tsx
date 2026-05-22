@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { authApis, endpoints } from "@/config/api";
+﻿import { useEffect, useState } from "react";
+import api, { endpoints } from "@/config/api";
 import type { ISummarizeModel, ISummaryFeedbackModelStats } from "@/types/type";
 import { Spinner } from "@/components/ui/spinner";
 import {
@@ -14,8 +14,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ThumbsDown, ThumbsUp, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 const SummaryFeedbackAdminPage = () => {
+    const { t } = useTranslation();
     const [stats, setStats] = useState<ISummaryFeedbackModelStats[]>([]);
     const [models, setModels] = useState<ISummarizeModel[]>([]);
     const [loading, setLoading] = useState(false);
@@ -25,10 +27,10 @@ const SummaryFeedbackAdminPage = () => {
     const load = async () => {
         try {
             setLoading(true);
-            const res = await authApis().get(endpoints["summary-feedback-stats"]);
+            const res = await api.get(endpoints["summary-feedback-stats"]);
             setStats(res.data.data as ISummaryFeedbackModelStats[]);
         } catch (err) {
-            console.error("Lỗi khi tải thống kê phản hồi", err);
+            console.error("Failed to load feedback stats", err);
         } finally {
             setLoading(false);
         }
@@ -37,10 +39,10 @@ const SummaryFeedbackAdminPage = () => {
     const loadModels = async () => {
         try {
             setModelsLoading(true);
-            const res = await authApis().get(endpoints["summarize-models"]);
+            const res = await api.get(endpoints["summarize-models"]);
             setModels(res.data.data.models as ISummarizeModel[]);
         } catch (err) {
-            console.error("Lỗi khi tải danh sách model", err);
+            console.error("Failed to load models", err);
         } finally {
             setModelsLoading(false);
         }
@@ -49,12 +51,12 @@ const SummaryFeedbackAdminPage = () => {
     const handleReloadModel = async () => {
         try {
             setReloading(true);
-            await authApis().post(endpoints["summarize-models-reload"]);
-            toast.success("Reload model thành công");
+            await api.post(endpoints["summarize-models-reload"]);
+            toast.success(t('admin.reload_model_success'));
             await loadModels();
         } catch (err) {
-            console.error("Lỗi khi reload model", err);
-            toast.error("Reload model thất bại");
+            console.error("Failed to reload model", err);
+            toast.error(t('admin.reload_model_failed'));
         } finally {
             setReloading(false);
         }
@@ -69,29 +71,29 @@ const SummaryFeedbackAdminPage = () => {
         <>
             <header className="flex h-16 shrink-0 items-center gap-2">
                 <div className="flex items-center justify-between gap-2 px-4 w-full">
-                    <span>Thống kê phản hồi tóm tắt AI</span>
+                    <span>{t('admin.feedback_page_title')}</span>
                     <Button variant="outline" onClick={handleReloadModel} disabled={reloading}>
                         <RefreshCw className={reloading ? "animate-spin" : ""} />
-                        Reload model
+                        {t('admin.reload_model')}
                     </Button>
                 </div>
             </header>
             <div className="p-4 space-y-6">
                 <div className="border rounded-xl p-5 shadow-xs">
                     <div className="flex items-center justify-between mb-3">
-                        <span className="font-medium">Danh sách model MLflow</span>
+                        <span className="font-medium">{t('admin.model_list')}</span>
                         {modelsLoading && <Spinner size={18} />}
                     </div>
                     {models.length === 0 && !modelsLoading ? (
-                        <p className="text-sm text-muted-foreground text-center py-4">Không có model nào.</p>
+                        <p className="text-sm text-muted-foreground text-center py-4">{t('admin.no_models')}</p>
                     ) : (
                         <Table>
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Version</TableHead>
-                                    <TableHead>Tên model</TableHead>
-                                    <TableHead>Ngày tạo</TableHead>
-                                    <TableHead className="text-center">Trạng thái</TableHead>
+                                    <TableHead>{t('admin.model_name')}</TableHead>
+                                    <TableHead>{t('admin.created_at')}</TableHead>
+                                    <TableHead className="text-center">{t('admin.status')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -102,9 +104,9 @@ const SummaryFeedbackAdminPage = () => {
                                         <TableCell>{m.createdAt}</TableCell>
                                         <TableCell className="text-center">
                                             {m.isActive ? (
-                                                <Badge className="bg-green-600">Đang dùng</Badge>
+                                                <Badge className="bg-green-600">{t('admin.active')}</Badge>
                                             ) : (
-                                                <Badge variant="secondary">Không hoạt động</Badge>
+                                                <Badge variant="secondary">{t('admin.inactive')}</Badge>
                                             )}
                                         </TableCell>
                                     </TableRow>
@@ -116,23 +118,23 @@ const SummaryFeedbackAdminPage = () => {
 
                 <div className="border rounded-xl p-5 shadow-xs">
                     <div className="mb-3">
-                        <span className="font-medium">Thống kê phản hồi theo model</span>
+                        <span className="font-medium">{t('admin.feedback_stats')}</span>
                     </div>
                     {loading ? (
                         <div className="flex justify-center py-10">
                             <Spinner />
                         </div>
                     ) : stats.length === 0 ? (
-                        <p className="text-sm text-muted-foreground text-center py-10">Chưa có dữ liệu phản hồi.</p>
+                        <p className="text-sm text-muted-foreground text-center py-10">{t('admin.no_feedback')}</p>
                     ) : (
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Mô hình</TableHead>
-                                    <TableHead className="text-center">Tổng phản hồi</TableHead>
-                                    <TableHead className="text-center">Hữu ích</TableHead>
-                                    <TableHead className="text-center">Không hữu ích</TableHead>
-                                    <TableHead className="text-center">Tỉ lệ hữu ích</TableHead>
+                                    <TableHead>{t('admin.model_name')}</TableHead>
+                                    <TableHead className="text-center">{t('admin.total_feedback')}</TableHead>
+                                    <TableHead className="text-center">{t('admin.helpful')}</TableHead>
+                                    <TableHead className="text-center">{t('admin.not_helpful')}</TableHead>
+                                    <TableHead className="text-center">{t('admin.helpful_rate')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>

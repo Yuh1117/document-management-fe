@@ -1,4 +1,4 @@
-import {
+﻿import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
@@ -11,14 +11,16 @@ import { useSidebar } from "../ui/sidebar"
 import { useParams } from "react-router"
 import { useAppDispatch } from "@/redux/hooks"
 import { openUploadModeModal, triggerReload } from "@/redux/reducers/filesSlice"
-import { authApis, endpoints } from "@/config/api"
+import api, { endpoints } from "@/config/api"
 import { toast } from "sonner"
 import { useState } from "react"
 import { Spinner } from "../ui/spinner"
 import { Separator } from "../ui/separator"
 import { openFolderModal } from "@/redux/reducers/folderSlice"
+import { useTranslation } from "react-i18next"
 
 const NewDropDown = () => {
+    const { t } = useTranslation()
     const { state } = useSidebar()
     const { id } = useParams<{ id: string }>()
     const dispatch = useAppDispatch()
@@ -39,7 +41,7 @@ const NewDropDown = () => {
                 formData.append("folderId", id)
             }
 
-            const res = await authApis().post(endpoints["upload-multiple-documents"], formData)
+            const res = await api.post(endpoints["upload-multiple-documents"], formData)
 
             const conflicts = res.data.data.conflicts
             if (conflicts?.length) {
@@ -48,7 +50,7 @@ const NewDropDown = () => {
                 }))
             } else {
                 dispatch(triggerReload())
-                toast.success("Tải lên thành công", {
+                toast.success(t('upload.upload_success'), {
                     duration: 2000
                 })
             }
@@ -67,10 +69,10 @@ const NewDropDown = () => {
                     errorMsg = errors
                 }
             } else {
-                errorMsg = "Lỗi hệ thống hoặc kết nối"
+                errorMsg = t('common.error_system')
             }
 
-            toast.error("Tải lên thất bại", {
+            toast.error(t('upload.upload_failed'), {
                 duration: 3000,
                 description: errorMsg
             });
@@ -99,10 +101,10 @@ const NewDropDown = () => {
                 formData.append("parentId", id);
             }
 
-            await authApis().post(endpoints["upload-folder"], formData);
+            await api.post(endpoints["upload-folder"], formData);
             dispatch(triggerReload());
 
-            toast.success("Tải lên thư mục thành công", {
+            toast.success(t('upload.folder_upload_success'), {
                 duration: 2000
             });
 
@@ -121,10 +123,10 @@ const NewDropDown = () => {
                     errorMsg = errors
                 }
             } else {
-                errorMsg = "Lỗi hệ thống hoặc kết nối"
+                errorMsg = t('common.error_system')
             }
 
-            toast.error("Tải lên thất bại", {
+            toast.error(t('upload.upload_failed'), {
                 duration: 3000,
                 description: errorMsg
             });
@@ -148,7 +150,7 @@ const NewDropDown = () => {
                 >
                     {isUploading ? <Spinner /> : <>
                         <Plus strokeWidth={3} />
-                        {state === "collapsed" ? "" : "Mới"}
+                        {state === "collapsed" ? "" : t('upload.new_button')}
                     </>}
 
                 </Button>
@@ -165,7 +167,7 @@ const NewDropDown = () => {
                     }}
                     >
                         <FileUp className="text-black-900" />
-                        Tải tệp lên
+                        {t('upload.upload_files')}
                     </DropdownMenuItem>
 
                     <DropdownMenuItem onClick={() => {
@@ -178,14 +180,14 @@ const NewDropDown = () => {
                     }}
                     >
                         <FolderUp className="text-black-900" />
-                        Tải thư mục lên
+                        {t('upload.upload_folder')}
                     </DropdownMenuItem>
 
                     <Separator />
 
                     <DropdownMenuItem onClick={handleAddFolder}>
                         <FolderPlus className="text-black-900" />
-                        Thư mục mới
+                        {t('upload.new_folder')}
                     </DropdownMenuItem>
 
                 </DropdownMenuGroup>

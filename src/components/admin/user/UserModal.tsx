@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+﻿import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -6,22 +6,14 @@ import type { IRole, IUser } from "@/types/type";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useEffect, useState, type ChangeEvent } from "react";
-import { authApis, endpoints } from "@/config/api";
+import api, { endpoints } from "@/config/api";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatTime } from "@/config/utils";
-
-const fieldNames: { [key: string]: string } = {
-    firstName: "Họ",
-    lastName: "Tên",
-    email: "Email",
-    password: "Mật khẩu",
-    avatar: "Avatar",
-    role: "Vai trò"
-};
+import { useTranslation } from "react-i18next";
 
 type Props = {
     open: boolean;
@@ -42,6 +34,16 @@ const UserModal = ({
     const [loading, setLoading] = useState<boolean>(false)
     const [msg, setMsg] = useState<string>("")
     const [roles, setRoles] = useState<IRole[]>([])
+    const { t } = useTranslation();
+
+    const fieldNames: { [key: string]: string } = {
+        firstName: t('signup.first_name'),
+        lastName: t('signup.last_name'),
+        email: 'Email',
+        password: t('login.password'),
+        avatar: t('signup.avatar'),
+        role: t('admin.roles')
+    };
 
     const setError = (field: keyof IUser, message: string): void => {
         form.setError(field, { type: "manual", message: message })
@@ -50,7 +52,7 @@ const UserModal = ({
     const validateEmpty = (field: keyof IUser, value: string): boolean => {
         form.clearErrors(field)
         if (!value) {
-            setError(field, `${fieldNames[field]} không được để trống`);
+            setError(field, t('validation.required', { field: fieldNames[field] }));
             return false;
         }
         return true
@@ -61,7 +63,7 @@ const UserModal = ({
 
         const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
         if (!emailRegex.test(value)) {
-            setError("email", "Email không hợp lệ")
+            setError("email", t('validation.email_invalid'))
             return false
         }
         return true
@@ -79,7 +81,7 @@ const UserModal = ({
 
         const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         if (!validImageTypes.includes(file.type)) {
-            setError("avatar", "Vui lòng chọn một hình ảnh hợp lệ");
+            setError("avatar", t('hide_data.invalid_file'));
             return false;
         }
         return true;
@@ -114,7 +116,7 @@ const UserModal = ({
 
     const loadRoles = async () => {
         try {
-            const res = await authApis().get(endpoints["roles"]);
+            const res = await api.get(endpoints["roles"]);
             setRoles(res.data.data.result);
         } catch (error) {
             console.log(error)
@@ -141,11 +143,11 @@ const UserModal = ({
                 });
 
                 if (isEditing) {
-                    await authApis().patch(endpoints["users-detail"](data.id), form)
+                    await api.patch(endpoints["users-detail"](data.id), form)
                     onOpenChange(false)
                     loadUsers()
                 } else {
-                    await authApis().post(endpoints["users"], form)
+                    await api.post(endpoints["users"], form)
                     onOpenChange(false)
                     loadUsers()
                 }
@@ -157,7 +159,7 @@ const UserModal = ({
                         setError(err.field, err.message);
                     });
                 } else {
-                    setMsg("Lỗi hệ thống hoặc kết nối.");
+                    setMsg(t('validation.system_error'));
                 }
             } finally {
                 setLoading(false);
@@ -186,7 +188,7 @@ const UserModal = ({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="w-full md:max-w-2xl" aria-describedby={undefined}>
                 <DialogHeader>
-                    <DialogTitle>{isEditing ? "Chỉnh sửa người dùng" : "Thêm mới người dùng"}</DialogTitle>
+                    <DialogTitle>{isEditing ? t('admin.user_title_edit') : t('admin.user_title_add')}</DialogTitle>
                 </DialogHeader>
                 {msg &&
                     <Alert className="border-red-500" variant="destructive">
@@ -205,7 +207,7 @@ const UserModal = ({
                                     name="lastName"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Họ</FormLabel>
+                                            <FormLabel>{t('signup.last_name')}</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     {...field}
@@ -225,7 +227,7 @@ const UserModal = ({
                                     name="firstName"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Tên</FormLabel>
+                                            <FormLabel>{t('signup.first_name')}</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     {...field}
@@ -265,7 +267,7 @@ const UserModal = ({
                                     name="password"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Mật khẩu</FormLabel>
+                                            <FormLabel>{t('login.password')}</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     type="password"
@@ -286,7 +288,7 @@ const UserModal = ({
                                     name="role"
                                     render={({ field }) => (
                                         <FormItem  >
-                                            <FormLabel>Vai trò</FormLabel>
+                                            <FormLabel>{t('admin.roles')}</FormLabel>
                                             <Select
                                                 value={field.value?.id.toString() || ""}
                                                 onValueChange={(v: string) => {
@@ -298,14 +300,14 @@ const UserModal = ({
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className={`w-full ${form.formState.errors.role ? "border-red-500" : ""}`}>
-                                                        <SelectValue placeholder="Chọn vai trò">
+                                                        <SelectValue placeholder={t('admin.select_role')}>
                                                             {field.value?.name || ""}
                                                         </SelectValue>
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
                                                     <SelectGroup>
-                                                        <SelectLabel>Vai trò</SelectLabel>
+                                                        <SelectLabel>{t('admin.roles')}</SelectLabel>
                                                         {roles &&
                                                             roles.map(role => (
                                                                 <SelectItem key={role.id} value={role.id.toString()}>
@@ -346,12 +348,12 @@ const UserModal = ({
 
                             {isEditing && <>
                                 <div className="flex items-center">
-                                    <Label className="me-2">Tạo lúc</Label>
+                                    <Label className="me-2">{t('common.created_at')}</Label>
                                     <Badge variant="secondary">{formatTime(data?.createdAt)}</Badge>
                                 </div>
 
                                 <div className="flex items-center">
-                                    <Label className="me-2">Cập nhật lúc</Label>
+                                    <Label className="me-2">{t('common.updated_at')}</Label>
                                     <Badge variant="secondary">{formatTime(data?.updatedAt)}</Badge>
                                 </div>
                             </>}
@@ -359,11 +361,11 @@ const UserModal = ({
                     </form>
                 </Form>
                 <DialogFooter>
-                    <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
+                    <Button variant="outline" onClick={() => onOpenChange(false)}>{t('common.cancel')}</Button>
                     <Button onClick={() => form.handleSubmit(onSubmit)()}
                         className={isEditing ? "bg-yellow-500 dark:bg-yellow-500 hover:bg-yellow-500/90 dark:hover:bg-yellow-500/90"
                             : "bg-blue-500 dark:bg-blue-500 hover:bg-blue-500/90 dark:hover:bg-blue-500/90"} disabled={loading}>
-                        {loading ? <Spinner size={16} /> : "Lưu"}
+                        {loading ? <Spinner size={16} /> : t('common.save')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

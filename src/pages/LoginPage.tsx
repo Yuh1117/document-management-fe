@@ -9,7 +9,6 @@ import { AlertCircleIcon, Loader2Icon } from "lucide-react"
 import { useTranslation } from "react-i18next";
 import Api, { endpoints } from "@/config/api";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import cookies from 'react-cookies';
 import { useAppDispatch } from "@/redux/hooks";
 import { login } from "@/redux/reducers/userSlice";
 import { toast, Toaster } from "sonner";
@@ -22,10 +21,6 @@ export interface LoginFormValues {
     password: string;
 }
 
-const fieldNames: { [key: string]: string } = {
-    email: "Email",
-    password: "Mật khẩu",
-};
 
 const Login = () => {
     const form = useForm<LoginFormValues>();
@@ -44,7 +39,8 @@ const Login = () => {
     const validateEmpty = (field: keyof LoginFormValues, value: string): boolean => {
         form.clearErrors(field)
         if (!value) {
-            setError(field, `${fieldNames[field]} không được để trống`);
+            const fieldLabel = field === 'email' ? 'Email' : t('login.password');
+            setError(field, t('validation.required', { field: fieldLabel }));
             return false;
         }
         return true
@@ -55,7 +51,7 @@ const Login = () => {
 
         const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
         if (!emailRegex.test(value)) {
-            setError("email", "Email không hợp lệ")
+            setError("email", t('validation.email_invalid'))
             return false
         }
         return true
@@ -87,15 +83,13 @@ const Login = () => {
             try {
                 setLoading(true);
                 const res = await Api.post(endpoints["login"], data)
-                cookies.save('token', res.data.data.accessToken, { path: "/" });
-
-                dispatch(login(res.data.data.user))
+                dispatch(login({ user: res.data.data.user, accessToken: res.data.data.accessToken }))
                 nav("/")
             } catch (error: any) {
                 if (error.response?.status === 401) {
-                    setMsg("Tài khoản hoặc mật khẩu không chính xác");
+                    setMsg(t('validation.wrong_credentials'));
                 } else {
-                    setMsg("Lỗi hệ thống hoặc kết nối.");
+                    setMsg(t('validation.system_error'));
                 }
             } finally {
                 setLoading(false);

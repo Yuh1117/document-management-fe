@@ -1,8 +1,8 @@
-import { Fragment, type ReactNode, useState } from "react";
+﻿import { Fragment, type ReactNode, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import type { IDocument } from "@/types/type";
-import { authApis, endpoints } from "@/config/api";
+import api, { endpoints } from "@/config/api";
 import { Checkbox } from "@/components/ui/checkbox";
 import EllipsisDropDown from "../EllipsisDropdown";
 import { toast } from "sonner";
@@ -14,6 +14,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { getIconComponentByMimeType } from "@/config/fileIcons";
 import { openDocumentDetail, openDocumentModal, openPreviewModal, openShareUrlModal, openSummarizeModal, openVersionModal } from "@/redux/reducers/documentSlice";
 import { truncateFileName } from "@/config/utils";
+import { useTranslation } from "react-i18next";
 
 type Props = {
     data: IDocument,
@@ -54,6 +55,7 @@ const Document = ({
     const [, setDownloading] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false)
     const dispatch = useAppDispatch();
+    const { t } = useTranslation();
     const { icon: Icon, color } = getIconComponentByMimeType(data.mimeType);
     const snippet = showSnippet ? data.snippet : null;
     const fileNameMaxLength = snippet ? 32 : 12;
@@ -84,7 +86,7 @@ const Document = ({
         try {
             setDownloading(true)
 
-            const res = await authApis().get(endpoints["download-single-document"](data.id), {
+            const res = await api.get(endpoints["download-single-document"](data.id), {
                 responseType: "blob",
             });
 
@@ -98,12 +100,12 @@ const Document = ({
             link.remove();
             window.URL.revokeObjectURL(url);
 
-            toast.success("Tải về thành công", {
+            toast.success(t('document.download_success'), {
                 duration: 2000
             })
         } catch (error) {
-            console.error("Tải xuống thất bại:", error);
-            toast.error("Tải về thất bại", {
+            console.error("Download failed:", error);
+            toast.error(t('document.download_failed'), {
                 duration: 2000
             })
         } finally {
@@ -120,15 +122,15 @@ const Document = ({
             setLoading(true);
 
             const req: number[] = [data.id]
-            await authApis().patch(endpoints["documents"], req);
+            await api.patch(endpoints["documents"], req);
 
             dispatch(triggerReload())
-            toast.success("Đã chuyển vào thùng rác", {
+            toast.success(t('common.trash_success'), {
                 duration: 2000
             })
         } catch (error) {
-            console.error("Lỗi khi xoá", error);
-            toast.error("Chuyển vào thùng rác thất bại", {
+            console.error("Soft delete failed:", error);
+            toast.error(t('common.trash_failed'), {
                 duration: 2000
             })
         } finally {
@@ -141,15 +143,15 @@ const Document = ({
             setLoading(true);
 
             const req: number[] = [data.id]
-            await authApis().patch(endpoints["document-restore"], req);
+            await api.patch(endpoints["document-restore"], req);
 
             dispatch(triggerReload())
-            toast.success("Đã khôi phục", {
+            toast.success(t('common.restore_success'), {
                 duration: 2000
             })
         } catch (error) {
-            console.error("Lỗi khi khôi phục", error);
-            toast.error("Khôi phục thất bại", {
+            console.error("Restore failed:", error);
+            toast.error(t('common.restore_failed'), {
                 duration: 2000
             })
         } finally {
@@ -162,17 +164,17 @@ const Document = ({
             setLoading(true);
 
             const req: number[] = [data.id]
-            await authApis().delete(endpoints["document-delete-permanent"], {
+            await api.delete(endpoints["document-delete-permanent"], {
                 data: req
             });
 
             dispatch(triggerReload())
-            toast.success("Đã xoá vĩnh viễn thành công", {
+            toast.success(t('common.delete_success'), {
                 duration: 2000
             })
         } catch (error) {
-            console.error("Lỗi khi xoá", error);
-            toast.error("Xoá vĩnh viễn thất bại", {
+            console.error("Hard delete failed:", error);
+            toast.error(t('common.delete_failed'), {
                 duration: 2000
             })
         } finally {

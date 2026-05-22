@@ -22,14 +22,6 @@ interface SignupFormValues extends LoginFormValues {
     avatar: File | null | undefined
 }
 
-const fieldNames: { [key: string]: string } = {
-    firstName: "Tên",
-    lastName: "Họ",
-    email: "Email",
-    password: "Mật khẩu",
-    confirmPassword: "Xác nhận mật khẩu",
-    avatar: "Avatar"
-};
 
 const Signup = () => {
     const form = useForm<SignupFormValues>();
@@ -44,10 +36,22 @@ const Signup = () => {
         form.setError(field, { type: "manual", message: message })
     }
 
+    const getFieldLabel = (field: keyof SignupFormValues): string => {
+        const labels: Record<keyof SignupFormValues, string> = {
+            firstName: t('signup.first_name'),
+            lastName: t('signup.last_name'),
+            email: 'Email',
+            password: t('login.password'),
+            confirmPassword: t('signup.confirm_password'),
+            avatar: t('signup.avatar'),
+        };
+        return labels[field] ?? field;
+    };
+
     const validateEmpty = (field: keyof SignupFormValues, value: string): boolean => {
         form.clearErrors(field)
         if (!value) {
-            setError(field, `${fieldNames[field]} không được để trống`);
+            setError(field, t('validation.required', { field: getFieldLabel(field) }));
             return false;
         }
         return true
@@ -58,7 +62,7 @@ const Signup = () => {
 
         const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
         if (!emailRegex.test(value)) {
-            setError("email", "Email không hợp lệ")
+            setError("email", t('validation.email_invalid'))
             return false
         }
         return true
@@ -74,7 +78,7 @@ const Signup = () => {
         if (validateEmpty("confirmPassword", value) === false) return false;
 
         if (value !== form.getValues("password")) {
-            setError("confirmPassword", "Mật khẩu không khớp");
+            setError("confirmPassword", t('validation.required', { field: t('signup.confirm_password') }));
             return false;
         }
         return true;
@@ -86,7 +90,7 @@ const Signup = () => {
 
         const validImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         if (!validImageTypes.includes(file.type)) {
-            setError("avatar", "Vui lòng chọn một hình ảnh hợp lệ");
+            setError("avatar", t('hide_data.invalid_file'));
             return false;
         }
         return true;
@@ -145,7 +149,7 @@ const Signup = () => {
 
                 nav("/login", {
                     state: {
-                        success: "Đăng ký tài khoản thành công."
+                        success: t('signup.success')
                     }
                 })
 
@@ -156,7 +160,7 @@ const Signup = () => {
                         setError(err.field, err.message);
                     });
                 } else {
-                    setMsg("Lỗi hệ thống hoặc kết nối.");
+                    setMsg(t('validation.system_error'));
                 }
             } finally {
                 setLoading(false);
@@ -170,7 +174,7 @@ const Signup = () => {
             form.setValue("email", user.email)
             form.setValue("firstName", user.firstName)
             form.setValue("lastName", user.lastName)
-            toast("Cần đăng ký tài khoản để dự phòng.", { duration: 5000 })
+            toast(t('signup.google_reminder'), { duration: 5000 })
         }
     }, [location.state?.newUser]);
 
@@ -186,7 +190,7 @@ const Signup = () => {
                                 <div className="flex flex-col items-center text-center gap-1">
                                     <h1 className="text-2xl font-bold">DMS</h1>
                                     <p className="text-muted-foreground text-balance">
-                                        {isGoogleAuth ? "Hoàn tất đăng nhập bằng Google" : t('signup.title')}
+                                        {isGoogleAuth ? t('signup.google_complete') : t('signup.title')}
                                     </p>
                                 </div>
 

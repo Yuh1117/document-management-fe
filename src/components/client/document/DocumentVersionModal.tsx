@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react"
+﻿import { useState, useEffect, useRef } from "react"
 import {
     Dialog,
     DialogContent,
@@ -11,12 +11,13 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Download, EllipsisVertical } from "lucide-react"
 import type { IDocument, IDocumentVersion } from "@/types/type"
-import { authApis, endpoints } from "@/config/api"
+import api, { endpoints } from "@/config/api"
 import { cn } from "@/lib/utils"
 import { Spinner } from "@/components/ui/spinner"
 import { formatTime } from "@/config/utils"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { toast } from "sonner"
+import { useTranslation } from "react-i18next"
 
 type Props = {
     data: IDocument | null,
@@ -25,6 +26,7 @@ type Props = {
 }
 
 const DocumentVersionModal = ({ data, open, onOpenChange }: Props) => {
+    const { t } = useTranslation();
     const [documentVersions, setDocumentVersions] = useState<IDocumentVersion[]>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [page, setPage] = useState<number>(1);
@@ -42,7 +44,7 @@ const DocumentVersionModal = ({ data, open, onOpenChange }: Props) => {
 
             let url = `${endpoints['document-version'](data.id)}?page=${page}`;
 
-            const res = await authApis().get(url);
+            const res = await api.get(url);
             const dataRes = res.data.data;
 
             setDocumentVersions((prev) => [...prev, ...dataRes.result]);
@@ -70,7 +72,7 @@ const DocumentVersionModal = ({ data, open, onOpenChange }: Props) => {
                 endpoint = endpoints["download-single-document"](data.id)
             }
 
-            const res = await authApis().get(endpoint, {
+            const res = await api.get(endpoint, {
                 responseType: "blob",
             });
 
@@ -84,12 +86,12 @@ const DocumentVersionModal = ({ data, open, onOpenChange }: Props) => {
             link.remove();
             window.URL.revokeObjectURL(url);
 
-            toast.success("Tải về thành công", {
+            toast.success(t('document.download_success'), {
                 duration: 2000
             })
         } catch (error) {
             console.error("Tải xuống thất bại:", error);
-            toast.error("Tải về thất bại", {
+            toast.error(t('document.download_failed'), {
                 duration: 2000
             })
         } finally {
@@ -136,11 +138,11 @@ const DocumentVersionModal = ({ data, open, onOpenChange }: Props) => {
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-lg" aria-describedby={undefined}>
                 <DialogHeader>
-                    <DialogTitle>Quản lý phiên bản "{data?.name}"</DialogTitle>
+                    <DialogTitle>{t('document.version_title', { name: data?.name })}</DialogTitle>
                 </DialogHeader>
 
                 <DialogDescription>
-                    Các phiên bản.
+                    {t('document.version_desc')}
                 </DialogDescription>
 
                 <ScrollArea className="h-64 border rounded-lg select-none">
@@ -149,7 +151,7 @@ const DocumentVersionModal = ({ data, open, onOpenChange }: Props) => {
                             dropdownOpen === "current" && "bg-input/50")}>
                             <div className="flex flex-col">
                                 <div>
-                                    Phiên bản hiện tại <span className="text-muted-foreground text-sm">{data?.name}</span>
+                                    {t('document.version_current')} <span className="text-muted-foreground text-sm">{data?.name}</span>
                                 </div>
                             </div>
                             <DropdownMenu onOpenChange={() => handleDropdownChange("current")}>
@@ -161,7 +163,7 @@ const DocumentVersionModal = ({ data, open, onOpenChange }: Props) => {
                                 <DropdownMenuContent>
                                     <DropdownMenuItem onClick={() => handleDownload(null)}>
                                         <Download className="text-black-900" />
-                                        <span>Tải về</span>
+                                        <span>{t('document.download')}</span>
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
@@ -173,7 +175,7 @@ const DocumentVersionModal = ({ data, open, onOpenChange }: Props) => {
                         >
                             <div className="flex flex-col">
                                 <div>
-                                    Phiên bản {d.versionNumber} <span className="text-muted-foreground text-sm">{d.name}</span>
+                                    {t('document.version_number', { number: d.versionNumber })} <span className="text-muted-foreground text-sm">{d.name}</span>
                                 </div>
                                 <div className="text-muted-foreground text-xs">
                                     {formatTime(d.createdAt)}
@@ -188,7 +190,7 @@ const DocumentVersionModal = ({ data, open, onOpenChange }: Props) => {
                                 <DropdownMenuContent>
                                     <DropdownMenuItem onClick={() => handleDownload(d)}>
                                         <Download className="text-black-900" />
-                                        <span>Tải xuống</span>
+                                        <span>{t('dropdown.download')}</span>
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
@@ -208,7 +210,7 @@ const DocumentVersionModal = ({ data, open, onOpenChange }: Props) => {
 
                 <DialogFooter>
                     <Button variant="outline" onClick={() => onOpenChange(false)}>
-                        Đóng
+                        {t('common.close')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

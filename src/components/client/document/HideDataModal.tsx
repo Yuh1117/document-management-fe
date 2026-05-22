@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+﻿import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -7,8 +7,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState, type ChangeEvent } from "react";
 import { useForm } from "react-hook-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { authApis, endpoints } from "@/config/api";
+import api, { endpoints } from "@/config/api";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 interface IForm {
     content: string;
@@ -16,18 +17,13 @@ interface IForm {
     file: File
 }
 
-const fieldNames: { [key: string]: string } = {
-    content: "Nội dung",
-    password: "Mật khẩu (tùy chọn)",
-    file: "Tệp"
-};
-
 type Props = {
     open: boolean;
     onOpenChange: (open: boolean) => void;
 };
 
 const HideDataModal = ({ open, onOpenChange }: Props) => {
+    const { t } = useTranslation();
     const form = useForm<IForm>();
     const [loading, setLoading] = useState<boolean>(false);
     const [decryptedData, setDecryptedData] = useState<string | null>(null);
@@ -40,7 +36,7 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
     const validateEmpty = (field: keyof IForm, value: string): boolean => {
         form.clearErrors(field);
         if (!value) {
-            setError(field, `${fieldNames[field]} không được để trống`);
+            setError(field, t('validation.required', { field: t(`hide_data.${field}_label`) }));
             return false;
         }
         return true;
@@ -49,13 +45,13 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
     const validateImage = (file: File): boolean => {
         form.clearErrors('file')
         if (!file) {
-            setError("file", "File không được để trống")
+            setError("file", t('validation.required', { field: t('hide_data.file_label') }))
             return false;
         }
 
         const validImageTypes = ["application/pdf"]
         if (!validImageTypes.includes(file.type)) {
-            setError("file", "Vui lòng chọn một file hợp lệ");
+            setError("file", t('hide_data.invalid_file'));
             return false;
         }
         return true;
@@ -87,7 +83,7 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
                         form.append(key, value);
                     });
 
-                    const res = await authApis().post(endpoints["hide-data"], form, {
+                    const res = await api.post(endpoints["hide-data"], form, {
                         responseType: "blob"
                     });
 
@@ -101,15 +97,11 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
                     link.remove();
                     window.URL.revokeObjectURL(url);
 
-                    toast.success("Thành công", {
-                        duration: 2000
-                    })
+                    toast.success(t('hide_data.success'), { duration: 2000 })
                     onOpenChange(false)
                 } catch (error) {
                     console.error("Lỗi", error);
-                    toast.error("Thất bại", {
-                        duration: 2000
-                    })
+                    toast.error(t('hide_data.failed'), { duration: 2000 })
                 } finally {
                     setLoading(false);
                 }
@@ -124,17 +116,13 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
                         form.append(key, value);
                     });
 
-                    const res: any = await authApis().post(endpoints["extract-data"], form);
+                    const res: any = await api.post(endpoints["extract-data"], form);
                     setDecryptedData(res.data.data)
 
-                    toast.success("Thành công", {
-                        duration: 2000
-                    })
+                    toast.success(t('hide_data.success'), { duration: 2000 })
                 } catch (error) {
                     console.error("Lỗi:", error);
-                    toast.error("Thất bại", {
-                        duration: 2000
-                    })
+                    toast.error(t('hide_data.failed'), { duration: 2000 })
                 } finally {
                     setLoading(false);
                 }
@@ -154,13 +142,13 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent aria-describedby={undefined}>
                 <DialogHeader>
-                    <DialogTitle>Ẩn Dữ Liệu</DialogTitle>
+                    <DialogTitle>{t('hide_data.title')}</DialogTitle>
                 </DialogHeader>
 
                 <Tabs defaultValue="hide" value={currentTab} onValueChange={(value) => setCurrentTab(value)}>
                     <TabsList className="mb-1">
-                        <TabsTrigger value="hide">Ẩn</TabsTrigger>
-                        <TabsTrigger value="extract">Trích xuất</TabsTrigger>
+                        <TabsTrigger value="hide">{t('hide_data.hide_tab')}</TabsTrigger>
+                        <TabsTrigger value="extract">{t('hide_data.extract_tab')}</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="hide">
@@ -172,7 +160,7 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
                                         name="file"
                                         render={() => (
                                             <FormItem>
-                                                <FormLabel>{fieldNames.file}</FormLabel>
+                                                <FormLabel>{t('hide_data.file_label')}</FormLabel>
                                                 <FormControl>
                                                     <Input type="file" accept="application/pdf"
                                                         onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -191,7 +179,7 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
                                         name="content"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>{fieldNames.content}</FormLabel>
+                                                <FormLabel>{t('hide_data.content_label')}</FormLabel>
                                                 <FormControl>
                                                     <Textarea
                                                         {...field}
@@ -209,7 +197,7 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
                                         name="password"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>{fieldNames.password}</FormLabel>
+                                                <FormLabel>{t('hide_data.password_label')}</FormLabel>
                                                 <FormControl>
                                                     <Input
                                                         type="password"
@@ -237,7 +225,7 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
                                         name="file"
                                         render={() => (
                                             <FormItem>
-                                                <FormLabel>{fieldNames.file}</FormLabel>
+                                                <FormLabel>{t('hide_data.file_label')}</FormLabel>
                                                 <FormControl>
                                                     <Input type="file" accept="application/pdf"
                                                         onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -256,7 +244,7 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
                                         name="password"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>{fieldNames.password}</FormLabel>
+                                                <FormLabel>{t('hide_data.password_label')}</FormLabel>
                                                 <FormControl>
                                                     <Input
                                                         type="password"
@@ -275,7 +263,7 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
 
                         {decryptedData && (
                             <div className="mt-4 p-2 border rounded-xl bg-gray-100">
-                                <h3 className="font-semibold">Dữ liệu giải mã:</h3>
+                                <h3 className="font-semibold">{t('hide_data.decrypted_label')}</h3>
                                 <p>{decryptedData}</p>
                             </div>
                         )}
@@ -285,10 +273,10 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
 
                 <DialogFooter className="mt-5">
                     <Button variant="outline" onClick={() => onOpenChange(false)}>
-                        Hủy
+                        {t('common.cancel')}
                     </Button>
                     <Button onClick={() => form.handleSubmit(onSubmit)()} disabled={loading}>
-                        {loading ? <Spinner size={16} /> : "Xác nhận"}
+                        {loading ? <Spinner size={16} /> : t('common.confirm')}
                     </Button>
                 </DialogFooter>
 

@@ -2,6 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ShieldAlert } from 'lucide-react';
 import { Spinner } from '../ui/spinner';
 import { useAppSelector } from '@/redux/hooks';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
     children: React.ReactNode;
@@ -11,6 +12,7 @@ type Props = {
 
 const Access = ({ children, permission, hideChildren = false }: Props) => {
     const { permissionsMap, loading } = useAppSelector((state) => state.permissions);
+    const { t } = useTranslation();
     const key = `${permission.apiPath}|${permission.method.toUpperCase()}`;
     const allow = permissionsMap[key] === true;
 
@@ -30,7 +32,7 @@ const Access = ({ children, permission, hideChildren = false }: Props) => {
                                         <ShieldAlert strokeWidth={1} size={128} />
                                     </div>
                                     <h2 className="text-xl font-semibold mb-3">
-                                        Bạn không có quyền truy cập!
+                                        {t('auth.no_permission')}
                                     </h2>
                                 </CardContent>
                             </Card>

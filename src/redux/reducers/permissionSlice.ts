@@ -1,5 +1,5 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { authApis, endpoints } from '@/config/api';
+﻿import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import api, { endpoints } from '@/config/api';
 import { logout } from './userSlice';
 
 interface PermissionsState {
@@ -15,7 +15,7 @@ const initialState: PermissionsState = {
 export const fetchPermissions = createAsyncThunk(
     'permissions/fetchPermissions',
     async (permissionsToCheck: { apiPath: string; method: string }[]) => {
-        const res = await authApis().post(endpoints['check-permissions'], permissionsToCheck);
+        const res = await api.post(endpoints['check-permissions'], permissionsToCheck);
         return res.data.data;
     }
 );
