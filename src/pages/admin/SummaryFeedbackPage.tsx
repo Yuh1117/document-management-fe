@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { authApis, endpoints } from "@/config/api";
+﻿import { useEffect, useState } from "react";
+import api, { endpoints } from "@/config/api";
 import type { ISummarizeModel, ISummaryFeedbackModelStats } from "@/types/type";
 import { Spinner } from "@/components/ui/spinner";
 import {
@@ -27,7 +27,7 @@ const SummaryFeedbackAdminPage = () => {
     const load = async () => {
         try {
             setLoading(true);
-            const res = await authApis().get(endpoints["summary-feedback-stats"]);
+            const res = await api.get(endpoints["summary-feedback-stats"]);
             setStats(res.data.data as ISummaryFeedbackModelStats[]);
         } catch (err) {
             console.error("Failed to load feedback stats", err);
@@ -39,7 +39,7 @@ const SummaryFeedbackAdminPage = () => {
     const loadModels = async () => {
         try {
             setModelsLoading(true);
-            const res = await authApis().get(endpoints["summarize-models"]);
+            const res = await api.get(endpoints["summarize-models"]);
             setModels(res.data.data.models as ISummarizeModel[]);
         } catch (err) {
             console.error("Failed to load models", err);
@@ -51,7 +51,7 @@ const SummaryFeedbackAdminPage = () => {
     const handleReloadModel = async () => {
         try {
             setReloading(true);
-            await authApis().post(endpoints["summarize-models-reload"]);
+            await api.post(endpoints["summarize-models-reload"]);
             toast.success(t('admin.reload_model_success'));
             await loadModels();
         } catch (err) {

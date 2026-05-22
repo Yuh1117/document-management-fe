@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+﻿import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -6,7 +6,7 @@ import type { IPermission } from "@/types/type";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useEffect, useState, type ChangeEvent } from "react";
-import { authApis, endpoints } from "@/config/api";
+import api, { endpoints } from "@/config/api";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
@@ -79,11 +79,11 @@ const PermissionModal = ({
                 setLoading(true);
 
                 if (isEditing) {
-                    await authApis().patch(endpoints["permissions-detail"](data.id), data)
+                    await api.patch(endpoints["permissions-detail"](data.id), data)
                     onOpenChange(false)
                     loadPermissions()
                 } else {
-                    await authApis().post(endpoints["permissions"], data)
+                    await api.post(endpoints["permissions"], data)
                     onOpenChange(false)
                     loadPermissions()
                 }

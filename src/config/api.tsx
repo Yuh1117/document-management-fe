@@ -1,5 +1,6 @@
 import axios from "axios";
-import cookies from "react-cookies"
+import { store } from "@/redux/store";
+import { setAccessToken, logout } from "@/redux/reducers/userSlice";
 
 const BASE_URL = 'http://localhost:8080/';
 const LANGUAGE_STORAGE_KEY = "language";
@@ -14,6 +15,8 @@ export const endpoints = {
     "signup": "/api/signup",
     'profile': '/api/secure/profile',
     "google-login": "/api/auth/google",
+    "refresh": "/api/auth/refresh",
+    "logout": "/api/auth/logout",
 
     "settings": "/api/admin/settings",
     "settings-detail": (id: string | number) => `/api/admin/settings/${id}`,
@@ -79,23 +82,77 @@ export const endpoints = {
     "summarize-models-reload": "/api/admin/documents/summarize/models/reload",
 }
 
-export const authApis = () => {
-    return axios.create({
-        baseURL: BASE_URL,
-        headers: {
-            "Authorization": `Bearer ${cookies.load("token")}`,
-            "Accept-Language": getAcceptLanguage(),
-        },
-    });
-};
-
 const api = axios.create({
     baseURL: BASE_URL,
+    withCredentials: true,
 });
 
 api.interceptors.request.use((config) => {
+    const isRefreshRequest = config.url?.includes(endpoints["refresh"]);
+    if (!isRefreshRequest) {
+        const token = store.getState().users.accessToken;
+        if (token) {
+            config.headers["Authorization"] = `Bearer ${token}`;
+        }
+    }
     config.headers["Accept-Language"] = getAcceptLanguage();
     return config;
 });
+
+let isRefreshing = false;
+let refreshSubscribers: ((token: string) => void)[] = [];
+
+const notifySubscribers = (token: string) => {
+    refreshSubscribers.forEach(cb => cb(token));
+    refreshSubscribers = [];
+};
+
+api.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        const originalRequest = error.config;
+
+        const isUnauthorized = error.response?.status === 401;
+        const isRefreshEndpoint = originalRequest.url?.includes(endpoints["refresh"]);
+        const isPublicEndpoint = [endpoints["login"], endpoints["signup"], endpoints["google-login"]]
+            .some(url => originalRequest.url?.includes(url));
+        const hasRetried = originalRequest._retry;
+
+        if (!isUnauthorized || isRefreshEndpoint || isPublicEndpoint || hasRetried) {
+            return Promise.reject(error);
+        }
+
+        if (isRefreshing) {
+            return new Promise((resolve) => {
+                refreshSubscribers.push((token) => {
+                    originalRequest.headers["Authorization"] = `Bearer ${token}`;
+                    resolve(api(originalRequest));
+                });
+            });
+        }
+
+        originalRequest._retry = true;
+        isRefreshing = true;
+
+        try {
+            const res = await axios.post(
+                BASE_URL + endpoints["refresh"],
+                {},
+                { withCredentials: true, headers: { "Accept-Language": getAcceptLanguage() } }
+            );
+            const newToken = res.data.data.accessToken;
+            store.dispatch(setAccessToken(newToken));
+            notifySubscribers(newToken);
+            originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
+            return api(originalRequest);
+        } catch {
+            store.dispatch(logout());
+            window.location.href = "/login";
+            return Promise.reject(error);
+        } finally {
+            isRefreshing = false;
+        }
+    }
+);
 
 export default api;

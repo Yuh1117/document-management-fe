@@ -1,10 +1,10 @@
-import { Alert, AlertDescription } from "@/components/ui/alert";
+﻿import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { authApis, endpoints } from "@/config/api";
+import api, { endpoints } from "@/config/api";
 import { useAppDispatch } from "@/redux/hooks";
 import { triggerReload } from "@/redux/reducers/filesSlice";
 import { closeFolderModal } from "@/redux/reducers/folderSlice";
@@ -64,7 +64,7 @@ const FolderModal = ({
             try {
                 setLoading(true);
                 if (isEditing) {
-                    await authApis().patch(endpoints["folder-detail"](data.id), data);
+                    await api.patch(endpoints["folder-detail"](data.id), data);
                     dispatch(closeFolderModal())
                 } else {
                     if (id) {
@@ -74,7 +74,7 @@ const FolderModal = ({
                         data = { ...data, parent }
                     }
 
-                    await authApis().post(endpoints["folders"], data);
+                    await api.post(endpoints["folders"], data);
                     dispatch(closeFolderModal());
                 }
                 dispatch(triggerReload())

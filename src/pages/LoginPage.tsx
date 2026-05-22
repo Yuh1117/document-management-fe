@@ -9,7 +9,6 @@ import { AlertCircleIcon, Loader2Icon } from "lucide-react"
 import { useTranslation } from "react-i18next";
 import Api, { endpoints } from "@/config/api";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import cookies from 'react-cookies';
 import { useAppDispatch } from "@/redux/hooks";
 import { login } from "@/redux/reducers/userSlice";
 import { toast, Toaster } from "sonner";
@@ -84,9 +83,7 @@ const Login = () => {
             try {
                 setLoading(true);
                 const res = await Api.post(endpoints["login"], data)
-                cookies.save('token', res.data.data.accessToken, { path: "/" });
-
-                dispatch(login(res.data.data.user))
+                dispatch(login({ user: res.data.data.user, accessToken: res.data.data.accessToken }))
                 nav("/")
             } catch (error: any) {
                 if (error.response?.status === 401) {

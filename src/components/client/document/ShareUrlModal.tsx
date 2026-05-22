@@ -1,11 +1,11 @@
-import { Button } from "@/components/ui/button";
+﻿import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
-import { authApis, endpoints } from "@/config/api";
+import api, { endpoints } from "@/config/api";
 import type { IDocument } from "@/types/type";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -33,7 +33,7 @@ const ShareUrlModal = ({ open, onOpenChange, doc }: Props) => {
                 expiredTime: data.expiredTime
             }
 
-            const res: any = await authApis().post(endpoints["share-url"], req);
+            const res: any = await api.post(endpoints["share-url"], req);
             setSignedUrl(res.data.data)
 
             toast.success(t('share_url.create_success'), {

@@ -1,4 +1,4 @@
-import {
+﻿import {
     Dialog,
     DialogContent,
     DialogHeader,
@@ -20,7 +20,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import MultiEmailInput from "./MultiInputEmail"
 import type { IDocument, IDocumentShare, IFolder, IFolderShare } from "@/types/type"
 import { isDocument } from "@/config/utils"
-import { authApis, endpoints } from "@/config/api"
+import api, { endpoints } from "@/config/api"
 import { Spinner } from "../ui/spinner"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import { resetPermission } from "@/redux/reducers/filesSlice"
@@ -71,7 +71,7 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
 
             let res;
             if (isDocument(data)) {
-                res = await authApis().get(endpoints["share-doc-detail"](data.id))
+                res = await api.get(endpoints["share-doc-detail"](data.id))
                 setPeople(
                     res.data.data
                         .filter((item: IDocumentShare) => item.user)
@@ -86,7 +86,7 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
                         }))
                 )
             } else {
-                res = await authApis().get(endpoints["share-folder-detail"](data.id))
+                res = await api.get(endpoints["share-folder-detail"](data.id))
                 setPeople(
                     res.data.data
                         .filter((item: IFolderShare) => item.user)
@@ -124,7 +124,7 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
                 url = endpoints["share-folder"];
             }
 
-            await authApis().post(url, payload)
+            await api.post(url, payload)
 
             toast.success(t('share.share_success'), { duration: 2000 })
             return true
@@ -164,7 +164,7 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
                 url = endpoints["share-folder-detail"](data.id);
             }
 
-            await authApis().delete(url, { data: ids })
+            await api.delete(url, { data: ids })
 
             toast.success(t('share.remove_success'), { duration: 2000 })
             return true

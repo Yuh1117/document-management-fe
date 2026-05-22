@@ -1,11 +1,11 @@
-import { Alert, AlertDescription } from "@/components/ui/alert";
+﻿import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
-import { authApis, endpoints } from "@/config/api";
+import api, { endpoints } from "@/config/api";
 import { useAppDispatch } from "@/redux/hooks";
 import { closeDocumentModal } from "@/redux/reducers/documentSlice";
 import { triggerReload } from "@/redux/reducers/filesSlice";
@@ -62,7 +62,7 @@ const DocumentModal = ({
             try {
                 setLoading(true);
 
-                await authApis().patch(endpoints["document-detail"](data.id), data);
+                await api.patch(endpoints["document-detail"](data.id), data);
                 dispatch(closeDocumentModal())
                 dispatch(triggerReload())
             } catch (error: any) {

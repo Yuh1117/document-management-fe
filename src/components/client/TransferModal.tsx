@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react"
+﻿import { useMemo, useState, useEffect } from "react"
 import {
     Dialog,
     DialogContent,
@@ -14,7 +14,7 @@ import type { IDocument, IFolder } from "@/types/type"
 import { toast } from "sonner"
 import { useAppDispatch } from "@/redux/hooks"
 import { triggerReload } from "@/redux/reducers/filesSlice"
-import { authApis, endpoints } from "@/config/api"
+import api, { endpoints } from "@/config/api"
 import { useFilesLoader } from "@/hooks/useFilesLoader"
 import { Spinner } from "../ui/spinner"
 import { cn } from "@/lib/utils"
@@ -73,7 +73,7 @@ const TransferModal = ({
                 }
             }
 
-            await authApis().post(url, req)
+            await api.post(url, req)
 
             dispatch(triggerReload())
             toast.success(t('transfer.success'))

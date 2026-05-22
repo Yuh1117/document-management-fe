@@ -1,7 +1,7 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+﻿import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import type { IDocument } from "@/types/type";
 import { toast } from "sonner";
-import { authApis, endpoints } from "@/config/api";
+import api, { endpoints } from "@/config/api";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Spinner } from "@/components/ui/spinner";
@@ -40,7 +40,7 @@ const DocumentPreviewModal = ({ data, open, onOpenChange }: Props) => {
         try {
             setLoading(true);
 
-            const res = await authApis().get(endpoints["document-preview"](data.id), {
+            const res = await api.get(endpoints["document-preview"](data.id), {
                 responseType: "blob",
             });
 

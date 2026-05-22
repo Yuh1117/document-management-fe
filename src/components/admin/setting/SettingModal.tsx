@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+﻿import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import type { ISetting } from "@/types/type";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useEffect, useState, type ChangeEvent } from "react";
-import { authApis, endpoints } from "@/config/api";
+import api, { endpoints } from "@/config/api";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
@@ -75,11 +75,11 @@ const SettingModal = ({
             try {
                 setLoading(true);
                 if (isEditing) {
-                    await authApis().patch(endpoints["settings-detail"](data.id), data);
+                    await api.patch(endpoints["settings-detail"](data.id), data);
                     onOpenChange(false)
                     loadSettings()
                 } else {
-                    await authApis().post(endpoints["settings"], data);
+                    await api.post(endpoints["settings"], data);
                     onOpenChange(false)
                     loadSettings()
                 }

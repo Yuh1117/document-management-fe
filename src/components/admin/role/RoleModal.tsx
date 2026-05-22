@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+﻿import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -6,7 +6,7 @@ import type { IPermission, IRole } from "@/types/type";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useEffect, useState, type ChangeEvent } from "react";
-import { authApis, endpoints } from "@/config/api";
+import api, { endpoints } from "@/config/api";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircleIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
@@ -73,11 +73,11 @@ const RoleModal = ({
                 setLoading(true);
 
                 if (isEditing) {
-                    await authApis().patch(endpoints["roles-detail"](data.id), data)
+                    await api.patch(endpoints["roles-detail"](data.id), data)
                     onOpenChange(false)
                     loadRoles()
                 } else {
-                    await authApis().post(endpoints["roles"], data)
+                    await api.post(endpoints["roles"], data)
                     onOpenChange(false)
                     loadRoles()
                 }
@@ -101,7 +101,7 @@ const RoleModal = ({
         try {
             setLoading(true);
 
-            const res = await authApis().get(`${endpoints["permissions"]}?all=true`);
+            const res = await api.get(`${endpoints["permissions"]}?all=true`);
             setListPermissions(Object.values(groupedPermissions(res.data.data.result)))
 
         } catch (error) {

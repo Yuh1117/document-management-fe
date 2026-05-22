@@ -1,8 +1,8 @@
-import { Fragment, type ReactNode, useState } from "react";
+﻿import { Fragment, type ReactNode, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import type { IDocument } from "@/types/type";
-import { authApis, endpoints } from "@/config/api";
+import api, { endpoints } from "@/config/api";
 import { Checkbox } from "@/components/ui/checkbox";
 import EllipsisDropDown from "../EllipsisDropdown";
 import { toast } from "sonner";
@@ -86,7 +86,7 @@ const Document = ({
         try {
             setDownloading(true)
 
-            const res = await authApis().get(endpoints["download-single-document"](data.id), {
+            const res = await api.get(endpoints["download-single-document"](data.id), {
                 responseType: "blob",
             });
 
@@ -122,7 +122,7 @@ const Document = ({
             setLoading(true);
 
             const req: number[] = [data.id]
-            await authApis().patch(endpoints["documents"], req);
+            await api.patch(endpoints["documents"], req);
 
             dispatch(triggerReload())
             toast.success(t('common.trash_success'), {
@@ -143,7 +143,7 @@ const Document = ({
             setLoading(true);
 
             const req: number[] = [data.id]
-            await authApis().patch(endpoints["document-restore"], req);
+            await api.patch(endpoints["document-restore"], req);
 
             dispatch(triggerReload())
             toast.success(t('common.restore_success'), {
@@ -164,7 +164,7 @@ const Document = ({
             setLoading(true);
 
             const req: number[] = [data.id]
-            await authApis().delete(endpoints["document-delete-permanent"], {
+            await api.delete(endpoints["document-delete-permanent"], {
                 data: req
             });
 

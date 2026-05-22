@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui/button";
+﻿import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { useParams } from "react-router";
-import { authApis, endpoints } from "@/config/api";
+import api, { endpoints } from "@/config/api";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/redux/hooks";
 import { triggerReload } from "@/redux/reducers/filesSlice";
@@ -40,9 +40,9 @@ const UploadModeModal = ({ open, onOpenChange, files }: Props) => {
             }
 
             if (mode === "replace") {
-                await authApis().post(endpoints["upload-replace-doc"], formData);
+                await api.post(endpoints["upload-replace-doc"], formData);
             } else {
-                await authApis().post(endpoints["upload-keep-doc"], formData);
+                await api.post(endpoints["upload-keep-doc"], formData);
             }
 
             toast.success(t('upload.upload_success'), {

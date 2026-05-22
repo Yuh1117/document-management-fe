@@ -7,7 +7,7 @@ import { SidebarInset, SidebarProvider } from './components/ui/sidebar'
 import { AdminRoute, AuthRoute, ProtectedRoute } from './components/protected-route/ProtectedRoute'
 import { useAppDispatch } from './redux/hooks'
 import { useEffect } from 'react'
-import { getProfile } from './redux/reducers/userSlice'
+import { initAuth } from './redux/reducers/userSlice'
 import { AppSidebar } from './components/client/layout/AppSidebar'
 import DashBoard from './pages/admin/DashboardPage'
 import SummaryFeedbackAdminPage from './pages/admin/SummaryFeedbackPage'
@@ -147,7 +147,7 @@ function App() {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        dispatch(getProfile())
+        dispatch(initAuth())
     }, [])
 
     return (

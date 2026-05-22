@@ -8,7 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Link, useNavigate } from "react-router";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { logout } from "@/redux/reducers/userSlice";
+import { logoutAsync } from "@/redux/reducers/userSlice";
 import logoImg from "@/assets/react.svg";
 import Setting from "@/components/shared/settings/SettingButton";
 import type { IAccount } from "@/types/type";
@@ -60,7 +60,7 @@ const Account = ({ user }: { user: IAccount | null }) => {
                         </DropdownMenuItem>
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => dispatch(logout())} className="font-medium">
+                    <DropdownMenuItem onClick={() => dispatch(logoutAsync())} className="font-medium">
                         <span className="text-red-500">{t('nav.logout')}</span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>

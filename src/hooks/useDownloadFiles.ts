@@ -1,4 +1,4 @@
-import { authApis, endpoints } from "@/config/api";
+﻿import api, { endpoints } from "@/config/api";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -14,17 +14,17 @@ export function useDownloadFiles() {
             let filename = "files.zip";
 
             if (docs.length > 0 && folders.length === 0) {
-                res = await authApis().post(endpoints["download-multiple-documents"], docs, {
+                res = await api.post(endpoints["download-multiple-documents"], docs, {
                     responseType: "blob"
                 });
                 filename = "documents.zip";
             } else if (docs.length === 0 && folders.length > 0) {
-                res = await authApis().post(endpoints["download-multiple-folders"], folders, {
+                res = await api.post(endpoints["download-multiple-folders"], folders, {
                     responseType: "blob"
                 });
                 filename = "folders.zip";
             } else {
-                res = await authApis().post(endpoints["download-multiple-files"], {
+                res = await api.post(endpoints["download-multiple-files"], {
                     folderIds: folders,
                     documentIds: docs
                 }, {

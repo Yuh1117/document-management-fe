@@ -1,4 +1,4 @@
-import DeleteModal from "@/components/admin/DeleteModal";
+﻿import DeleteModal from "@/components/admin/DeleteModal";
 import SettingModal from "@/components/admin/setting/SettingModal";
 import Access from "@/components/protected-route/Access";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Spinner } from "@/components/ui/spinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { authApis, endpoints } from "@/config/api";
+import api, { endpoints } from "@/config/api";
 import { ALL_PERMISSIONS } from "@/config/permissions";
 import { useAppDispatch } from "@/redux/hooks";
 import { fetchPermissions } from "@/redux/reducers/permissionSlice";
@@ -42,7 +42,7 @@ const SettingAdminPage = () => {
                 url = `${url}&kw=${kwInput}`;
             }
 
-            const res = await authApis().get(url);
+            const res = await api.get(url);
             setSettings(res.data.data.result);
             setTotalPages(res.data.data.totalPages)
 

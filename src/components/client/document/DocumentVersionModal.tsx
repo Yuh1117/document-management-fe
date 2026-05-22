@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react"
+﻿import { useState, useEffect, useRef } from "react"
 import {
     Dialog,
     DialogContent,
@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Download, EllipsisVertical } from "lucide-react"
 import type { IDocument, IDocumentVersion } from "@/types/type"
-import { authApis, endpoints } from "@/config/api"
+import api, { endpoints } from "@/config/api"
 import { cn } from "@/lib/utils"
 import { Spinner } from "@/components/ui/spinner"
 import { formatTime } from "@/config/utils"
@@ -44,7 +44,7 @@ const DocumentVersionModal = ({ data, open, onOpenChange }: Props) => {
 
             let url = `${endpoints['document-version'](data.id)}?page=${page}`;
 
-            const res = await authApis().get(url);
+            const res = await api.get(url);
             const dataRes = res.data.data;
 
             setDocumentVersions((prev) => [...prev, ...dataRes.result]);
@@ -72,7 +72,7 @@ const DocumentVersionModal = ({ data, open, onOpenChange }: Props) => {
                 endpoint = endpoints["download-single-document"](data.id)
             }
 
-            const res = await authApis().get(endpoint, {
+            const res = await api.get(endpoint, {
                 responseType: "blob",
             });
 

@@ -1,4 +1,4 @@
-import {
+﻿import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
@@ -11,7 +11,7 @@ import { useSidebar } from "../ui/sidebar"
 import { useParams } from "react-router"
 import { useAppDispatch } from "@/redux/hooks"
 import { openUploadModeModal, triggerReload } from "@/redux/reducers/filesSlice"
-import { authApis, endpoints } from "@/config/api"
+import api, { endpoints } from "@/config/api"
 import { toast } from "sonner"
 import { useState } from "react"
 import { Spinner } from "../ui/spinner"
@@ -41,7 +41,7 @@ const NewDropDown = () => {
                 formData.append("folderId", id)
             }
 
-            const res = await authApis().post(endpoints["upload-multiple-documents"], formData)
+            const res = await api.post(endpoints["upload-multiple-documents"], formData)
 
             const conflicts = res.data.data.conflicts
             if (conflicts?.length) {
@@ -101,7 +101,7 @@ const NewDropDown = () => {
                 formData.append("parentId", id);
             }
 
-            await authApis().post(endpoints["upload-folder"], formData);
+            await api.post(endpoints["upload-folder"], formData);
             dispatch(triggerReload());
 
             toast.success(t('upload.folder_upload_success'), {

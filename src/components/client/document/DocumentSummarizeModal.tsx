@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import {
     Dialog,
     DialogContent,
@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
-import { authApis, endpoints } from "@/config/api";
+import api, { endpoints } from "@/config/api";
 import type { IDocument, IDocumentSummarize, ISummaryFeedbackDocumentStats, ISummaryFeedbackRes } from "@/types/type";
 import { Sparkles, ThumbsDown, ThumbsUp } from "lucide-react";
 import { toast } from "sonner";
@@ -49,7 +49,7 @@ const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
     const loadFeedbackStats = async () => {
         if (!data) return;
         try {
-            const res = await authApis().get(endpoints["document-summary-feedback"](data.id));
+            const res = await api.get(endpoints["document-summary-feedback"](data.id));
             setFeedbackStats(res.data.data as ISummaryFeedbackDocumentStats);
         } catch (err) {
             console.error(err);
@@ -60,7 +60,7 @@ const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
         if (!data) return;
         try {
             setLoading(true);
-            const res = await authApis().get(endpoints["document-summarize"](data.id));
+            const res = await api.get(endpoints["document-summarize"](data.id));
             setResult(res.data.data as IDocumentSummarize);
             await loadFeedbackStats();
             setMyFeedback(null);
@@ -83,7 +83,7 @@ const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
         if (!data || pendingVote === null || !result) return;
         try {
             setSubmittingFeedback(true);
-            const res = await authApis().post(endpoints["document-summary-feedback"](data.id), {
+            const res = await api.post(endpoints["document-summary-feedback"](data.id), {
                 summaryId: result.id,
                 isHelpful: pendingVote,
                 comment: comment.trim() || undefined,

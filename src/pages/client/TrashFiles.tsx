@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { authApis, endpoints } from "@/config/api";
+import api, { endpoints } from "@/config/api";
 import { Spinner } from "@/components/ui/spinner";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -25,7 +25,7 @@ const TrashFilesPage = () => {
         try {
             setCleaning(true)
 
-            await authApis().delete(endpoints["files-delete-permanent"]);
+            await api.delete(endpoints["files-delete-permanent"]);
 
             setOpen(false)
             dispatch(triggerReload())

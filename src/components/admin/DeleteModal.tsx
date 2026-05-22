@@ -1,8 +1,8 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+﻿import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useEffect, useState } from "react";
-import { authApis } from "@/config/api";
+import api from "@/config/api";
 import { useTranslation } from "react-i18next";
 import { Alert, AlertDescription } from "../ui/alert";
 import { AlertCircleIcon } from "lucide-react";
@@ -25,7 +25,7 @@ const DeleteModal = ({ open, deletingId, onCancel, name, load, endpoint }: Props
         try {
             setLoading(true);
             if (deletingId !== null) {
-                await authApis().delete(endpoint(deletingId));
+                await api.delete(endpoint(deletingId));
                 onCancel()
                 load()
             }

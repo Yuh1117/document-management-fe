@@ -1,9 +1,9 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Folder as FolderIcon } from "lucide-react";
 import type { IFolder } from "@/types/type";
-import { authApis, endpoints } from "@/config/api";
+import api, { endpoints } from "@/config/api";
 import { useNavigate } from "react-router";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -62,7 +62,7 @@ const Folder = ({
         try {
             setDownloading(true)
 
-            const res = await authApis().get(endpoints["download-single-folder"](data.id), {
+            const res = await api.get(endpoints["download-single-folder"](data.id), {
                 responseType: "blob",
             });
 
@@ -98,7 +98,7 @@ const Folder = ({
             setLoading(true);
 
             const req: number[] = [data.id]
-            await authApis().patch(endpoints["folders"], req);
+            await api.patch(endpoints["folders"], req);
 
             dispatch(triggerReload())
             toast.success(t('common.trash_success'), {
@@ -119,7 +119,7 @@ const Folder = ({
             setLoading(true);
 
             const req: number[] = [data.id]
-            await authApis().patch(endpoints["folder-restore"], req);
+            await api.patch(endpoints["folder-restore"], req);
 
             dispatch(triggerReload())
             toast.success(t('common.restore_success'), {
@@ -140,7 +140,7 @@ const Folder = ({
             setLoading(true);
 
             const req: number[] = [data.id]
-            await authApis().delete(endpoints["folder-delete-permanent"], {
+            await api.delete(endpoints["folder-delete-permanent"], {
                 data: req
             });
 

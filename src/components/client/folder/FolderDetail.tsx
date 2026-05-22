@@ -1,9 +1,9 @@
-import { Badge } from "@/components/ui/badge";
+﻿import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Spinner } from "@/components/ui/spinner";
-import { authApis, endpoints } from "@/config/api";
+import api, { endpoints } from "@/config/api";
 import { formatTime } from "@/config/utils";
 import { useAppSelector } from "@/redux/hooks";
 import type { IFolder } from "@/types/type";
@@ -26,7 +26,7 @@ const FolderDetail = ({ isSheetOpen, setIsSheetOpen, data }: Props) => {
         if (!data) return
         try {
             setLoadingDetail?.(true);
-            const res = await authApis().get(endpoints["folder-detail"](data.id));
+            const res = await api.get(endpoints["folder-detail"](data.id));
 
             setFolderDetail?.(res.data.data);
             setIsSheetOpen?.(true);

@@ -1,6 +1,5 @@
 import { useGoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router";
-import cookies from "react-cookies";
 import { useAppDispatch } from "@/redux/hooks";
 import Api, { endpoints } from "@/config/api";
 import type { Dispatch, SetStateAction } from "react";
@@ -22,9 +21,7 @@ const GoogleLoginButton = ({ setMsg }: { setMsg: Dispatch<SetStateAction<string>
                 });
 
                 if (res.data.data.accessToken) {
-                    cookies.save('token', res.data.data.accessToken, { path: "/" });
-
-                    dispatch(login(res.data.data.user))
+                    dispatch(login({ user: res.data.data.user, accessToken: res.data.data.accessToken }))
                     nav("/");
                 } else {
                     nav("/signup", { state: { newUser: res.data.data } });

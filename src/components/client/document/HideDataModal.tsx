@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+﻿import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState, type ChangeEvent } from "react";
 import { useForm } from "react-hook-form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { authApis, endpoints } from "@/config/api";
+import api, { endpoints } from "@/config/api";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
@@ -83,7 +83,7 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
                         form.append(key, value);
                     });
 
-                    const res = await authApis().post(endpoints["hide-data"], form, {
+                    const res = await api.post(endpoints["hide-data"], form, {
                         responseType: "blob"
                     });
 
@@ -116,7 +116,7 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
                         form.append(key, value);
                     });
 
-                    const res: any = await authApis().post(endpoints["extract-data"], form);
+                    const res: any = await api.post(endpoints["extract-data"], form);
                     setDecryptedData(res.data.data)
 
                     toast.success(t('hide_data.success'), { duration: 2000 })
