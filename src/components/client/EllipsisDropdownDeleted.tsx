@@ -1,5 +1,6 @@
 import { BrushCleaning, EllipsisVertical, History } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { useTranslation } from "react-i18next";
 
 type Props = {
     handleDropdownToggle: (open: boolean) => void,
@@ -8,6 +9,8 @@ type Props = {
 }
 
 const EllipsisDropDownDeleted = ({ handleDropdownToggle, handleRestore, handleHardDelete }: Props) => {
+    const { t } = useTranslation();
+
     return (
         <DropdownMenu onOpenChange={handleDropdownToggle}>
             <DropdownMenuTrigger asChild>
@@ -19,11 +22,11 @@ const EllipsisDropDownDeleted = ({ handleDropdownToggle, handleRestore, handleHa
                 <DropdownMenuGroup>
                     <DropdownMenuItem onClick={handleRestore}>
                         <History className="text-black-900" />
-                        Khôi phục
+                        {t('dropdown.restore')}
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={handleHardDelete}>
                         <BrushCleaning className="text-red-500" />
-                        <span className="text-red-500">Xoá vĩnh viễn</span>
+                        <span className="text-red-500">{t('dropdown.delete_permanently')}</span>
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
             </DropdownMenuContent>

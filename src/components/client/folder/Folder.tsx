@@ -14,6 +14,7 @@ import EllipsisDropDownDeleted from "../EllipsisDropdownDeleted";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
 import { openFolderDetail, openFolderModal } from "@/redux/reducers/folderSlice";
+import { useTranslation } from "react-i18next";
 
 type Props = {
     data: IFolder,
@@ -37,6 +38,7 @@ const Folder = ({
     const [, setDownloading] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false)
     const dispatch = useAppDispatch()
+    const { t } = useTranslation()
 
     const handleDropdownToggle = (open: boolean) => {
         setIsDropdownOpen(open);
@@ -74,12 +76,12 @@ const Folder = ({
             link.remove();
             window.URL.revokeObjectURL(url);
 
-            toast.success("Tải về thành công", {
+            toast.success(t('document.download_success'), {
                 duration: 2000
             })
         } catch (error) {
-            console.error("Tải về thất bại:", error);
-            toast.error("Tải về thất bại", {
+            console.error("Download failed:", error);
+            toast.error(t('document.download_failed'), {
                 duration: 2000
             })
         } finally {
@@ -99,12 +101,12 @@ const Folder = ({
             await authApis().patch(endpoints["folders"], req);
 
             dispatch(triggerReload())
-            toast.success("Đã chuyển vào thùng rác", {
+            toast.success(t('common.trash_success'), {
                 duration: 2000
             })
         } catch (error) {
-            console.error("Lỗi khi xoá", error);
-            toast.error("Chuyển vào thùng rác thất bại", {
+            console.error("Soft delete failed:", error);
+            toast.error(t('common.trash_failed'), {
                 duration: 2000
             })
         } finally {
@@ -120,12 +122,12 @@ const Folder = ({
             await authApis().patch(endpoints["folder-restore"], req);
 
             dispatch(triggerReload())
-            toast.success("Đã khôi phục", {
+            toast.success(t('common.restore_success'), {
                 duration: 2000
             })
         } catch (error) {
-            console.error("Lỗi khi khôi phục", error);
-            toast.error("Khôi phục thất bại", {
+            console.error("Restore failed:", error);
+            toast.error(t('common.restore_failed'), {
                 duration: 2000
             })
         } finally {
@@ -143,12 +145,12 @@ const Folder = ({
             });
 
             dispatch(triggerReload())
-            toast.success("Đã xoá vĩnh viễn thành công", {
+            toast.success(t('common.delete_success'), {
                 duration: 2000
             })
         } catch (error) {
-            console.error("Lỗi khi xoá", error);
-            toast.error("Xoá vĩnh viễn thất bại", {
+            console.error("Hard delete failed:", error);
+            toast.error(t('common.delete_failed'), {
                 duration: 2000
             })
         } finally {

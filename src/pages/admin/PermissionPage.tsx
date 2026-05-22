@@ -16,8 +16,10 @@ import type { IPermission } from "@/types/type";
 import { PencilLine, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
+import { useTranslation } from "react-i18next";
 
 const PermissionAdminPage = () => {
+    const { t } = useTranslation();
     const [permissions, setPermissions] = useState<IPermission[]>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [q, setQ] = useSearchParams();
@@ -109,30 +111,30 @@ const PermissionAdminPage = () => {
         <div className="px-4">
             <header className="flex h-16 shrink-0 items-center gap-2">
                 <div className="flex items-center gap-2">
-                    <span>Quyền</span>
+                    <span>{t('admin.permissions')}</span>
                 </div>
             </header>
             <Access permission={ALL_PERMISSIONS.PERMISSIONS.LIST}>
                 <div className="mx-5">
                     <div className="flex items-center gap-2 border rounded-xl p-5  shadow-xs">
-                        <Label>Tên:</Label>
+                        <Label>{t('common.name')}:</Label>
                         <Input
                             className="w-sm"
                             type="text"
-                            placeholder="Nhập tên"
+                            placeholder={t('signup.first_name_placeholder')}
                             id="name"
                             value={kwInput}
                             onChange={(e) => setKwInput(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                         />
-                        <Button variant="secondary" onClick={handleSearch}>Tìm kiếm</Button>
+                        <Button variant="secondary" onClick={handleSearch}>{t('nav.search')}</Button>
                     </div>
                     <div className="border rounded-xl mt-5 p-5 shadow-xs">
                         <div className="flex justify-between items-center mb-3">
-                            <span className="font-medium">Danh sách quyền</span>
+                            <span className="font-medium">{t('admin.permission_list')}</span>
                             <Access permission={ALL_PERMISSIONS.PERMISSIONS.CREATE} hideChildren>
                                 <Button className="bg-blue-500 dark:bg-blue-500 hover:bg-blue-500/90 dark:hover:bg-blue-500/90" onClick={handleOpenAdd}>
-                                    <Plus strokeWidth={3} /> Thêm mới
+                                    <Plus strokeWidth={3} /> {t('admin.add_new')}
                                 </Button>
                             </Access>
                         </div>
@@ -140,7 +142,7 @@ const PermissionAdminPage = () => {
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Id</TableHead>
-                                    <TableHead>Tên</TableHead>
+                                    <TableHead>{t('common.name')}</TableHead>
                                     <TableHead>Module</TableHead>
                                     <TableHead>Method</TableHead>
                                     <TableHead>Api path</TableHead>
@@ -159,7 +161,7 @@ const PermissionAdminPage = () => {
                                 ) : permissions.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={5} className="text-center text-sm text-muted-foreground py-10">
-                                            Không có dữ liệu
+                                            {t('common.no_data')}
                                         </TableCell>
                                     </TableRow>
                                 ) : (

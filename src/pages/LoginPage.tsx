@@ -22,10 +22,6 @@ export interface LoginFormValues {
     password: string;
 }
 
-const fieldNames: { [key: string]: string } = {
-    email: "Email",
-    password: "Mật khẩu",
-};
 
 const Login = () => {
     const form = useForm<LoginFormValues>();
@@ -44,7 +40,8 @@ const Login = () => {
     const validateEmpty = (field: keyof LoginFormValues, value: string): boolean => {
         form.clearErrors(field)
         if (!value) {
-            setError(field, `${fieldNames[field]} không được để trống`);
+            const fieldLabel = field === 'email' ? 'Email' : t('login.password');
+            setError(field, t('validation.required', { field: fieldLabel }));
             return false;
         }
         return true
@@ -55,7 +52,7 @@ const Login = () => {
 
         const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
         if (!emailRegex.test(value)) {
-            setError("email", "Email không hợp lệ")
+            setError("email", t('validation.email_invalid'))
             return false
         }
         return true
@@ -93,9 +90,9 @@ const Login = () => {
                 nav("/")
             } catch (error: any) {
                 if (error.response?.status === 401) {
-                    setMsg("Tài khoản hoặc mật khẩu không chính xác");
+                    setMsg(t('validation.wrong_credentials'));
                 } else {
-                    setMsg("Lỗi hệ thống hoặc kết nối.");
+                    setMsg(t('validation.system_error'));
                 }
             } finally {
                 setLoading(false);

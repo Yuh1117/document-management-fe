@@ -4,8 +4,10 @@ import { Card, CardContent } from '../ui/card';
 import { ShieldAlert } from 'lucide-react';
 import { ChangeLanguage } from '../shared/settings/ChangeLanguage';
 import { ModeToggle } from '../shared/settings/ThemeToggle';
+import { useTranslation } from 'react-i18next';
 
 const NotPermitted = () => {
+    const { t } = useTranslation();
     return (
         <div className="bg-muted flex min-h-screen flex-col items-center justify-center p-6 md:p-10">
             <Card className="w-full md:max-w-sm ">
@@ -14,11 +16,11 @@ const NotPermitted = () => {
                         <ShieldAlert strokeWidth={1} size={128}/>
                     </div>
                     <h2 className="text-xl font-semibold mb-3">
-                        Bạn không có quyền truy cập trang này!
+                        {t('auth.no_permission')}
                     </h2>
                     <Link to="/">
                         <Button variant="secondary" className="w-full">
-                            Quay về trang chủ
+                            {t('auth.back_home')}
                         </Button>
                     </Link>
                 </CardContent>

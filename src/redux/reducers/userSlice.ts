@@ -5,10 +5,12 @@ import cookies from 'react-cookies';
 
 interface UsersState {
     user: IAccount | null;
+    loading: boolean;
 }
 
 const initialState: UsersState = {
     user: null,
+    loading: true,
 };
 
 export const getProfile = createAsyncThunk(
@@ -38,12 +40,15 @@ const userSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(getProfile.pending, (state) => {
+                state.loading = true;
                 state.user = null;
             })
             .addCase(getProfile.fulfilled, (state, action) => {
+                state.loading = false;
                 state.user = action.payload ?? null;
             })
             .addCase(getProfile.rejected, (state) => {
+                state.loading = false;
                 state.user = null;
             });
     },

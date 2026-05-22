@@ -4,8 +4,11 @@ import TrashFilesPage from "./TrashFiles";
 import SearchFilesPage from "./SearchFiles";
 import SharedFilesPage from "./SharedFiles";
 import RecentFilesPage from "./RecentFiles";
+import { useTranslation } from "react-i18next";
 
 const Files = ({ mode }: { mode: string }) => {
+    const { t } = useTranslation();
+
     switch (mode) {
         case "my-files":
             return <MyFilesPage />;
@@ -20,7 +23,7 @@ const Files = ({ mode }: { mode: string }) => {
         case "trash":
             return <TrashFilesPage />;
         default:
-            return <div>Không tìm thấy</div>;
+            return <div>{t('common.not_found')}</div>;
     }
 };
 

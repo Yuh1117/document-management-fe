@@ -33,11 +33,11 @@ const GoogleLoginButton = ({ setMsg }: { setMsg: Dispatch<SetStateAction<string>
                 if (error.response?.status === 401) {
                     setMsg(error.response.data);
                 } else {
-                    setMsg("Lỗi hệ thống hoặc kết nối.");
+                    setMsg(t('validation.system_error'));
                 }
             }
         },
-        onError: () => setMsg("Đăng nhập thất bại."),
+        onError: () => setMsg(t('validation.system_error')),
         flow: "auth-code"
     })
 

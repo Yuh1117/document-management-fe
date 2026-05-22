@@ -16,41 +16,44 @@ import {
 } from "@/components/ui/sidebar"
 import { NewDropDown } from "../NewDropdown"
 import type { NavItem } from "@/components/admin/layout/AdminSidebar"
-
-const navMainItems: NavItem[] = [
-  {
-    title: "Trang chủ",
-    url: "/",
-    icon: Home,
-    access: true
-  },
-  {
-    title: "Files của tôi",
-    url: "/my-files",
-    icon: Box,
-    access: true
-  },
-  {
-    title: "Gần đây",
-    url: "/recent",
-    icon: Clock,
-    access: true
-  },
-  {
-    title: "Được chia sẻ",
-    url: "/shared",
-    icon: Users,
-    access: true
-  },
-  {
-    title: "Thùng rác",
-    url: "/trash",
-    icon: Trash,
-    access: true
-  },
-]
+import { useTranslation } from "react-i18next"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { t } = useTranslation()
+
+  const navMainItems: NavItem[] = [
+    {
+      title: t('nav.home'),
+      url: "/",
+      icon: Home,
+      access: true
+    },
+    {
+      title: t('nav.my_files'),
+      url: "/my-files",
+      icon: Box,
+      access: true
+    },
+    {
+      title: t('nav.recent'),
+      url: "/recent",
+      icon: Clock,
+      access: true
+    },
+    {
+      title: t('nav.shared'),
+      url: "/shared",
+      icon: Users,
+      access: true
+    },
+    {
+      title: t('nav.trash'),
+      url: "/trash",
+      icon: Trash,
+      access: true
+    },
+  ]
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarRail />

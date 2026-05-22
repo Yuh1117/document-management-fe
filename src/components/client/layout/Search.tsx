@@ -8,8 +8,10 @@ import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { useTranslation } from "react-i18next"
 
 const SearchBar = () => {
+    const { t } = useTranslation()
     const [isOpen, setIsOpen] = useState(false)
     const [searchValue, setSearchValue] = useState("")
     const [searchHistory, setSearchHistory] = useState<{ label: string }[]>([])
@@ -113,7 +115,7 @@ const SearchBar = () => {
                 <Input
                     className="border-none focus-visible:ring-[0px] dark:bg-popover"
                     type="text"
-                    placeholder="Tìm kiếm"
+                    placeholder={t('search.placeholder')}
                     onFocus={() => setIsOpen(true)}
                     onBlur={() => setTimeout(() => setIsOpen(false), 200)}
                     value={searchValue}
@@ -125,7 +127,7 @@ const SearchBar = () => {
             {isOpen && (
                 <div className="absolute top-full left-0 z-10 w-full rounded-b-xl border border-t-0 bg-popover shadow-lg">
                     <div className="p-1">
-                        <Label className="m-2 text-xs text-muted-foreground">Lịch sử tìm kiếm</Label>
+                        <Label className="m-2 text-xs text-muted-foreground">{t('search.history')}</Label>
                         <div>
                             {filteredHistory.length > 0 ? (
                                 filteredHistory.map((item, index) => (
@@ -152,7 +154,7 @@ const SearchBar = () => {
                                     </div>
                                 ))
                             ) : (
-                                <div className="px-2 py-2 text-xs text-muted-foreground italic">Không có lịch sử tìm kiếm</div>
+                                <div className="px-2 py-2 text-xs text-muted-foreground italic">{t('search.no_history')}</div>
                             )}
                         </div>
 
@@ -161,17 +163,17 @@ const SearchBar = () => {
                     <div className="h-px bg-border" />
 
                     <div className="p-1">
-                        <Label className="m-2 text-xs text-muted-foreground">Nâng cao</Label>
+                        <Label className="m-2 text-xs text-muted-foreground">{t('search.advanced')}</Label>
                         <HoverCard >
                             <HoverCardTrigger>
                                 <Button variant="ghost" className="rounded-xl"
                                     onClick={openAdvancedSearch}>
                                     <SlidersHorizontal className="size-4 opacity-60" />
-                                    Tìm kiếm nâng cao
+                                    {t('search.advanced_label')}
                                 </Button>
                             </HoverCardTrigger>
                             <HoverCardContent>
-                                Đây là tìm kiếm nâng cao.
+                                {t('search.advanced_desc')}
                             </HoverCardContent>
                         </HoverCard>
                     </div>
@@ -183,7 +185,7 @@ const SearchBar = () => {
                 variant="outline"
                 size="icon"
                 className="shrink-0 rounded-xl"
-                title="Tìm kiếm nâng cao"
+                title={t('search.advanced_label')}
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={openAdvancedSearch}
             >
@@ -193,34 +195,34 @@ const SearchBar = () => {
             <Dialog open={showAdvanced} onOpenChange={setShowAdvanced}>
                 <DialogContent aria-describedby={undefined} className="top-[30%] w-full md:max-w-xl">
                     <DialogHeader>
-                        <DialogTitle>Tìm kiếm nâng cao</DialogTitle>
+                        <DialogTitle>{t('search.advanced_label')}</DialogTitle>
                     </DialogHeader>
 
                     <div className="grid grid-cols-4 gap-4 p-1">
-                        <Label className="col-span-1">Loại tài liệu</Label>
+                        <Label className="col-span-1">{t('search.doc_type')}</Label>
                         <div className="col-span-3">
                             <Select value={type} onValueChange={(s: string) => setType(s)}>
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Chọn loại tài liệu" />
+                                    <SelectValue placeholder={t('search.doc_type')} />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="any">Bất kỳ</SelectItem>
+                                    <SelectItem value="any">{t('search.any')}</SelectItem>
                                     <SelectItem value="pdf">PDF</SelectItem>
                                     <SelectItem value="word">DOC</SelectItem>
-                                    <SelectItem value="image">Hình ảnh</SelectItem>
+                                    <SelectItem value="image">{t('search.image')}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
 
-                        <Label className="col-span-1">Kích thước file</Label>
+                        <Label className="col-span-1">{t('search.file_size')}</Label>
                         <div className="col-span-3 flex items-center gap-4">
                             <Select value={sizeType} onValueChange={(s: string) => setSizeType(s)}>
                                 <SelectTrigger>
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="minSize">Lớn hơn</SelectItem>
-                                    <SelectItem value="maxSize">Nhỏ hơn</SelectItem>
+                                    <SelectItem value="minSize">{t('search.larger_than')}</SelectItem>
+                                    <SelectItem value="maxSize">{t('search.smaller_than')}</SelectItem>
                                 </SelectContent>
                             </Select>
                             <Input type="number" placeholder="MB" className="w-32" min={0}
@@ -228,21 +230,21 @@ const SearchBar = () => {
                                 onKeyDown={handleAvKeyDown} />
                         </div>
 
-                        <Label className="col-span-4">Từ khóa</Label>
+                        <Label className="col-span-4">{t('search.keyword')}</Label>
                         <div className="col-span-1">
                             <Select value={kwType} onValueChange={(s: string) => setKwType(s)}>
                                 <SelectTrigger>
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="hybrid">Mặc định</SelectItem>
-                                    <SelectItem value="full_text">Chính xác</SelectItem>
-                                    <SelectItem value="semantic">Gần giống</SelectItem>
+                                    <SelectItem value="hybrid">{t('search.hybrid')}</SelectItem>
+                                    <SelectItem value="full_text">{t('search.full_text')}</SelectItem>
+                                    <SelectItem value="semantic">{t('search.semantic')}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
                         <div className="col-span-3">
-                            <Input placeholder="Nhập từ khóa"
+                            <Input placeholder={t('search.keyword_placeholder')}
                                 value={kw}
                                 onChange={(e) => setKw(e.target.value)}
                                 onKeyDown={handleAvKeyDown}
@@ -253,9 +255,9 @@ const SearchBar = () => {
 
                     <DialogFooter>
                         <Button variant="outline" onClick={reset}>
-                            Đặt lại
+                            {t('search.reset')}
                         </Button>
-                        <Button onClick={handleAdvancedSearch}>Tìm kiếm</Button>
+                        <Button onClick={handleAdvancedSearch}>{t('nav.search')}</Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

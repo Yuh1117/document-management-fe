@@ -14,6 +14,7 @@ import Setting from "@/components/shared/settings/SettingButton";
 import type { IAccount } from "@/types/type";
 import SearchBar from "./Search";
 import HideDataModal from "../document/HideDataModal";
+import { useTranslation } from "react-i18next";
 
 const logo = {
     url: "",
@@ -24,6 +25,7 @@ const logo = {
 const Account = ({ user }: { user: IAccount | null }) => {
     const dispatch = useAppDispatch();
     const nav = useNavigate();
+    const { t } = useTranslation();
 
     if (user) {
         return (
@@ -47,19 +49,19 @@ const Account = ({ user }: { user: IAccount | null }) => {
                     <DropdownMenuGroup>
                         {user.role.name.startsWith("ROLE_ADMIN") &&
                             <DropdownMenuItem className="font-medium" onClick={() => nav("/admin")}>
-                                Admin
+                                {t('nav.admin')}
                             </DropdownMenuItem>
                         }
                         <DropdownMenuItem className="font-medium">
-                            Tài khoản
+                            {t('nav.account')}
                         </DropdownMenuItem>
                         <DropdownMenuItem className="font-medium">
-                            Thông báo
+                            {t('nav.notifications')}
                         </DropdownMenuItem>
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => dispatch(logout())} className="font-medium">
-                        <span className="text-red-500">Đăng xuất</span>
+                        <span className="text-red-500">{t('nav.logout')}</span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
@@ -70,20 +72,21 @@ const Account = ({ user }: { user: IAccount | null }) => {
 const Header = () => {
     const user = useAppSelector(state => state.users.user);
     const [openModal, setOpenModal] = useState<boolean>(false)
+    const { t } = useTranslation();
 
     const desktopMenu = useMemo(() => {
         return (
             <NavigationMenu>
                 <NavigationMenuList>
                     <NavigationMenuItem>
-                        <NavigationMenuTrigger>Khác</NavigationMenuTrigger>
+                        <NavigationMenuTrigger>{t('nav.other')}</NavigationMenuTrigger>
                         <NavigationMenuContent>
                             <ul className="grid w-[120px] gap-4">
                                 <li onClick={() => setOpenModal(true)} className="cursor-pointer">
                                     <NavigationMenuLink asChild>
                                         <div className="flex-row items-center gap-2">
                                             <Shield className="text-black-900" />
-                                            Ẩn dữ liệu
+                                            {t('nav.hide_data')}
                                         </div>
                                     </NavigationMenuLink>
                                 </li>
@@ -93,21 +96,21 @@ const Header = () => {
                 </NavigationMenuList>
             </NavigationMenu>
         )
-    }, [])
+    }, [t])
 
     const mobileMenu = useMemo(() => {
         return (
             <Accordion type="single" collapsible className="flex w-full flex-col gap-4">
                 <AccordionItem value="item-1" className="border-b-0" >
                     <AccordionTrigger className="text-md py-0 font-semibold hover:no-underline">
-                        Khác
+                        {t('nav.other')}
                     </AccordionTrigger>
                     <AccordionContent className="mt-2">
                         <ul>
                             <li onClick={() => setOpenModal(true)}>
                                 <div className="flex rounded-xl p-3 hover:bg-muted hover:text-accent-foreground items-center gap-2">
                                     <Shield className="text-black-900" />
-                                    Ẩn dữ liệu
+                                    {t('nav.hide_data')}
                                 </div>
                             </li>
                         </ul>
@@ -115,7 +118,7 @@ const Header = () => {
                 </AccordionItem>
             </Accordion>
         )
-    }, [])
+    }, [t])
 
     return (
         <section className="py-3 sticky top-0 z-50 bg-background">

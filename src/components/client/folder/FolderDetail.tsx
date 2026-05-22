@@ -8,6 +8,7 @@ import { formatTime } from "@/config/utils";
 import { useAppSelector } from "@/redux/hooks";
 import type { IFolder } from "@/types/type";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 type Props = {
     data: IFolder | null;
@@ -16,6 +17,7 @@ type Props = {
 }
 
 const FolderDetail = ({ isSheetOpen, setIsSheetOpen, data }: Props) => {
+    const { t } = useTranslation();
     const userId = useAppSelector(state => state.users.user?.id)
     const [loadingDetail, setLoadingDetail] = useState<boolean>(false)
     const [folderDetail, setFolderDetail] = useState<IFolder | null>(null)
@@ -45,7 +47,7 @@ const FolderDetail = ({ isSheetOpen, setIsSheetOpen, data }: Props) => {
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetContent className="rounded-l-xl" aria-describedby={undefined}>
                 <SheetHeader>
-                    <SheetTitle className="text-lg mb-2">Chi tiết thư mục</SheetTitle>
+                    <SheetTitle className="text-lg mb-2">{t('folder.detail_title')}</SheetTitle>
                     <div>
                         {loadingDetail ? (
                             <Spinner />
@@ -53,36 +55,36 @@ const FolderDetail = ({ isSheetOpen, setIsSheetOpen, data }: Props) => {
                             <div className="space-y-3">
                                 <div className="space-y-2">
                                     <div className="flex items-center">
-                                        <Label className="me-2 medium text-md">Tên:</Label>
+                                        <Label className="me-2 medium text-md">{t('common.name')}:</Label>
                                         <span>{folderDetail.name}</span>
                                     </div>
                                     <div className="flex items-center">
-                                        <Label className="me-2 medium text-md">Loại:</Label>
-                                        <span>Thư mục</span>
+                                        <Label className="me-2 medium text-md">{t('common.type')}:</Label>
+                                        <span>{t('folder.type_label')}</span>
                                     </div>
                                 </div>
                                 <Separator />
                                 <div className="space-y-2">
                                     <div className="flex items-center">
-                                        <Label className="me-2 medium text-md">Tạo bởi:</Label>
-                                        <Badge variant="secondary">{folderDetail.createdBy?.id === userId ? "Tôi" : folderDetail.createdBy?.email}</Badge>
+                                        <Label className="me-2 medium text-md">{t('common.created_by')}:</Label>
+                                        <Badge variant="secondary">{folderDetail.createdBy?.id === userId ? t('common.me') : folderDetail.createdBy?.email}</Badge>
                                     </div>
                                     <div className="flex items-center">
-                                        <Label className="me-2 medium text-md">Cập nhật bởi:</Label>
-                                        <Badge variant="secondary">{folderDetail.updatedBy?.id === userId ? "Tôi" : folderDetail.updatedBy?.email}</Badge>
+                                        <Label className="me-2 medium text-md">{t('common.updated_by')}:</Label>
+                                        <Badge variant="secondary">{folderDetail.updatedBy?.id === userId ? t('common.me') : folderDetail.updatedBy?.email}</Badge>
                                     </div>
                                     <div className="flex items-center">
-                                        <Label className="me-2 medium text-md">Tạo lúc:</Label>
+                                        <Label className="me-2 medium text-md">{t('common.created_at')}:</Label>
                                         <Badge variant="secondary">{formatTime(folderDetail?.createdAt)}</Badge>
                                     </div>
                                     <div className="flex items-center">
-                                        <Label className="me-2 medium text-md">Cập nhật lúc:</Label>
+                                        <Label className="me-2 medium text-md">{t('common.updated_at')}:</Label>
                                         <Badge variant="secondary">{formatTime(folderDetail?.updatedAt)}</Badge>
                                     </div>
                                 </div>
                             </div>
                         ) : (
-                            <p>Không tìm thấy chi tiết.</p>
+                            <p>{t('folder.not_found')}</p>
                         )}
                     </div>
                 </SheetHeader>

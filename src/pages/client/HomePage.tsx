@@ -3,17 +3,18 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Box, Clock, Trash, Users } from "lucide-react";
-import { Link, useLoaderData } from "react-router";
+import { Link } from "react-router";
+import { useTranslation } from "react-i18next";
 
 const Home = () => {
-    const loaderData = useLoaderData()
+    const { t } = useTranslation();
 
     return (
         <div className="bg-muted dark:bg-muted flex flex-col rounded-xl p-2 select-none">
             <div className="bg-muted/60 backdrop-blur flex items-center justify-between rounded-xl p-4 border-b">
                 <div className="flex items-center gap-4">
                     <SidebarTrigger />
-                    <h1 className="text-2xl font-semibold">{loaderData.message}</h1>
+                    <h1 className="text-2xl font-semibold">{t('pages.home')}</h1>
                 </div>
             </div>
 
@@ -23,7 +24,7 @@ const Home = () => {
                         <Card className="bg-background hover:bg-input/50 rounded-xl border-1 transition-all duration-200">
                             <CardHeader className="flex items-center">
                                 <Box className="me-2" />
-                                <Label className="text-md cursor-pointer">Files của tôi</Label>
+                                <Label className="text-md cursor-pointer">{t('nav.my_files')}</Label>
                             </CardHeader>
                         </Card>
                     </Link>
@@ -31,7 +32,7 @@ const Home = () => {
                         <Card className="bg-background hover:bg-input/50 rounded-xl border-1 transition-all duration-200">
                             <CardHeader className="flex items-center">
                                 <Clock className="me-2" />
-                                <Label className="text-md cursor-pointer">Gần đây</Label>
+                                <Label className="text-md cursor-pointer">{t('nav.recent')}</Label>
                             </CardHeader>
                         </Card>
                     </Link>
@@ -39,7 +40,7 @@ const Home = () => {
                         <Card className="bg-background hover:bg-input/50 rounded-xl border-1 transition-all duration-200">
                             <CardHeader className="flex items-center">
                                 <Users className="me-2" />
-                                <Label className="text-md cursor-pointer">Được chia sẻ</Label>
+                                <Label className="text-md cursor-pointer">{t('nav.shared')}</Label>
                             </CardHeader>
                         </Card>
                     </Link>
@@ -47,7 +48,7 @@ const Home = () => {
                         <Card className="bg-background hover:bg-input/50 rounded-xl border-1 transition-all duration-200">
                             <CardHeader className="flex items-center">
                                 <Trash className="me-2" />
-                                <Label className="text-md cursor-pointer">Thùng rác</Label>
+                                <Label className="text-md cursor-pointer">{t('nav.trash')}</Label>
                             </CardHeader>
                         </Card>
                     </Link>

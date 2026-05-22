@@ -23,6 +23,7 @@ import { NavMain } from "./AdminNavMain"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import { ALL_PERMISSIONS } from "@/config/permissions"
 import { fetchPermissions } from "@/redux/reducers/permissionSlice"
+import { useTranslation } from "react-i18next"
 
 export type NavItem = {
   title: string,
@@ -37,53 +38,21 @@ export type NavItem = {
   }
 }
 
-const navMainItems: NavItem[] = [
-  {
-    title: "Bảng điều khiển",
-    url: "/admin",
-    icon: ChartPie,
-    access: true
-  },
-  {
-    title: "Cài đặt",
-    url: "/admin/settings",
-    icon: Settings2,
-    access: false,
-    permission: ALL_PERMISSIONS.SETTINGS.LIST
-  },
-  {
-    title: "Người dùng",
-    url: "/admin/users",
-    icon: User,
-    access: false,
-    permission: ALL_PERMISSIONS.USERS.LIST
-  },
-  {
-    title: "Vai trò",
-    url: "/admin/roles",
-    icon: Shield,
-    access: false,
-    permission: ALL_PERMISSIONS.ROLES.LIST
-  },
-  {
-    title: "Quyền",
-    url: "/admin/permissions",
-    icon: Lock,
-    access: false,
-    permission: ALL_PERMISSIONS.PERMISSIONS.LIST
-  },
-  {
-    title: "Phản hồi tóm tắt AI",
-    url: "/admin/summary-feedback",
-    icon: MessageSquareMore,
-    access: true,
-  },
-]
-
 export function AdminSidebar(props: React.ComponentProps<typeof Sidebar>) {
+  const { t } = useTranslation();
   const user = useAppSelector((state) => state.users.user);
   const permissions = useAppSelector((state) => state.permissions.permissionsMap);
   const dispatch = useAppDispatch();
+
+  const navMainItems: NavItem[] = [
+    { title: t('admin.dashboard'), url: "/admin", icon: ChartPie, access: true },
+    { title: t('admin.settings'), url: "/admin/settings", icon: Settings2, access: false, permission: ALL_PERMISSIONS.SETTINGS.LIST },
+    { title: t('admin.users'), url: "/admin/users", icon: User, access: false, permission: ALL_PERMISSIONS.USERS.LIST },
+    { title: t('admin.roles'), url: "/admin/roles", icon: Shield, access: false, permission: ALL_PERMISSIONS.ROLES.LIST },
+    { title: t('admin.permissions'), url: "/admin/permissions", icon: Lock, access: false, permission: ALL_PERMISSIONS.PERMISSIONS.LIST },
+    { title: t('admin.summary_feedback'), url: "/admin/summary-feedback", icon: MessageSquareMore, access: true },
+  ];
+
   const [navItems, setNavItems] = React.useState<NavItem[]>(navMainItems);
 
   React.useEffect(() => {

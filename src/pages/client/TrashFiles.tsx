@@ -11,8 +11,10 @@ import { useFilesLoader } from "@/hooks/useFilesLoader";
 import { triggerReload } from "@/redux/reducers/filesSlice";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 const TrashFilesPage = () => {
+    const { t } = useTranslation();
     const { reloadFlag } = useAppSelector(state => state.files);
     const { files, loading, hasMore, observerRef } = useFilesLoader(endpoints["trash-files"], reloadFlag);
     const [cleaning, setCleaning] = useState<boolean>(false);
@@ -27,12 +29,12 @@ const TrashFilesPage = () => {
 
             setOpen(false)
             dispatch(triggerReload())
-            toast.success("Đã dọn sạch thùng rác", {
+            toast.success(t('trash.clean_success'), {
                 duration: 2000
             })
         } catch (error) {
             console.log(error)
-            toast.error("Dọn thất bại", {
+            toast.error(t('trash.clean_failed'), {
                 duration: 2000
             })
         } finally {
@@ -51,27 +53,27 @@ const TrashFilesPage = () => {
             <div className="bg-muted/60 backdrop-blur flex items-center justify-between rounded-xl p-4 border-b">
                 <div className="flex items-center gap-4">
                     <SidebarTrigger />
-                    <h1 className="text-2xl font-semibold">Thùng rác</h1>
+                    <h1 className="text-2xl font-semibold">{t('trash.title')}</h1>
                 </div>
-                {cleaning ? <Spinner /> : <div className="cursor-pointer p-2 rounded-xl hover:bg-input/50 dark:hover:bg-input/50"
+                {cleaning ? <Spinner /> : <div className="cursor-pointer p-2 rounded-xl hover:bg-input/50 dark:hover:bg-input/50 text-red-500"
                     onClick={() => {
                         if (documents.length === 0 && folders.length === 0) return;
                         setOpen(true);
                     }} >
-                    Dọn sạch thùng rác
+                    {t('trash.clean')}
                 </div>}
             </div>
 
             <ScrollArea className="p-2 h-[calc(100vh-160px)]">
                 {files.length === 0 && !loading ? (
                     <div className="flex justify-center items-center py-8 text-muted-foreground">
-                        Không có dữ liệu
+                        {t('common.no_data')}
                     </div>
                 ) : (
                     <>
                         {folders.length > 0 && (
                             <div className="mb-6">
-                                <h2 className="text-lg mb-2">Thư mục</h2>
+                                <h2 className="text-lg mb-2">{t('file.folders')}</h2>
                                 <div className="grid grid-cols-[repeat(auto-fill,_minmax(220px,_1fr))] gap-4 px-2 py-4">
                                     {folders.map((f) => (
                                         <Folder
@@ -86,7 +88,7 @@ const TrashFilesPage = () => {
 
                         {documents.length > 0 && (
                             <div>
-                                <h2 className="text-lg mb-2">Tài liệu</h2>
+                                <h2 className="text-lg mb-2">{t('file.documents')}</h2>
                                 <div className="grid grid-cols-[repeat(auto-fill,_minmax(220px,_1fr))] gap-4 px-2 py-4">
                                     {documents.map((f) => (
                                         <Document
@@ -110,22 +112,22 @@ const TrashFilesPage = () => {
                 {hasMore && !loading && <div ref={observerRef} className="h-10" />}
 
                 {!hasMore && files.length > 0 && (
-                    <p className="text-center text-muted-foreground py-4">Đã tải hết</p>
+                    <p className="text-center text-muted-foreground py-4">{t('common.all_loaded')}</p>
                 )}
             </ScrollArea>
 
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent aria-describedby={undefined}>
                     <DialogHeader>
-                        <DialogTitle>Xóa vĩnh viễn</DialogTitle>
+                        <DialogTitle>{t('trash.delete_permanent_title')}</DialogTitle>
                         <DialogDescription>
-                            Tất cả các mục trong thùng rác sẽ bị xóa vĩnh viễn.
+                            {t('trash.delete_permanent_desc')}
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setOpen(false)}>Hủy</Button>
+                        <Button variant="outline" onClick={() => setOpen(false)}>{t('common.cancel')}</Button>
                         <Button variant="destructive" onClick={handleCleanTrash} disabled={cleaning}>
-                            {cleaning ? <Spinner size={16} /> : "Xác nhận"}
+                            {cleaning ? <Spinner size={16} /> : t('common.confirm')}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

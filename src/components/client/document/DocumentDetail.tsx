@@ -12,6 +12,7 @@ import { authApis, endpoints } from "@/config/api";
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
 import { openSummarizeModal } from "@/redux/reducers/documentSlice";
+import { useTranslation } from "react-i18next";
 
 type Props = {
     data: IDocument | null;
@@ -20,6 +21,7 @@ type Props = {
 };
 
 const DocumentDetail = ({ isSheetOpen, setIsSheetOpen, data }: Props) => {
+    const { t } = useTranslation();
     const dispatch = useAppDispatch();
     const userId = useAppSelector(state => state.users.user?.id);
     const [loadingDetail, setLoadingDetail] = useState<boolean>(false);
@@ -56,7 +58,7 @@ const DocumentDetail = ({ isSheetOpen, setIsSheetOpen, data }: Props) => {
         <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetContent className="rounded-l-xl p-1" aria-describedby={undefined}>
                 <SheetHeader>
-                    <SheetTitle className="text-lg mb-2">Chi tiết tài liệu</SheetTitle>
+                    <SheetTitle className="text-lg mb-2">{t('document.detail_title')}</SheetTitle>
                     <div>
                         {loadingDetail ? (
                             <Spinner />
@@ -64,51 +66,52 @@ const DocumentDetail = ({ isSheetOpen, setIsSheetOpen, data }: Props) => {
                             <div className="space-y-3">
                                 <div className="space-y-2">
                                     <div className="flex items-center">
-                                        <Label className="me-2 medium text-md">Tên:</Label>
+                                        <Label className="me-2 medium text-md">{t('common.name')}:</Label>
                                         <span>{documentDetail.name}</span>
                                     </div>
                                     <div>
-                                        <Label className="me-2 medium text-md">Mô tả:</Label>
+                                        <Label className="me-2 medium text-md">{t('common.description')}:</Label>
                                         <Textarea readOnly tabIndex={-1} value={documentDetail.description || ""} />
                                     </div>
                                     <div className="flex flex-wrap items-center">
-                                        <Label className="me-2 medium text-md">Loại:</Label>
+                                        <Label className="me-2 medium text-md">{t('common.type')}:</Label>
                                         <span>{documentDetail.mimeType}</span>
                                     </div>
                                     <div className="flex items-center">
-                                        <Label className="me-2 medium text-md">Kích thước:</Label>
+                                        <Label className="me-2 medium text-md">{t('common.size')}:</Label>
                                         <span>{formatFileSize(documentDetail.fileSize)}</span>
                                     </div>
                                 </div>
                                 <Separator />
                                 <div className="space-y-2">
                                     <div className="flex items-center">
-                                        <Label className="me-2 medium text-md">Tạo bởi:</Label>
-                                        <Badge variant="secondary">{documentDetail.createdBy?.id === userId ? "Tôi" : documentDetail.createdBy?.email}</Badge>
+                                        <Label className="me-2 medium text-md">{t('common.created_by')}:</Label>
+                                        <Badge variant="secondary">{documentDetail.createdBy?.id === userId ? t('common.me') : documentDetail.createdBy?.email}</Badge>
                                     </div>
                                     <div className="flex items-center">
-                                        <Label className="me-2 medium text-md">Cập nhật bởi:</Label>
-                                        <Badge variant="secondary">{documentDetail.updatedBy?.id === userId ? "Tôi" : documentDetail.updatedBy?.email}</Badge>
+                                        <Label className="me-2 medium text-md">{t('common.updated_by')}:</Label>
+                                        <Badge variant="secondary">{documentDetail.updatedBy?.id === userId ? t('common.me') : documentDetail.updatedBy?.email}</Badge>
                                     </div>
                                     <div className="flex items-center">
-                                        <Label className="me-2 medium text-md">Tạo lúc:</Label>
+                                        <Label className="me-2 medium text-md">{t('common.created_at')}:</Label>
                                         <Badge variant="secondary">{formatTime(documentDetail?.createdAt)}</Badge>
                                     </div>
                                     <div className="flex items-center">
-                                        <Label className="me-2 medium text-md">Cập nhật lúc:</Label>
+                                        <Label className="me-2 medium text-md">{t('common.updated_at')}:</Label>
                                         <Badge variant="secondary">{formatTime(documentDetail?.updatedAt)}</Badge>
-                                    </div></div>
+                                    </div>
+                                </div>
                                 <Separator />
                                 <div className="flex flex-wrap items-center justify-between gap-2">
-                                    <Label className="medium text-md">Tóm tắt (AI)</Label>
+                                    <Label className="medium text-md">{t('document.summary_label')}</Label>
                                     <Button type="button" variant="secondary" size="sm" onClick={handleOpenSummarize}>
                                         <Sparkles className="size-4 me-1.5" />
-                                        Tóm tắt
+                                        {t('dropdown.summarize')}
                                     </Button>
                                 </div>
                             </div>
                         ) : (
-                            <p>Không tìm thấy chi tiết.</p>
+                            <p>{t('document.not_found')}</p>
                         )}
                     </div>
                 </SheetHeader>

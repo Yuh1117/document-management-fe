@@ -16,6 +16,7 @@ import type { IDocument, IDocumentSummarize, ISummaryFeedbackDocumentStats, ISum
 import { Sparkles, ThumbsDown, ThumbsUp } from "lucide-react";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
+import { useTranslation } from "react-i18next";
 
 type Props = {
     data: IDocument | null;
@@ -24,6 +25,7 @@ type Props = {
 };
 
 const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
+    const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<IDocumentSummarize | null>(null);
     const [feedbackStats, setFeedbackStats] = useState<ISummaryFeedbackDocumentStats | null>(null);
@@ -64,7 +66,7 @@ const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
             setMyFeedback(null);
         } catch (error: unknown) {
             console.error("Lỗi khi tóm tắt tài liệu", error);
-            toast.error("Tóm tắt thất bại", { duration: 3000 });
+            toast.error(t('document.summary_failed'), { duration: 3000 });
         } finally {
             setLoading(false);
         }
@@ -88,10 +90,10 @@ const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
             });
             setMyFeedback(res.data.data as ISummaryFeedbackRes);
             setShowCommentBox(false);
-            toast.success("Đã gửi phản hồi");
+            toast.success(t('document.summary_send_success'));
             await loadFeedbackStats();
         } catch {
-            toast.error("Gửi phản hồi thất bại");
+            toast.error(t('document.summary_send_failed'));
         } finally {
             setSubmittingFeedback(false);
         }
@@ -107,9 +109,9 @@ const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-w-lg" aria-describedby={undefined}>
                 <DialogHeader>
-                    <DialogTitle>Tóm tắt tài liệu</DialogTitle>
+                    <DialogTitle>{t('document.summary_title')}</DialogTitle>
                     <DialogDescription className="sr-only">
-                        Tạo tóm tắt nội dung bằng AI cho tài liệu đã chọn.
+                        {t('document.summary_prompt')}
                     </DialogDescription>
                 </DialogHeader>
                 {data && (
@@ -123,12 +125,12 @@ const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
                     </ScrollArea>
                 ) : (
                     <div className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-                        Nhấn &quot;Tạo tóm tắt&quot; để tạo nội dung tóm tắt.
+                        {t('document.summary_prompt')}
                     </div>
                 )}
                 {result && (() => {
                     const meta: string[] = [];
-                    if (result.modelName) meta.push(`Mô hình: ${result.modelName}`);
+                    if (result.modelName) meta.push(t('document.summary_model', { name: result.modelName }));
                     return meta.length > 0 ? (
                         <p className="text-xs text-muted-foreground">{meta.join(" · ")}</p>
                     ) : null;
@@ -138,18 +140,18 @@ const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
                     <>
                         <Separator />
                         <div className="space-y-2">
-                            <p className="text-xs text-muted-foreground">Tóm tắt này có hữu ích không?</p>
+                            <p className="text-xs text-muted-foreground">{t('document.summary_helpful_question')}</p>
                             {myFeedback ? (
                                 <p className="text-xs text-green-600">
-                                    Bạn đã đánh giá: {myFeedback.isHelpful ? "Hữu ích" : "Không hữu ích"}
+                                    {t('document.summary_voted', { value: myFeedback.isHelpful ? t('document.summary_helpful') : t('document.summary_not_helpful') })}
                                 </p>
                             ) : showCommentBox ? (
                                 <div className="space-y-2">
                                     <p className="text-xs text-muted-foreground">
-                                        {pendingVote ? "Hữu ích" : "Không hữu ích"} — thêm nhận xét (tuỳ chọn):
+                                        {t('document.summary_comment_label', { vote: pendingVote ? t('document.summary_helpful') : t('document.summary_not_helpful') })}
                                     </p>
                                     <Textarea
-                                        placeholder="Nhận xét..."
+                                        placeholder={t('document.summary_comment_placeholder')}
                                         value={comment}
                                         onChange={(e) => setComment(e.target.value)}
                                         rows={2}
@@ -158,10 +160,10 @@ const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
                                     <div className="flex gap-2">
                                         <Button size="sm" onClick={submitFeedback} disabled={submittingFeedback}>
                                             {submittingFeedback ? <Spinner size={14} className="me-1.5" /> : null}
-                                            Gửi
+                                            {t('document.summary_send')}
                                         </Button>
                                         <Button size="sm" variant="ghost" onClick={cancelFeedback} disabled={submittingFeedback}>
-                                            Huỷ
+                                            {t('common.cancel')}
                                         </Button>
                                     </div>
                                 </div>
@@ -185,7 +187,7 @@ const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
                             )}
                             {feedbackStats && feedbackStats.totalCount > 0 && (
                                 <p className="text-xs text-muted-foreground">
-                                    {feedbackStats.helpfulCount}/{feedbackStats.totalCount} đánh giá hữu ích
+                                    {t('document.summary_stats', { helpful: feedbackStats.helpfulCount, total: feedbackStats.totalCount })}
                                 </p>
                             )}
                         </div>
@@ -200,19 +202,19 @@ const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
                             onClick={() => { setResult(null); setFeedbackStats(null); setMyFeedback(null); setShowCommentBox(false); setPendingVote(null); }}
                             disabled={loading}
                         >
-                            Xoá kết quả
+                            {t('document.summary_clear')}
                         </Button>
                     )}
                     <Button type="button" onClick={runSummarize} disabled={loading || !data}>
                         {loading ? (
                             <>
                                 <Spinner size={16} className="me-2" />
-                                Đang tóm tắt…
+                                {t('document.summary_creating')}
                             </>
                         ) : (
                             <>
                                 <Sparkles className="size-4 me-2" />
-                                {result ? "Tạo lại" : "Tạo tóm tắt"}
+                                {result ? t('document.summary_regenerate') : t('document.summary_create')}
                             </>
                         )}
                     </Button>

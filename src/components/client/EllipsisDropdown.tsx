@@ -1,5 +1,6 @@
 import { Copy, Download, EllipsisVertical, Eye, FolderOpen, FolderSymlink, History, Info, Link2, PenLine, Sparkles, Trash, UserRoundPlus } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { useTranslation } from "react-i18next";
 
 type Props = {
     type: string,
@@ -19,6 +20,8 @@ type Props = {
 
 const EllipsisDropDown = ({ type, permission, handleDropdownToggle, handleDownload, handleViewDetail,
     handleOpenEdit, handleSoftDelete, handleOpenShareUrl, handleOpenTransfer, handleOpenShare, handleOpenVersion, handlePreview, handleOpenSummarize }: Props) => {
+    const { t } = useTranslation();
+
     return (
         <DropdownMenu onOpenChange={handleDropdownToggle}>
             <DropdownMenuTrigger asChild>
@@ -31,29 +34,29 @@ const EllipsisDropDown = ({ type, permission, handleDropdownToggle, handleDownlo
                     {type === "document" && <>
                         <DropdownMenuItem onClick={handlePreview}>
                             <Eye className="text-black-900" />
-                            Xem
+                            {t('dropdown.preview')}
                         </DropdownMenuItem>
                         {handleOpenSummarize && (
                             <DropdownMenuItem onClick={handleOpenSummarize}>
                                 <Sparkles className="text-black-900" />
-                                Tóm tắt
+                                {t('dropdown.summarize')}
                             </DropdownMenuItem>
                         )}
                         <DropdownMenuSeparator />
                     </>}
                     <DropdownMenuItem onClick={handleDownload}>
                         <Download className="text-black-900" />
-                        Tải xuống
+                        {t('dropdown.download')}
                     </DropdownMenuItem>
                     {(permission === "OWNER" || permission === "EDIT") && (
                         <DropdownMenuItem onClick={handleOpenEdit}>
                             <PenLine className="text-black-900" />
-                            Chỉnh sửa
+                            {t('dropdown.edit')}
                         </DropdownMenuItem>
                     )}
                     <DropdownMenuItem onClick={() => handleOpenTransfer?.("copy")}>
                         <Copy className="text-black-900" />
-                        Sao chép
+                        {t('dropdown.copy')}
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
@@ -61,17 +64,17 @@ const EllipsisDropDown = ({ type, permission, handleDropdownToggle, handleDownlo
                     <DropdownMenuSub>
                         <DropdownMenuSubTrigger>
                             <UserRoundPlus className="size-4 me-2" />
-                            Chia sẻ
+                            {t('dropdown.share')}
                         </DropdownMenuSubTrigger>
                         <DropdownMenuPortal>
                             <DropdownMenuSubContent>
                                 <DropdownMenuItem onClick={handleOpenShare}>
                                     <UserRoundPlus className="text-black-900" />
-                                    Chia sẻ
+                                    {t('dropdown.share')}
                                 </DropdownMenuItem>
                                 {type === "document" && <DropdownMenuItem onClick={handleOpenShareUrl}>
                                     <Link2 className="text-black-900" />
-                                    URL
+                                    {t('dropdown.share_url')}
                                 </DropdownMenuItem>}
                             </DropdownMenuSubContent>
                         </DropdownMenuPortal>
@@ -80,14 +83,13 @@ const EllipsisDropDown = ({ type, permission, handleDropdownToggle, handleDownlo
                         <DropdownMenuSub>
                             <DropdownMenuSubTrigger>
                                 <FolderOpen className="size-4 me-2" />
-                                Sắp xếp
+                                {t('dropdown.arrange')}
                             </DropdownMenuSubTrigger>
                             <DropdownMenuPortal>
                                 <DropdownMenuSubContent>
-
                                     <DropdownMenuItem onClick={() => handleOpenTransfer?.("move")}>
                                         <FolderSymlink className="text-black-900" />
-                                        Di chuyển
+                                        {t('dropdown.move')}
                                     </DropdownMenuItem>
                                 </DropdownMenuSubContent>
                             </DropdownMenuPortal>
@@ -96,17 +98,17 @@ const EllipsisDropDown = ({ type, permission, handleDropdownToggle, handleDownlo
                     <DropdownMenuSub>
                         <DropdownMenuSubTrigger>
                             <Info className="size-4 me-2" />
-                            Thông tin
+                            {t('dropdown.info')}
                         </DropdownMenuSubTrigger>
                         <DropdownMenuPortal>
                             <DropdownMenuSubContent>
                                 <DropdownMenuItem onClick={handleViewDetail}>
                                     <Info className="text-black-900" />
-                                    Chi tiết
+                                    {t('dropdown.details')}
                                 </DropdownMenuItem>
                                 {type === "document" && <DropdownMenuItem onClick={handleOpenVersion}>
                                     <History className="text-black-900" />
-                                    Quản lý phiên bản
+                                    {t('dropdown.version_manage')}
                                 </DropdownMenuItem>}
                             </DropdownMenuSubContent>
                         </DropdownMenuPortal>
@@ -117,7 +119,7 @@ const EllipsisDropDown = ({ type, permission, handleDropdownToggle, handleDownlo
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleSoftDelete}>
                             <Trash className="text-red-500" />
-                            <span className="text-red-500">Chuyển vào thùng rác</span>
+                            <span className="text-red-500">{t('dropdown.move_to_trash')}</span>
                         </DropdownMenuItem>
                     </>
                 )}

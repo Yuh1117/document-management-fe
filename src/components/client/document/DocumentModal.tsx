@@ -13,10 +13,7 @@ import type { IDocument } from "@/types/type";
 import { AlertCircleIcon } from "lucide-react";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { useForm } from "react-hook-form";
-
-const fieldNames: { [key: string]: string } = {
-    name: "Tên"
-};
+import { useTranslation } from "react-i18next";
 
 type Props = {
     open: boolean;
@@ -29,6 +26,7 @@ const DocumentModal = ({
     onOpenChange,
     data
 }: Props) => {
+    const { t } = useTranslation();
     const form = useForm<IDocument>();
     const [loading, setLoading] = useState<boolean>(false)
     const [msg, setMsg] = useState<string>("")
@@ -42,7 +40,7 @@ const DocumentModal = ({
     const validateEmpty = (field: keyof IDocument, value: string): boolean => {
         form.clearErrors(field)
         if (!value) {
-            setError(field, `${fieldNames[field]} không được để trống`);
+            setError(field, t('validation.required', { field: t('common.name') }));
             return false;
         }
         return true
@@ -53,7 +51,6 @@ const DocumentModal = ({
         if (!validateEmpty("name", data.name)) {
             flag = false;
         }
-
         return flag;
     }
 
@@ -79,7 +76,7 @@ const DocumentModal = ({
                         setMsg(errors)
                     }
                 } else {
-                    setMsg("Lỗi hệ thống hoặc kết nối.");
+                    setMsg(t('validation.system_error'));
                 }
             } finally {
                 setLoading(false);
@@ -118,7 +115,7 @@ const DocumentModal = ({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent aria-describedby={undefined}>
                 <DialogHeader>
-                    <DialogTitle>Đổi tên tài liệu</DialogTitle>
+                    <DialogTitle>{t('document.rename_title')}</DialogTitle>
                 </DialogHeader>
                 {msg &&
                     <Alert className="border-red-500" variant="destructive">
@@ -136,7 +133,7 @@ const DocumentModal = ({
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Tên</FormLabel>
+                                        <FormLabel>{t('common.name')}</FormLabel>
                                         <FormControl>
                                             <Input
                                                 {...field}
@@ -157,7 +154,7 @@ const DocumentModal = ({
                                 name="description"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Mô tả</FormLabel>
+                                        <FormLabel>{t('common.description')}</FormLabel>
                                         <FormControl>
                                             <Textarea {...field}
                                                 value={field.value || ""}
@@ -174,9 +171,9 @@ const DocumentModal = ({
                     </form>
                 </Form>
                 <DialogFooter>
-                    <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
+                    <Button variant="outline" onClick={() => onOpenChange(false)}>{t('common.cancel')}</Button>
                     <Button onClick={() => form.handleSubmit(onSubmit)()} disabled={loading}>
-                        {loading ? <Spinner size={16} /> : "Lưu"}
+                        {loading ? <Spinner size={16} /> : t('common.save')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

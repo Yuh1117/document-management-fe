@@ -4,8 +4,10 @@ import { Card, CardContent } from '../ui/card';
 import { UserRoundCheck } from 'lucide-react';
 import { ChangeLanguage } from '../shared/settings/ChangeLanguage';
 import { ModeToggle } from '../shared/settings/ThemeToggle';
+import { useTranslation } from 'react-i18next';
 
 const NotLogin = () => {
+    const { t } = useTranslation();
     return (
         <div className="bg-muted flex min-h-screen flex-col items-center justify-center p-6 md:p-10">
             <Card className="w-full md:max-w-sm">
@@ -14,11 +16,11 @@ const NotLogin = () => {
                         <UserRoundCheck strokeWidth={1} size={128} />
                     </div>
                     <h2 className="text-xl font-semibold mb-3">
-                        Bạn cần đăng nhập để tiếp tục.
+                        {t('auth.login_required')}
                     </h2>
                     <Link to="/login">
                         <Button variant="secondary" className="w-full">
-                            Đăng nhập
+                            {t('login.label')}
                         </Button>
                     </Link>
                 </CardContent>

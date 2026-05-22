@@ -16,8 +16,10 @@ import type { ISetting } from "@/types/type";
 import { PencilLine, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
+import { useTranslation } from "react-i18next";
 
 const SettingAdminPage = () => {
+    const { t } = useTranslation();
     const [settings, setSettings] = useState<ISetting[]>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [q, setQ] = useSearchParams();
@@ -109,7 +111,7 @@ const SettingAdminPage = () => {
         <div className="px-4">
             <header className="flex h-16 shrink-0 items-center gap-2">
                 <div className="flex items-center gap-2">
-                    <span>Cài đặt</span>
+                    <span>{t('admin.settings')}</span>
                 </div>
             </header>
             <Access permission={ALL_PERMISSIONS.SETTINGS.LIST}>
@@ -119,20 +121,20 @@ const SettingAdminPage = () => {
                         <Input
                             className="w-sm"
                             type="text"
-                            placeholder="Nhập key"
+                            placeholder="Key"
                             id="key"
                             value={kwInput}
                             onChange={(e) => setKwInput(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                         />
-                        <Button variant="secondary" onClick={handleSearch}>Tìm kiếm</Button>
+                        <Button variant="secondary" onClick={handleSearch}>{t('nav.search')}</Button>
                     </div>
                     <div className="border rounded-xl mt-5 p-5 shadow-xs">
                         <div className="flex justify-between items-center mb-3">
-                            <span className="font-medium">Danh sách cài đặt</span>
+                            <span className="font-medium">{t('admin.setting_list')}</span>
                             <Access permission={ALL_PERMISSIONS.SETTINGS.CREATE} hideChildren>
                                 <Button className="bg-blue-500 dark:bg-blue-500 hover:bg-blue-500/90 dark:hover:bg-blue-500/90" onClick={handleOpenAdd}>
-                                    <Plus strokeWidth={3} /> Thêm mới
+                                    <Plus strokeWidth={3} /> {t('admin.add_new')}
                                 </Button>
                             </Access>
                         </div>
@@ -142,7 +144,7 @@ const SettingAdminPage = () => {
                                     <TableHead>Id</TableHead>
                                     <TableHead>Key</TableHead>
                                     <TableHead>Value</TableHead>
-                                    <TableHead>Mô tả</TableHead>
+                                    <TableHead>{t('common.description')}</TableHead>
                                     <TableHead></TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -158,7 +160,7 @@ const SettingAdminPage = () => {
                                 ) : settings.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={5} className="text-center text-sm text-muted-foreground py-10">
-                                            Không có dữ liệu
+                                            {t('common.no_data')}
                                         </TableCell>
                                     </TableRow>
                                 ) : (
@@ -237,7 +239,7 @@ const SettingAdminPage = () => {
                     open={!!deletingId}
                     deletingId={deletingId}
                     onCancel={() => setDeletingId(null)}
-                    name={"cài đặt"}
+                    name={t('admin.settings')}
                     load={loadSettings}
                     endpoint={endpoints["settings-detail"]}
                 />

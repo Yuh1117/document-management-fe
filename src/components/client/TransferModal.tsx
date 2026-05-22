@@ -19,6 +19,7 @@ import { useFilesLoader } from "@/hooks/useFilesLoader"
 import { Spinner } from "../ui/spinner"
 import { cn } from "@/lib/utils"
 import { isDocument, isFolder } from "@/config/utils"
+import { useTranslation } from "react-i18next"
 
 type Props = {
     data: IDocument | IFolder | null,
@@ -27,16 +28,18 @@ type Props = {
     mode: "copy" | "move" | null
 }
 
-const rootEntries = [
-    { id: 0, name: "Files của tôi", endpoint: endpoints["my-files"] },
-]
-
 const TransferModal = ({
     data,
     open,
     onOpenChange,
     mode
 }: Props) => {
+    const { t } = useTranslation();
+
+    const rootEntries = [
+        { id: 0, name: t('pages.my_files'), endpoint: endpoints["my-files"] },
+    ]
+
     const [selectedFolder, setSelectedFolder] = useState<number | null>(null)
     const [currentEndpoint, setCurrentEndpoint] = useState<string | null>(null)
     const [breadcrumb, setBreadcrumb] = useState<{ id: number, name: string }[]>([])
@@ -73,11 +76,11 @@ const TransferModal = ({
             await authApis().post(url, req)
 
             dispatch(triggerReload())
-            toast.success("Thành công")
+            toast.success(t('transfer.success'))
             onOpenChange(false)
         } catch (error) {
             console.error("Lỗi khi di chuyển", error)
-            toast.error("Thất bại")
+            toast.error(t('transfer.failed'))
         } finally {
             setTransfering(false)
         }
@@ -117,13 +120,13 @@ const TransferModal = ({
             <DialogContent className="max-w-lg" aria-describedby={undefined}>
                 <DialogHeader>
                     <DialogTitle>
-                        {mode == "copy" ? "Sao chép" : "Di chuyển"} "{data?.name}"
+                        {mode == "copy" ? t('transfer.copy_title', { name: data?.name }) : t('transfer.move_title', { name: data?.name })}
                     </DialogTitle>
                 </DialogHeader>
 
                 <Tabs defaultValue="all" className="w-full">
                     <TabsList className="grid grid-cols-3 w-full">
-                        <TabsTrigger value="all">Tất cả vị trí</TabsTrigger>
+                        <TabsTrigger value="all">{t('transfer.all_locations')}</TabsTrigger>
                     </TabsList>
                 </Tabs>
 
@@ -160,7 +163,7 @@ const TransferModal = ({
                             ))
                         ) : folders.length === 0 && !loading ? (
                             <div className="flex justify-center items-center py-8 text-muted-foreground">
-                                Không có dữ liệu
+                                {t('common.no_data')}
                             </div>
                         ) : (
                             folders.map((f) => {
@@ -203,10 +206,10 @@ const TransferModal = ({
 
                 <DialogFooter>
                     <Button variant="outline" onClick={() => onOpenChange(false)}>
-                        Hủy
+                        {t('common.cancel')}
                     </Button>
                     <Button disabled={selectedFolder === null || transfering} onClick={handleTransfer}>
-                        {transfering ? <Spinner /> : mode == "copy" ? "Sao chép" : "Di chuyển"}
+                        {transfering ? <Spinner /> : mode == "copy" ? t('dropdown.copy') : t('dropdown.move')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

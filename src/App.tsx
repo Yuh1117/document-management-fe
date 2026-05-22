@@ -1,4 +1,4 @@
-import { createBrowserRouter, Outlet, RouterProvider } from 'react-router'
+import { createBrowserRouter, Outlet, RouterProvider, type LoaderFunction } from 'react-router'
 import Home from './pages/client/HomePage'
 import Login from './pages/LoginPage'
 import Signup from './pages/SignupPage'
@@ -19,8 +19,8 @@ import PermissionAdminPage from './pages/admin/PermissionPage'
 import RoleAdminPage from './pages/admin/RolePage'
 import Files from './pages/client/FilesPage'
 
-const homeLoader = async () => {
-    return { message: "Trang chủ" };
+const homeLoader: LoaderFunction = async () => {
+    return {};
 };
 
 const MainLayout = () => (

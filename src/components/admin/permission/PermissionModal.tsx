@@ -14,13 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatTime } from "@/config/utils";
 import { ALL_METHODS, ALL_MODULES } from "@/config/permissions";
-
-const fieldNames: { [key: string]: string } = {
-    name: "Tên",
-    module: "Module",
-    method: "Method",
-    apiPath: "Api path"
-};
+import { useTranslation } from "react-i18next";
 
 type Props = {
     open: boolean;
@@ -40,6 +34,14 @@ const PermissionModal = ({
     const form = useForm<IPermission>();
     const [loading, setLoading] = useState<boolean>(false)
     const [msg, setMsg] = useState<string>("")
+    const { t } = useTranslation();
+
+    const fieldNames: { [key: string]: string } = {
+        name: t('common.name'),
+        module: "Module",
+        method: "Method",
+        apiPath: "Api path"
+    };
 
     const setError = (field: keyof IPermission, message: string): void => {
         form.setError(field, { type: "manual", message: message })
@@ -48,7 +50,7 @@ const PermissionModal = ({
     const validateEmpty = (field: keyof IPermission, value: string): boolean => {
         form.clearErrors(field)
         if (!value) {
-            setError(field, `${fieldNames[field]} không được để trống`);
+            setError(field, t('validation.required', { field: fieldNames[field] }));
             return false;
         }
         return true
@@ -93,7 +95,7 @@ const PermissionModal = ({
                         setError(err.field, err.message);
                     });
                 } else {
-                    setMsg("Lỗi hệ thống hoặc kết nối.");
+                    setMsg(t('validation.system_error'));
                 }
             } finally {
                 setLoading(false);
@@ -118,7 +120,7 @@ const PermissionModal = ({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="w-full md:max-w-2xl" aria-describedby={undefined}>
                 <DialogHeader>
-                    <DialogTitle>{isEditing ? "Chỉnh sửa quyền" : "Thêm mới quyền"}</DialogTitle>
+                    <DialogTitle>{isEditing ? t('admin.permission_title_edit') : t('admin.permission_title_add')}</DialogTitle>
                 </DialogHeader>
                 {msg &&
                     <Alert className="border-red-500" variant="destructive">
@@ -137,7 +139,7 @@ const PermissionModal = ({
                                     name="name"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Tên</FormLabel>
+                                            <FormLabel>{t('common.name')}</FormLabel>
                                             <FormControl>
                                                 <Input
                                                     {...field}
@@ -166,7 +168,7 @@ const PermissionModal = ({
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className={`w-full ${form.formState.errors.module ? "border-red-500" : ""}`}>
-                                                        <SelectValue placeholder="Chọn module">
+                                                        <SelectValue placeholder={t('admin.select_module')}>
                                                             {field.value || ""}
                                                         </SelectValue>
                                                     </SelectTrigger>
@@ -201,7 +203,7 @@ const PermissionModal = ({
                                             >
                                                 <FormControl>
                                                     <SelectTrigger className={`w-full ${form.formState.errors.method ? "border-red-500" : ""}`}>
-                                                        <SelectValue placeholder="Chọn method">
+                                                        <SelectValue placeholder={t('admin.select_method')}>
                                                             {field.value || ""}
                                                         </SelectValue>
                                                     </SelectTrigger>
@@ -246,12 +248,12 @@ const PermissionModal = ({
 
                             {isEditing && <>
                                 <div className="flex items-center">
-                                    <Label className="me-2">Tạo lúc</Label>
+                                    <Label className="me-2">{t('common.created_at')}</Label>
                                     <Badge variant="secondary">{formatTime(data?.createdAt)}</Badge>
                                 </div>
 
                                 <div className="flex items-center">
-                                    <Label className="me-2">Cập nhật lúc</Label>
+                                    <Label className="me-2">{t('common.updated_at')}</Label>
                                     <Badge variant="secondary">{formatTime(data?.updatedAt)}</Badge>
                                 </div>
                             </>}
@@ -259,11 +261,11 @@ const PermissionModal = ({
                     </form>
                 </Form>
                 <DialogFooter>
-                    <Button variant="outline" onClick={() => onOpenChange(false)}>Hủy</Button>
+                    <Button variant="outline" onClick={() => onOpenChange(false)}>{t('common.cancel')}</Button>
                     <Button onClick={() => form.handleSubmit(onSubmit)()}
                         className={isEditing ? "bg-yellow-500 dark:bg-yellow-500 hover:bg-yellow-500/90 dark:hover:bg-yellow-500/90"
                             : "bg-blue-500 dark:bg-blue-500 hover:bg-blue-500/90 dark:hover:bg-blue-500/90"} disabled={loading}>
-                        {loading ? <Spinner size={16} /> : "Lưu"}
+                        {loading ? <Spinner size={16} /> : t('common.save')}
                     </Button>
                 </DialogFooter>
             </DialogContent>
