@@ -34,9 +34,9 @@ export function useFilesLoader(endpoint: string | null, reloadFlag?: any, query?
             const data = res.data.data;
 
             setFiles((prev) => [...prev, ...data.result]);
-            setHasMore(data.currentPage < data.totalPages);
+            setHasMore(data.result.length > 0);
 
-            if (data.currentPage >= data.totalPages)
+            if (data.result.length === 0)
                 setPage(0);
         } catch (err) {
             console.error(err);
