@@ -1,22 +1,11 @@
-import * as React from "react"
-import {
-  Home,
-  Box,
-  Users,
-  Trash,
-  Clock,
-} from "lucide-react"
+import * as React from 'react'
+import { Home, Box, Users, Trash, Clock } from 'lucide-react'
 
-import { NavMain } from "@/components/client/layout/NavMain"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarRail
-} from "@/components/ui/sidebar"
-import { NewDropDown } from "../NewDropdown"
-import type { NavItem } from "@/components/admin/layout/AdminSidebar"
-import { useTranslation } from "react-i18next"
+import { NavMain } from '@/components/client/layout/NavMain'
+import { Sidebar, SidebarContent, SidebarHeader, SidebarRail } from '@/components/ui/sidebar'
+import { NewDropDown } from '../NewDropdown'
+import type { NavItem } from '@/components/admin/layout/AdminSidebar'
+import { useTranslation } from 'react-i18next'
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation()
@@ -24,33 +13,33 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const navMainItems: NavItem[] = [
     {
       title: t('nav.home'),
-      url: "/",
+      url: '/',
       icon: Home,
-      access: true
+      access: true,
     },
     {
       title: t('nav.my_files'),
-      url: "/my-files",
+      url: '/my-files',
       icon: Box,
-      access: true
+      access: true,
     },
     {
       title: t('nav.recent'),
-      url: "/recent",
+      url: '/recent',
       icon: Clock,
-      access: true
+      access: true,
     },
     {
       title: t('nav.shared'),
-      url: "/shared",
+      url: '/shared',
       icon: Users,
-      access: true
+      access: true,
     },
     {
       title: t('nav.trash'),
-      url: "/trash",
+      url: '/trash',
       icon: Trash,
-      access: true
+      access: true,
     },
   ]
 

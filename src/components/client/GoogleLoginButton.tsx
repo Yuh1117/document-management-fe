@@ -1,49 +1,49 @@
-import { useGoogleLogin } from "@react-oauth/google";
-import { useNavigate } from "react-router";
-import { useAppDispatch } from "@/redux/hooks";
-import Api, { endpoints } from "@/config/api";
-import type { Dispatch, SetStateAction } from "react";
-import { login } from "@/redux/reducers/userSlice";
-import { useTranslation } from "react-i18next";
-import { FcGoogle } from "react-icons/fc";
-import { Button } from "@/components/ui/button";
+import { useGoogleLogin } from '@react-oauth/google'
+import { useNavigate } from 'react-router'
+import { useAppDispatch } from '@/redux/hooks'
+import Api, { endpoints } from '@/config/api'
+import type { Dispatch, SetStateAction } from 'react'
+import { login } from '@/redux/reducers/userSlice'
+import { useTranslation } from 'react-i18next'
+import { FcGoogle } from 'react-icons/fc'
+import { Button } from '@/components/ui/button'
 
 const GoogleLoginButton = ({ setMsg }: { setMsg: Dispatch<SetStateAction<string>> }) => {
-    const dispatch = useAppDispatch()
-    const nav = useNavigate();
-    const { t } = useTranslation();
+  const dispatch = useAppDispatch()
+  const nav = useNavigate()
+  const { t } = useTranslation()
 
-    const handleLoginGoogle = useGoogleLogin({
-        onSuccess: async (response: any) => {
-            try {
-                const res = await Api.post(endpoints["google-login"], {
-                    code: response.code,
-                });
+  const handleLoginGoogle = useGoogleLogin({
+    onSuccess: async (response: any) => {
+      try {
+        const res = await Api.post(endpoints['google-login'], {
+          code: response.code,
+        })
 
-                if (res.data.data.accessToken) {
-                    dispatch(login({ user: res.data.data.user, accessToken: res.data.data.accessToken }))
-                    nav("/");
-                } else {
-                    nav("/signup", { state: { newUser: res.data.data } });
-                }
-            } catch (error: any) {
-                if (error.response?.status === 401) {
-                    setMsg(error.response.data);
-                } else {
-                    setMsg(t('validation.system_error'));
-                }
-            }
-        },
-        onError: () => setMsg(t('validation.system_error')),
-        flow: "auth-code"
-    })
+        if (res.data.data.accessToken) {
+          dispatch(login({ user: res.data.data.user, accessToken: res.data.data.accessToken }))
+          nav('/')
+        } else {
+          nav('/signup', { state: { newUser: res.data.data } })
+        }
+      } catch (error: any) {
+        if (error.response?.status === 401) {
+          setMsg(error.response.data)
+        } else {
+          setMsg(t('validation.system_error'))
+        }
+      }
+    },
+    onError: () => setMsg(t('validation.system_error')),
+    flow: 'auth-code',
+  })
 
-    return (
-        <Button variant="outline" type="button" className="w-full" onClick={handleLoginGoogle}>
-            <FcGoogle />
-            {t('login.google')}
-        </Button>
-    );
-};
+  return (
+    <Button variant="outline" type="button" className="w-full" onClick={handleLoginGoogle}>
+      <FcGoogle />
+      {t('login.google')}
+    </Button>
+  )
+}
 
 export default GoogleLoginButton

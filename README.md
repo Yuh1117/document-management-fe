@@ -3,12 +3,14 @@
 A modern React + Vite frontend for a document management system. This repository contains the client application (UI, routes, components and state management) used to interact with the DMS backend.
 
 Key goals:
+
 - Provide an intuitive interface for uploading, sharing, organizing and managing documents.
 - Support role & permission management, user admin pages, and an accessible client experience.
 
 ## Quick start
 
 Prerequisites
+
 - Node.js 20+
 - A package manager: npm, yarn or pnpm
 
@@ -116,5 +118,3 @@ Because this app includes both admin and client views, files and folders are gro
 ## Localization
 
 The app uses `i18next` and includes `public/locales/` with `en` and `vi` translation files. Add or edit translations there to update UI text.
-
-

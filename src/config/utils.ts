@@ -1,57 +1,60 @@
-import type { IDocument, IFolder, IPermission } from "@/types/type";
+import type { IDocument, IFolder, IPermission } from '@/types/type'
 
 export function formatTime(time: string | undefined): string {
-    if (!time) return "";
+  if (!time) return ''
 
-    const cleanedDateStr = time.replace(/\.\d+Z$/, 'Z');
-    const date = new Date(cleanedDateStr);
+  const cleanedDateStr = time.replace(/\.\d+Z$/, 'Z')
+  const date = new Date(cleanedDateStr)
 
-    const dateStr = new Intl.DateTimeFormat('vi-VN', {
-        timeZone: 'Asia/Ho_Chi_Minh',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-    }).format(date);
+  const dateStr = new Intl.DateTimeFormat('vi-VN', {
+    timeZone: 'Asia/Ho_Chi_Minh',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date)
 
-    const timeStr = new Intl.DateTimeFormat('vi-VN', {
-        timeZone: 'Asia/Ho_Chi_Minh',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-    }).format(date);
+  const timeStr = new Intl.DateTimeFormat('vi-VN', {
+    timeZone: 'Asia/Ho_Chi_Minh',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).format(date)
 
-    return `${dateStr} ${timeStr}`;
+  return `${dateStr} ${timeStr}`
 }
 
 export function getMethodColor(method: string): string {
-    switch (method) {
-        case "GET":
-            return "text-green-500";
-        case "POST":
-            return "text-yellow-500";
-        case "PUT":
-            return "text-blue-500";
-        case "PATCH":
-            return "text-violet-500";
-        case "DELETE":
-            return "text-red-500";
-        default:
-            return "text-gray-500";
-    }
+  switch (method) {
+    case 'GET':
+      return 'text-green-500'
+    case 'POST':
+      return 'text-yellow-500'
+    case 'PUT':
+      return 'text-blue-500'
+    case 'PATCH':
+      return 'text-violet-500'
+    case 'DELETE':
+      return 'text-red-500'
+    default:
+      return 'text-gray-500'
+  }
 }
 
 export function groupedPermissions(permissions: IPermission[]) {
-    const groupedPermissions = permissions.reduce((acc, permission) => {
-        const module = permission.module;
-        if (!acc[module]) {
-            acc[module] = { module, permissions: [] };
-        }
-        acc[module].permissions.push(permission);
-        return acc;
-    }, {} as Record<string, { module: string, permissions: IPermission[] }>);
+  const groupedPermissions = permissions.reduce(
+    (acc, permission) => {
+      const module = permission.module
+      if (!acc[module]) {
+        acc[module] = { module, permissions: [] }
+      }
+      acc[module].permissions.push(permission)
+      return acc
+    },
+    {} as Record<string, { module: string; permissions: IPermission[] }>
+  )
 
-    return groupedPermissions;
+  return groupedPermissions
 }
 
 // function transformPermissions(groupedPermissions: Record<string, { module: string, permissions: IPermission[] }>) {
@@ -94,24 +97,24 @@ export function groupedPermissions(permissions: IPermission[]) {
 // }
 
 export function formatFileSize(bytes: number): string {
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    if (bytes === 0) return '0 Byte';
-    const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return (bytes / Math.pow(1024, i)).toFixed(2) + ' ' + sizes[i];
+  const sizes = ['Bytes', 'KB', 'MB', 'GB']
+  if (bytes === 0) return '0 Byte'
+  const i = Math.floor(Math.log(bytes) / Math.log(1024))
+  return (bytes / Math.pow(1024, i)).toFixed(2) + ' ' + sizes[i]
 }
 
 export function truncateFileName(name: string, maxBaseLength = 12): string {
-    const formatName = name.substring(0, name.indexOf("."));
-    if (formatName.length <= maxBaseLength) return name;
-    const end = name.substring(name.lastIndexOf("."));
-    const start = formatName.substring(0, maxBaseLength);
-    return `${start}...${end}`
+  const formatName = name.substring(0, name.indexOf('.'))
+  if (formatName.length <= maxBaseLength) return name
+  const end = name.substring(name.lastIndexOf('.'))
+  const start = formatName.substring(0, maxBaseLength)
+  return `${start}...${end}`
 }
 
 export function isDocument(data: any): data is IDocument {
-    return data && "originalFilename" in data && "mimeType" in data;
+  return data && 'originalFilename' in data && 'mimeType' in data
 }
 
 export function isFolder(data: any): data is IFolder {
-    return data && "inheritPermissions" in data;
+  return data && 'inheritPermissions' in data
 }

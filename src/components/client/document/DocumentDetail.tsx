@@ -1,123 +1,131 @@
-﻿import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Spinner } from "@/components/ui/spinner";
-import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
-import type { IDocument } from "@/types/type";
-import { formatFileSize, formatTime } from "@/config/utils";
-import { Separator } from "@/components/ui/separator";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { Textarea } from "@/components/ui/textarea";
-import { useEffect, useState } from "react";
-import api, { endpoints } from "@/config/api";
-import { Button } from "@/components/ui/button";
-import { Sparkles } from "lucide-react";
-import { openSummarizeModal } from "@/redux/reducers/documentSlice";
-import { useTranslation } from "react-i18next";
+﻿import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { Spinner } from '@/components/ui/spinner'
+import { Badge } from '@/components/ui/badge'
+import { Label } from '@/components/ui/label'
+import type { IDocument } from '@/types/type'
+import { formatFileSize, formatTime } from '@/config/utils'
+import { Separator } from '@/components/ui/separator'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { Textarea } from '@/components/ui/textarea'
+import { useEffect, useState } from 'react'
+import api, { endpoints } from '@/config/api'
+import { Button } from '@/components/ui/button'
+import { Sparkles } from 'lucide-react'
+import { openSummarizeModal } from '@/redux/reducers/documentSlice'
+import { useTranslation } from 'react-i18next'
 
 type Props = {
-    data: IDocument | null;
-    isSheetOpen: boolean;
-    setIsSheetOpen: (open: boolean) => void;
-};
+  data: IDocument | null
+  isSheetOpen: boolean
+  setIsSheetOpen: (open: boolean) => void
+}
 
 const DocumentDetail = ({ isSheetOpen, setIsSheetOpen, data }: Props) => {
-    const { t } = useTranslation();
-    const dispatch = useAppDispatch();
-    const userId = useAppSelector(state => state.users.user?.id);
-    const [loadingDetail, setLoadingDetail] = useState<boolean>(false);
-    const [documentDetail, setDocumentDetail] = useState<IDocument | null>(null);
+  const { t } = useTranslation()
+  const dispatch = useAppDispatch()
+  const userId = useAppSelector((state) => state.users.user?.id)
+  const [loadingDetail, setLoadingDetail] = useState<boolean>(false)
+  const [documentDetail, setDocumentDetail] = useState<IDocument | null>(null)
 
-    const loadViewDetail = async () => {
-        if (!data) return;
+  const loadViewDetail = async () => {
+    if (!data) return
 
-        try {
-            setLoadingDetail(true);
-            const res = await api.get(endpoints["document-detail"](data.id));
-            setDocumentDetail(res.data.data);
-        } catch (error) {
-            console.error("Lỗi khi tải chi tiết tài liệu", error);
-        } finally {
-            setLoadingDetail(false);
-        }
-    };
+    try {
+      setLoadingDetail(true)
+      const res = await api.get(endpoints['document-detail'](data.id))
+      setDocumentDetail(res.data.data)
+    } catch (error) {
+      console.error('Lỗi khi tải chi tiết tài liệu', error)
+    } finally {
+      setLoadingDetail(false)
+    }
+  }
 
-    const handleOpenSummarize = () => {
-        const doc = documentDetail ?? data;
-        if (doc) {
-            dispatch(openSummarizeModal({ data: doc }));
-        }
-    };
+  const handleOpenSummarize = () => {
+    const doc = documentDetail ?? data
+    if (doc) {
+      dispatch(openSummarizeModal({ data: doc }))
+    }
+  }
 
-    useEffect(() => {
-        if (isSheetOpen && data) {
-            loadViewDetail();
-        }
-    }, [isSheetOpen, data?.id]);
+  useEffect(() => {
+    if (isSheetOpen && data) {
+      loadViewDetail()
+    }
+  }, [isSheetOpen, data?.id])
 
-    return (
-        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-            <SheetContent className="rounded-l-xl p-1" aria-describedby={undefined}>
-                <SheetHeader>
-                    <SheetTitle className="text-lg mb-2">{t('document.detail_title')}</SheetTitle>
-                    <div>
-                        {loadingDetail ? (
-                            <Spinner />
-                        ) : documentDetail ? (
-                            <div className="space-y-3">
-                                <div className="space-y-2">
-                                    <div className="flex items-center">
-                                        <Label className="me-2 medium text-md">{t('common.name')}:</Label>
-                                        <span>{documentDetail.name}</span>
-                                    </div>
-                                    <div>
-                                        <Label className="me-2 medium text-md">{t('common.description')}:</Label>
-                                        <Textarea readOnly tabIndex={-1} value={documentDetail.description || ""} />
-                                    </div>
-                                    <div className="flex flex-wrap items-center">
-                                        <Label className="me-2 medium text-md">{t('common.type')}:</Label>
-                                        <span>{documentDetail.mimeType}</span>
-                                    </div>
-                                    <div className="flex items-center">
-                                        <Label className="me-2 medium text-md">{t('common.size')}:</Label>
-                                        <span>{formatFileSize(documentDetail.fileSize)}</span>
-                                    </div>
-                                </div>
-                                <Separator />
-                                <div className="space-y-2">
-                                    <div className="flex items-center">
-                                        <Label className="me-2 medium text-md">{t('common.created_by')}:</Label>
-                                        <Badge variant="secondary">{documentDetail.createdBy?.id === userId ? t('common.me') : documentDetail.createdBy?.email}</Badge>
-                                    </div>
-                                    <div className="flex items-center">
-                                        <Label className="me-2 medium text-md">{t('common.updated_by')}:</Label>
-                                        <Badge variant="secondary">{documentDetail.updatedBy?.id === userId ? t('common.me') : documentDetail.updatedBy?.email}</Badge>
-                                    </div>
-                                    <div className="flex items-center">
-                                        <Label className="me-2 medium text-md">{t('common.created_at')}:</Label>
-                                        <Badge variant="secondary">{formatTime(documentDetail?.createdAt)}</Badge>
-                                    </div>
-                                    <div className="flex items-center">
-                                        <Label className="me-2 medium text-md">{t('common.updated_at')}:</Label>
-                                        <Badge variant="secondary">{formatTime(documentDetail?.updatedAt)}</Badge>
-                                    </div>
-                                </div>
-                                <Separator />
-                                <div className="flex flex-wrap items-center justify-between gap-2">
-                                    <Label className="medium text-md">{t('document.summary_label')}</Label>
-                                    <Button type="button" variant="secondary" size="sm" onClick={handleOpenSummarize}>
-                                        <Sparkles className="size-4 me-1.5" />
-                                        {t('dropdown.summarize')}
-                                    </Button>
-                                </div>
-                            </div>
-                        ) : (
-                            <p>{t('document.not_found')}</p>
-                        )}
-                    </div>
-                </SheetHeader>
-            </SheetContent>
-        </Sheet>
-    );
-};
+  return (
+    <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+      <SheetContent className="rounded-l-xl p-1" aria-describedby={undefined}>
+        <SheetHeader>
+          <SheetTitle className="text-lg mb-2">{t('document.detail_title')}</SheetTitle>
+          <div>
+            {loadingDetail ? (
+              <Spinner />
+            ) : documentDetail ? (
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <div className="flex items-center">
+                    <Label className="me-2 medium text-md">{t('common.name')}:</Label>
+                    <span>{documentDetail.name}</span>
+                  </div>
+                  <div>
+                    <Label className="me-2 medium text-md">{t('common.description')}:</Label>
+                    <Textarea readOnly tabIndex={-1} value={documentDetail.description || ''} />
+                  </div>
+                  <div className="flex flex-wrap items-center">
+                    <Label className="me-2 medium text-md">{t('common.type')}:</Label>
+                    <span>{documentDetail.mimeType}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Label className="me-2 medium text-md">{t('common.size')}:</Label>
+                    <span>{formatFileSize(documentDetail.fileSize)}</span>
+                  </div>
+                </div>
+                <Separator />
+                <div className="space-y-2">
+                  <div className="flex items-center">
+                    <Label className="me-2 medium text-md">{t('common.created_by')}:</Label>
+                    <Badge variant="secondary">
+                      {documentDetail.createdBy?.id === userId
+                        ? t('common.me')
+                        : documentDetail.createdBy?.email}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center">
+                    <Label className="me-2 medium text-md">{t('common.updated_by')}:</Label>
+                    <Badge variant="secondary">
+                      {documentDetail.updatedBy?.id === userId
+                        ? t('common.me')
+                        : documentDetail.updatedBy?.email}
+                    </Badge>
+                  </div>
+                  <div className="flex items-center">
+                    <Label className="me-2 medium text-md">{t('common.created_at')}:</Label>
+                    <Badge variant="secondary">{formatTime(documentDetail?.createdAt)}</Badge>
+                  </div>
+                  <div className="flex items-center">
+                    <Label className="me-2 medium text-md">{t('common.updated_at')}:</Label>
+                    <Badge variant="secondary">{formatTime(documentDetail?.updatedAt)}</Badge>
+                  </div>
+                </div>
+                <Separator />
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <Label className="medium text-md">{t('document.summary_label')}</Label>
+                  <Button type="button" variant="secondary" size="sm" onClick={handleOpenSummarize}>
+                    <Sparkles className="size-4 me-1.5" />
+                    {t('dropdown.summarize')}
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <p>{t('document.not_found')}</p>
+            )}
+          </div>
+        </SheetHeader>
+      </SheetContent>
+    </Sheet>
+  )
+}
 
-export default DocumentDetail;
+export default DocumentDetail

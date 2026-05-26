@@ -1,163 +1,170 @@
-﻿import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
-import api, { endpoints } from "@/config/api";
-import { useAppDispatch } from "@/redux/hooks";
-import { triggerReload } from "@/redux/reducers/filesSlice";
-import { closeFolderModal } from "@/redux/reducers/folderSlice";
-import type { IFolder } from "@/types/type";
-import { AlertCircleIcon } from "lucide-react";
-import { useEffect, useState, type ChangeEvent } from "react";
-import { useForm } from "react-hook-form";
-import { useParams } from "react-router";
-import { useTranslation } from "react-i18next";
+﻿import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Spinner } from '@/components/ui/spinner'
+import api, { endpoints } from '@/config/api'
+import { useAppDispatch } from '@/redux/hooks'
+import { triggerReload } from '@/redux/reducers/filesSlice'
+import { closeFolderModal } from '@/redux/reducers/folderSlice'
+import type { IFolder } from '@/types/type'
+import { AlertCircleIcon } from 'lucide-react'
+import { useEffect, useState, type ChangeEvent } from 'react'
+import { useForm } from 'react-hook-form'
+import { useParams } from 'react-router'
+import { useTranslation } from 'react-i18next'
 
 type Props = {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-    isEditing: boolean;
-    data: IFolder | null | undefined
-};
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  isEditing: boolean
+  data: IFolder | null | undefined
+}
 
-const FolderModal = ({
-    open,
-    onOpenChange,
-    isEditing,
-    data
-}: Props) => {
-    const { t } = useTranslation();
-    const form = useForm<IFolder>();
-    const [loading, setLoading] = useState<boolean>(false)
-    const [msg, setMsg] = useState<string>("")
-    const dispatch = useAppDispatch()
-    const { id } = useParams<{ id: string }>()
+const FolderModal = ({ open, onOpenChange, isEditing, data }: Props) => {
+  const { t } = useTranslation()
+  const form = useForm<IFolder>()
+  const [loading, setLoading] = useState<boolean>(false)
+  const [msg, setMsg] = useState<string>('')
+  const dispatch = useAppDispatch()
+  const { id } = useParams<{ id: string }>()
 
-    const setError = (field: keyof IFolder, message: string): void => {
-        form.setError(field, { type: "manual", message: message })
+  const setError = (field: keyof IFolder, message: string): void => {
+    form.setError(field, { type: 'manual', message: message })
+  }
+
+  const validateEmpty = (field: keyof IFolder, value: string): boolean => {
+    form.clearErrors(field)
+    if (!value) {
+      setError(field, t('validation.required', { field: t('common.name') }))
+      return false
     }
+    return true
+  }
 
-    const validateEmpty = (field: keyof IFolder, value: string): boolean => {
-        form.clearErrors(field)
-        if (!value) {
-            setError(field, t('validation.required', { field: t('common.name') }));
-            return false;
-        }
-        return true
+  const validate = (data: IFolder): boolean => {
+    let flag = true
+    if (!validateEmpty('name', data.name)) {
+      flag = false
     }
+    return flag
+  }
 
-    const validate = (data: IFolder): boolean => {
-        let flag = true;
-        if (!validateEmpty("name", data.name)) {
-            flag = false;
-        }
-        return flag;
-    }
+  const onSubmit = async (data: IFolder) => {
+    form.clearErrors()
+    setMsg('')
 
-    const onSubmit = async (data: IFolder) => {
-        form.clearErrors()
-        setMsg("")
-
-        if (validate(data) === true) {
-            try {
-                setLoading(true);
-                if (isEditing) {
-                    await api.patch(endpoints["folder-detail"](data.id), data);
-                    dispatch(closeFolderModal())
-                } else {
-                    if (id) {
-                        const parent: { id: number } = {
-                            id: parseInt(id),
-                        }
-                        data = { ...data, parent }
-                    }
-
-                    await api.post(endpoints["folders"], data);
-                    dispatch(closeFolderModal());
-                }
-                dispatch(triggerReload())
-            } catch (error: any) {
-                const errors = error.response.data.error;
-                if (error.response?.status === 400) {
-                    if (Array.isArray(errors)) {
-                        errors.forEach((err: any) => {
-                            setError(err.field, err.message);
-                        });
-                    } else {
-                        setMsg(errors)
-                    }
-
-                } else {
-                    setMsg(t('validation.system_error'));
-                }
-            } finally {
-                setLoading(false);
+    if (validate(data) === true) {
+      try {
+        setLoading(true)
+        if (isEditing) {
+          await api.patch(endpoints['folder-detail'](data.id), data)
+          dispatch(closeFolderModal())
+        } else {
+          if (id) {
+            const parent: { id: number } = {
+              id: parseInt(id),
             }
+            data = { ...data, parent }
+          }
+
+          await api.post(endpoints['folders'], data)
+          dispatch(closeFolderModal())
         }
+        dispatch(triggerReload())
+      } catch (error: any) {
+        const errors = error.response.data.error
+        if (error.response?.status === 400) {
+          if (Array.isArray(errors)) {
+            errors.forEach((err: any) => {
+              setError(err.field, err.message)
+            })
+          } else {
+            setMsg(errors)
+          }
+        } else {
+          setMsg(t('validation.system_error'))
+        }
+      } finally {
+        setLoading(false)
+      }
     }
+  }
 
-    useEffect(() => {
-        if (open) {
-            if (data) {
-                form.reset(data);
-            } else {
-                form.reset();
-            }
-            form.clearErrors();
-            setMsg("");
-        }
-    }, [open]);
+  useEffect(() => {
+    if (open) {
+      if (data) {
+        form.reset(data)
+      } else {
+        form.reset()
+      }
+      form.clearErrors()
+      setMsg('')
+    }
+  }, [open])
 
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>{isEditing ? t('folder.rename_title') : t('folder.new_title')}</DialogTitle>
+        </DialogHeader>
+        {msg && (
+          <Alert className="border-red-500" variant="destructive">
+            <AlertCircleIcon />
+            <AlertDescription>{msg}</AlertDescription>
+          </Alert>
+        )}
+        <Form {...form}>
+          <form className="p-1" onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="flex flex-col gap-6">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('common.name')}</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        value={field.value || ''}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                          form.setValue('name', e.target.value)
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </form>
+        </Form>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            {t('common.cancel')}
+          </Button>
+          <Button onClick={() => form.handleSubmit(onSubmit)()} disabled={loading}>
+            {loading ? <Spinner size={16} /> : t('common.save')}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
 
-    return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent aria-describedby={undefined}>
-                <DialogHeader>
-                    <DialogTitle>{isEditing ? t('folder.rename_title') : t('folder.new_title')}</DialogTitle>
-                </DialogHeader>
-                {msg &&
-                    <Alert className="border-red-500" variant="destructive">
-                        <AlertCircleIcon />
-                        <AlertDescription>
-                            {msg}
-                        </AlertDescription>
-                    </Alert>
-                }
-                <Form {...form}>
-                    <form className="p-1" onSubmit={form.handleSubmit(onSubmit)}>
-                        <div className="flex flex-col gap-6">
-                            <FormField
-                                control={form.control}
-                                name="name"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>{t('common.name')}</FormLabel>
-                                        <FormControl>
-                                            <Input {...field}
-                                                value={field.value || ""}
-                                                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                                                    form.setValue('name', e.target.value)
-                                                }} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                        </div>
-                    </form>
-                </Form>
-                <DialogFooter>
-                    <Button variant="outline" onClick={() => onOpenChange(false)}>{t('common.cancel')}</Button>
-                    <Button onClick={() => form.handleSubmit(onSubmit)()} disabled={loading}>
-                        {loading ? <Spinner size={16} /> : t('common.save')}
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
-    );
-};
-
-export default FolderModal;
+export default FolderModal

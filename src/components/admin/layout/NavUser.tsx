@@ -1,12 +1,6 @@
-import {
-  ChevronsUpDown,
-} from "lucide-react"
+import { ChevronsUpDown } from 'lucide-react'
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,24 +9,24 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from '@/components/ui/dropdown-menu'
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
-import { useAppDispatch } from "@/redux/hooks"
-import { logout } from "@/redux/reducers/userSlice"
-import type { IAccount } from "@/types/type"
-import { useNavigate } from "react-router"
-import { useTranslation } from "react-i18next"
+} from '@/components/ui/sidebar'
+import { useAppDispatch } from '@/redux/hooks'
+import { logout } from '@/redux/reducers/userSlice'
+import type { IAccount } from '@/types/type'
+import { useNavigate } from 'react-router'
+import { useTranslation } from 'react-i18next'
 
 export function NavUser({ user }: { user: IAccount | null }) {
   const { isMobile } = useSidebar()
-  const dispatch = useAppDispatch();
-  const nav = useNavigate();
-  const { t } = useTranslation();
+  const dispatch = useAppDispatch()
+  const nav = useNavigate()
+  const { t } = useTranslation()
 
   return (
     <SidebarMenu>
@@ -55,21 +49,19 @@ export function NavUser({ user }: { user: IAccount | null }) {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : "right"}
+            side={isMobile ? 'bottom' : 'right'}
             align="end"
             sideOffset={4}
           >
             <DropdownMenuLabel>
               <div className="flex flex-col">
                 <span>{`${user?.lastName} ${user?.firstName}`}</span>
-                <span className="text-muted-foreground truncate text-xs">
-                  {user?.email}
-                </span>
+                <span className="text-muted-foreground truncate text-xs">{user?.email}</span>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem className="font-medium" onClick={() => nav("/")}>
+              <DropdownMenuItem className="font-medium" onClick={() => nav('/')}>
                 {t('pages.home')}
               </DropdownMenuItem>
             </DropdownMenuGroup>
