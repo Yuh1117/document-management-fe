@@ -1,5 +1,42 @@
 {
     "welcome": "Welcome to DMS",
+    "landing": {
+        "subtitle": "Document management system",
+        "description": "An intelligent electronic document management and retrieval system using artificial intelligence.",
+        "cta": {
+            "start": "Get started",
+            "signup": "Create account"
+        },
+        "features": {
+            "document_management": {
+                "title": "Centralized document management",
+                "description": "Store, organize, and access documents in one shared workspace."
+            },
+            "search": {
+                "title": "Fast search",
+                "description": "Find files by keyword, document type, and advanced filters when needed."
+            },
+            "sharing": {
+                "title": "Controlled sharing",
+                "description": "Grant view, edit, and link sharing permissions to the right people."
+            },
+            "ai_summary": {
+                "title": "AI summary",
+                "description": "Generate quick summaries to understand the key points without reading the whole document."
+            }
+        },
+        "mock": {
+            "folders": {
+                "project": "Project",
+                "references": "References"
+            },
+            "documents": {
+                "outline": "outline.pdf",
+                "report": "report.docx",
+                "plan": "plan.xlsx"
+            }
+        }
+    },
     "login": {
         "label": "Login",
         "title": "Login to your account",

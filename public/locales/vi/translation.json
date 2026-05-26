@@ -1,5 +1,42 @@
 {
     "welcome": "Chào mừng đến với DMS",
+    "landing": {
+        "subtitle": "Hệ thống quản lý tài liệu",
+        "description": "Hệ thống quản lý và khai thác tài liệu điện tử thông minh sử dụng trí tuệ nhân tạo.",
+        "cta": {
+            "start": "Bắt đầu sử dụng",
+            "signup": "Tạo tài khoản"
+        },
+        "features": {
+            "document_management": {
+                "title": "Quản lý tài liệu tập trung",
+                "description": "Lưu trữ, phân loại và truy cập tài liệu trong một không gian làm việc thống nhất."
+            },
+            "search": {
+                "title": "Tìm kiếm nhanh",
+                "description": "Tìm file theo từ khóa, loại tài liệu và các bộ lọc nâng cao khi cần."
+            },
+            "sharing": {
+                "title": "Chia sẻ có kiểm soát",
+                "description": "Cấp quyền xem, chỉnh sửa và chia sẻ liên kết cho đúng người dùng."
+            },
+            "ai_summary": {
+                "title": "Tóm tắt AI",
+                "description": "Tạo bản tóm tắt nhanh để nắm ý chính của tài liệu mà không cần đọc toàn bộ nội dung."
+            }
+        },
+        "mock": {
+            "folders": {
+                "project": "Đồ án",
+                "references": "Tài liệu tham khảo"
+            },
+            "documents": {
+                "outline": "de-cuong.pdf",
+                "report": "bao-cao.docx",
+                "plan": "ke-hoach.xlsx"
+            }
+        }
+    },
     "login": {
         "label": "Đăng nhập",
         "title": "Đăng nhập tài khoản của bạn",

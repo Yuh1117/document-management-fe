@@ -1,10 +1,11 @@
 import { createBrowserRouter, Outlet, RouterProvider, type LoaderFunction } from 'react-router'
 import Home from './pages/client/HomePage'
+import LandingPage from './pages/LandingPage'
 import Login from './pages/LoginPage'
 import Signup from './pages/SignupPage'
 import Header from './components/client/layout/Header'
 import { SidebarInset, SidebarProvider } from './components/ui/sidebar'
-import { AdminRoute, AuthRoute, ProtectedRoute } from './components/protected-route/ProtectedRoute'
+import { AdminRoute, AuthRoute, ProtectedRoute, PublicHomeRoute } from './components/protected-route/ProtectedRoute'
 import { useAppDispatch } from './redux/hooks'
 import { useEffect } from 'react'
 import { initAuth } from './redux/reducers/userSlice'
@@ -50,9 +51,9 @@ const router = createBrowserRouter([
     {
         path: "/",
         element: (
-            <ProtectedRoute>
+            <PublicHomeRoute fallback={<LandingPage />}>
                 <MainLayout />
-            </ProtectedRoute>
+            </PublicHomeRoute>
         ),
         children: [
             {
@@ -60,32 +61,41 @@ const router = createBrowserRouter([
                 Component: Home,
                 loader: homeLoader,
             },
+        ],
+    },
+    {
+        element: (
+            <ProtectedRoute>
+                <MainLayout />
+            </ProtectedRoute>
+        ),
+        children: [
             {
-                path: "/my-files",
+                path: "my-files",
                 element: <Files mode="my-files" />,
             },
             {
-                path: "/search",
+                path: "search",
                 element: <Files mode="search" />,
             },
             {
-                path: "/advanced-search",
+                path: "advanced-search",
                 element: <Files mode="search" />,
             },
             {
-                path: "/folders/:id",
+                path: "folders/:id",
                 element: <Files mode="folder" />,
             },
             {
-                path: "/recent",
+                path: "recent",
                 element: <Files mode="recent" />,
             },
             {
-                path: "/shared",
+                path: "shared",
                 element: <Files mode="shared" />,
             },
             {
-                path: "/trash",
+                path: "trash",
                 element: <Files mode="trash" />,
             }
         ],
@@ -148,7 +158,7 @@ function App() {
 
     useEffect(() => {
         dispatch(initAuth())
-    }, [])
+    }, [dispatch])
 
     return (
         <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
