@@ -96,6 +96,7 @@ api.interceptors.request.use((config) => {
         }
     }
     config.headers["Accept-Language"] = getAcceptLanguage();
+    config.headers["ngrok-skip-browser-warning"] = "true";
     return config;
 });
 
@@ -146,7 +147,7 @@ api.interceptors.response.use(
             const res = await axios.post(
                 BASE_URL + endpoints["refresh"],
                 {},
-                { withCredentials: true, headers: { "Accept-Language": getAcceptLanguage() } }
+                { withCredentials: true, headers: { "Accept-Language": getAcceptLanguage(), "ngrok-skip-browser-warning": "true" } }
             );
             const newToken = res.data.data.accessToken;
             store.dispatch(setAccessToken(newToken));
