@@ -179,7 +179,7 @@ const Folder = ({
       }}
       onClick={handleToggleCheck}
       className={cn(
-        'bg-background hover:bg-input/50 py-4 rounded-xl border-1 transition-all duration-200',
+        'bg-background hover:bg-input/50 py-4 rounded-2xl border-1 transition-all duration-200',
         isDropdownOpen && 'bg-input/50'
       )}
     >

@@ -139,7 +139,7 @@ const LandingPage = () => {
                         <div
                           key={item.labelKey}
                           title={t(item.labelKey)}
-                          className={`flex size-10 items-center justify-center rounded-md ${
+                          className={`flex size-10 items-center justify-center rounded-2xl ${
                             item.active ? 'bg-muted font-semibold' : 'text-muted-foreground'
                           } transition-colors hover:bg-muted hover:text-foreground`}
                         >
@@ -169,7 +169,7 @@ const LandingPage = () => {
                         {folderItems.map((folderKey) => (
                           <div
                             key={folderKey}
-                            className="flex h-12 items-center justify-between rounded-lg border bg-background px-4 shadow-xs transition-colors hover:bg-input/50"
+                            className="flex h-12 items-center justify-between rounded-2xl border bg-background px-4 shadow-xs transition-colors hover:bg-input/50"
                           >
                             <div className="flex min-w-0 items-center gap-3">
                               <Folder className="size-4 shrink-0" />
@@ -194,7 +194,7 @@ const LandingPage = () => {
                           return (
                             <div
                               key={document.nameKey}
-                              className="rounded-lg border bg-background p-4 shadow-xs transition-colors hover:bg-input/50"
+                              className="rounded-2xl border bg-background p-4 shadow-xs transition-colors hover:bg-input/50"
                             >
                               <div className="mb-4 flex items-center justify-between">
                                 <div className="flex min-w-0 items-center gap-2">
