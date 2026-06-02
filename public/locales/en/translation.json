@@ -170,6 +170,12 @@
     "delete_permanent_desc": "All items in the trash will be permanently deleted."
   },
   "document": {
+    "status": {
+      "not_processed": "Not processed",
+      "processing": "Processing",
+      "completed": "Completed",
+      "failed": "Failed"
+    },
     "detail_title": "Document Details",
     "rename_title": "Rename Document",
     "not_found": "Details not found.",

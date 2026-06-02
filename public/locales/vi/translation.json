@@ -170,6 +170,12 @@
     "delete_permanent_desc": "Tất cả các mục trong thùng rác sẽ bị xóa vĩnh viễn."
   },
   "document": {
+    "status": {
+      "not_processed": "Chưa xử lý",
+      "processing": "Đang xử lý",
+      "completed": "Hoàn tất",
+      "failed": "Thất bại"
+    },
     "detail_title": "Chi tiết tài liệu",
     "rename_title": "Đổi tên tài liệu",
     "not_found": "Không tìm thấy chi tiết.",

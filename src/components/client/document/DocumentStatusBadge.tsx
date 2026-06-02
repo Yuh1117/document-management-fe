@@ -3,6 +3,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { cn } from '@/lib/utils'
 import type { IDocument } from '@/types/type'
 import { CheckCircle2, CircleDashed, LoaderCircle, XCircle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 type Props = {
   document: IDocument
@@ -19,11 +20,11 @@ const badgeClassByVariant: Record<string, string> = {
   danger: 'border-red-500/25 bg-red-100 text-red-800 dark:bg-red-500/15 dark:text-red-300',
 }
 
-const fallbackBadgeByStatus: Record<string, { label: string; variant: string }> = {
-  NOT_PROCESSED: { label: 'Chưa xử lý', variant: 'neutral' },
-  PROCESSING: { label: 'Đang xử lý', variant: 'warning' },
-  COMPLETED: { label: 'Hoàn tất', variant: 'success' },
-  FAILED: { label: 'Thất bại', variant: 'danger' },
+const fallbackBadgeByStatus: Record<string, { labelKey: string; variant: string }> = {
+  NOT_PROCESSED: { labelKey: 'document.status.not_processed', variant: 'neutral' },
+  PROCESSING: { labelKey: 'document.status.processing', variant: 'warning' },
+  COMPLETED: { labelKey: 'document.status.completed', variant: 'success' },
+  FAILED: { labelKey: 'document.status.failed', variant: 'danger' },
 }
 
 const iconByVariant = {
@@ -42,9 +43,12 @@ const getBadge = (document: IDocument) => {
 }
 
 const DocumentStatusBadge = ({ document, className, compact = false }: Props) => {
+  const { t } = useTranslation()
   const badge = getBadge(document)
 
   if (!badge) return null
+
+  const label = t(badge.labelKey)
 
   if (compact) {
     const Icon = iconByVariant[badge.variant as keyof typeof iconByVariant] ?? CircleDashed
@@ -59,12 +63,12 @@ const DocumentStatusBadge = ({ document, className, compact = false }: Props) =>
               badgeClassByVariant[badge.variant] ?? badgeClassByVariant.neutral,
               className
             )}
-            aria-label={badge.label}
+            aria-label={label}
           >
             <Icon className={cn('size-3', badge.variant === 'warning' && 'animate-spin')} />
           </span>
         </TooltipTrigger>
-        <TooltipContent>{badge.label}</TooltipContent>
+        <TooltipContent>{label}</TooltipContent>
       </Tooltip>
     )
   }
@@ -77,9 +81,9 @@ const DocumentStatusBadge = ({ document, className, compact = false }: Props) =>
         badgeClassByVariant[badge.variant] ?? badgeClassByVariant.neutral,
         className
       )}
-      title={badge.label}
+      title={label}
     >
-      {badge.label}
+      {label}
     </Badge>
   )
 }
