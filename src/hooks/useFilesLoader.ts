@@ -1,6 +1,13 @@
 ﻿import { useEffect, useMemo, useRef, useState } from 'react'
 import type { IFileItem } from '@/types/type'
-import api from '@/config/api'
+import api, { endpoints } from '@/config/api'
+
+type DocumentProcessingStatus = {
+  id: number
+  processingStatus: string | null
+}
+
+const MAX_NOT_PROCESSED_STATUS_CHECKS = 12
 
 export function useFilesLoader(
   endpoint: string | null,
@@ -13,6 +20,7 @@ export function useFilesLoader(
   const [hasMore, setHasMore] = useState<boolean>(true)
   const [loadKey, setLoadKey] = useState<boolean>(false)
   const observerRef = useRef<HTMLDivElement | null>(null)
+  const notProcessedStatusCheckCountRef = useRef<Map<number, number>>(new Map())
 
   const stableQuery = useMemo(() => {
     const params = new URLSearchParams()
@@ -26,14 +34,18 @@ export function useFilesLoader(
     return params
   }, [JSON.stringify(query)])
 
+  const buildUrl = (pageNumber: number) => {
+    const params = new URLSearchParams(stableQuery)
+    params.set('page', pageNumber.toString())
+
+    return `${endpoint}?${params.toString()}`
+  }
+
   const loadFiles = async () => {
     try {
       setLoading(true)
 
-      const params = new URLSearchParams(stableQuery)
-      params.set('page', page.toString())
-
-      const url = `${endpoint}?${params.toString()}`
+      const url = buildUrl(page)
       const res = await api.get(url)
       const data = res.data.data
 
@@ -50,16 +62,79 @@ export function useFilesLoader(
     }
   }
 
+  const getStatusPollingDocumentIds = () => {
+    return files
+      .filter((file) => {
+        if (file.type !== 'document' || !file.document) return false
+
+        if (file.document.processingStatus === 'PROCESSING') return true
+        if (file.document.processingStatus) return false
+
+        const checkCount = notProcessedStatusCheckCountRef.current.get(file.document.id) ?? 0
+        return checkCount < MAX_NOT_PROCESSED_STATUS_CHECKS
+      })
+      .map((file) => file.document.id)
+  }
+
+  const refreshProcessingStatuses = async () => {
+    const documentIds = getStatusPollingDocumentIds()
+
+    if (documentIds.length === 0) return
+
+    try {
+      const res = await api.post(endpoints['document-processing-status'], documentIds)
+      const statuses = res.data.data as DocumentProcessingStatus[]
+      const statusMap = new Map(statuses.map((status) => [status.id, status.processingStatus]))
+
+      setFiles((prev) =>
+        prev.map((file) => {
+          if (file.type !== 'document' || !file.document || !statusMap.has(file.document.id)) {
+            return file
+          }
+
+          return {
+            ...file,
+            document: {
+              ...file.document,
+              processingStatus: statusMap.get(file.document.id) ?? null,
+            },
+          }
+        })
+      )
+
+      for (const documentId of documentIds) {
+        const status = statusMap.get(documentId)
+        if (status) {
+          notProcessedStatusCheckCountRef.current.delete(documentId)
+          continue
+        }
+
+        const checkCount = notProcessedStatusCheckCountRef.current.get(documentId) ?? 0
+        notProcessedStatusCheckCountRef.current.set(documentId, checkCount + 1)
+      }
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   useEffect(() => {
     if (endpoint && page > 0) loadFiles()
   }, [page, loadKey])
 
   useEffect(() => {
     setFiles([])
+    notProcessedStatusCheckCountRef.current.clear()
     setPage(1)
     setHasMore(true)
     setLoadKey((prev) => !prev)
   }, [reloadFlag, endpoint, stableQuery])
+
+  useEffect(() => {
+    if (getStatusPollingDocumentIds().length === 0) return
+
+    const interval = window.setInterval(refreshProcessingStatuses, 5000)
+    return () => window.clearInterval(interval)
+  }, [files])
 
   useEffect(() => {
     if (!hasMore || loading) return

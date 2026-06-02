@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { Sparkles } from 'lucide-react'
 import { openSummarizeModal } from '@/redux/reducers/documentSlice'
 import { useTranslation } from 'react-i18next'
+import DocumentStatusBadge from './DocumentStatusBadge'
 
 type Props = {
   data: IDocument | null
@@ -68,6 +69,10 @@ const DocumentDetail = ({ isSheetOpen, setIsSheetOpen, data }: Props) => {
                   <div className="flex items-center">
                     <Label className="me-2 medium text-md">{t('common.name')}:</Label>
                     <span>{documentDetail.name}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Label className="me-2 medium text-md">{t('admin.status')}:</Label>
+                    <DocumentStatusBadge document={documentDetail} />
                   </div>
                   <div>
                     <Label className="me-2 medium text-md">{t('common.description')}:</Label>

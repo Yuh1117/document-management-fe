@@ -27,6 +27,7 @@ import {
 } from '@/redux/reducers/documentSlice'
 import { truncateFileName } from '@/config/utils'
 import { useTranslation } from 'react-i18next'
+import DocumentStatusBadge from './DocumentStatusBadge'
 
 type Props = {
   data: IDocument
@@ -73,7 +74,7 @@ const Document = ({
   const { t } = useTranslation()
   const { icon: Icon, color } = getIconComponentByMimeType(data.mimeType)
   const snippet = showSnippet ? data.snippet : null
-  const fileNameMaxLength = snippet ? 32 : 12
+  const fileNameMaxLength = snippet ? 24 : 7
 
   const handleDropdownToggle = (open: boolean) => {
     setIsDropdownOpen(open)
@@ -230,14 +231,15 @@ const Document = ({
         isDropdownOpen && 'bg-input/50'
       )}
     >
-      <CardHeader className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Icon size={20} color={color} />
-          <Label className="whitespace-nowrap">
+      <CardHeader className="flex items-center justify-between gap-2">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <Icon size={20} color={color} className="shrink-0" />
+          <Label className="shrink-0 whitespace-nowrap">
             {truncateFileName(data.name, fileNameMaxLength)}
           </Label>
+          <DocumentStatusBadge document={data} compact className="ml-auto" />
         </div>
-        <div>
+        <div className="shrink-0">
           {loading ? (
             <Spinner />
           ) : data.deleted ? (

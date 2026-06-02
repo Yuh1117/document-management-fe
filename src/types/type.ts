@@ -61,6 +61,7 @@ export interface IDocument {
   fileSize: number
   mimeType: string
   snippet?: string | null
+  processingStatus?: 'PROCESSING' | 'COMPLETED' | 'FAILED' | string | null
   deleted: boolean
   folder?: { id: number }
   storageType: string
