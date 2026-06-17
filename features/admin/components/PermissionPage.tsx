@@ -26,27 +26,31 @@ import {
 import api, { endpoints } from '@/lib/api'
 import { ALL_PERMISSIONS } from '@/constants/permissions'
 import { getMethodColor } from '@/lib/format'
-import { useAppDispatch } from '@/store/hooks'
-import { fetchPermissions } from '@/store/slices/permissionSlice'
 import type { IPermission } from '@/types/type'
 import { PencilLine, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useSearchParams } from '@/hooks/useQueryParams'
 import { useTranslation } from 'react-i18next'
+import { usePermissionStore } from '@/store/permissionStore'
 
-const PermissionAdminPage = () => {
+interface Props {
+  initialPermissions?: IPermission[]
+  initialTotalPages?: number
+}
+
+const PermissionAdminPage = ({ initialPermissions = [], initialTotalPages = 1 }: Props) => {
   const { t } = useTranslation()
-  const [permissions, setPermissions] = useState<IPermission[]>([])
+  const [permissions, setPermissions] = useState<IPermission[]>(initialPermissions)
   const [loading, setLoading] = useState<boolean>(false)
   const [q, setQ] = useSearchParams()
   const page = parseInt(q.get('page') || '1')
   const [kwInput, setKwInput] = useState<string>(q.get('kw') || '')
-  const [totalPages, setTotalPages] = useState<number>(1)
+  const [totalPages, setTotalPages] = useState<number>(initialTotalPages)
   const [showModal, setShowModal] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [data, setData] = useState<IPermission | null>()
   const [deletingId, setDeletingId] = useState<number | null>(null)
-  const dispatch = useAppDispatch()
+  const { fetchPermissions } = usePermissionStore()
 
   const loadPermissions = async () => {
     try {
@@ -118,8 +122,8 @@ const PermissionAdminPage = () => {
       ALL_PERMISSIONS.PERMISSIONS.DELETE,
     ].map(({ apiPath, method }) => ({ apiPath, method }))
 
-    dispatch(fetchPermissions(permissionsToCheck))
-  }, [dispatch])
+    fetchPermissions(permissionsToCheck)
+  }, [])
 
   return (
     <div className="px-4">

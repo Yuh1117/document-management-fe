@@ -25,27 +25,31 @@ import {
 } from '@/components/ui/table'
 import api, { endpoints } from '@/lib/api'
 import { ALL_PERMISSIONS } from '@/constants/permissions'
-import { useAppDispatch } from '@/store/hooks'
-import { fetchPermissions } from '@/store/slices/permissionSlice'
 import type { IRole } from '@/types/type'
 import { PencilLine, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useSearchParams } from '@/hooks/useQueryParams'
 import { useTranslation } from 'react-i18next'
+import { usePermissionStore } from '@/store/permissionStore'
 
-const RoleAdminPage = () => {
+interface Props {
+  initialRoles?: IRole[]
+  initialTotalPages?: number
+}
+
+const RoleAdminPage = ({ initialRoles = [], initialTotalPages = 1 }: Props) => {
   const { t } = useTranslation()
-  const [roles, setRoles] = useState<IRole[]>([])
+  const [roles, setRoles] = useState<IRole[]>(initialRoles)
   const [loading, setLoading] = useState<boolean>(false)
   const [q, setQ] = useSearchParams()
   const page = parseInt(q.get('page') || '1')
   const [kwInput, setKwInput] = useState<string>(q.get('kw') || '')
-  const [totalPages, setTotalPages] = useState<number>(1)
+  const [totalPages, setTotalPages] = useState<number>(initialTotalPages)
   const [showModal, setShowModal] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [data, setData] = useState<IRole | null>()
   const [deletingId, setDeletingId] = useState<number | null>(null)
-  const dispatch = useAppDispatch()
+  const { fetchPermissions } = usePermissionStore()
 
   const loadRoles = async () => {
     try {
@@ -117,8 +121,8 @@ const RoleAdminPage = () => {
       ALL_PERMISSIONS.ROLES.DELETE,
     ].map(({ apiPath, method }) => ({ apiPath, method }))
 
-    dispatch(fetchPermissions(permissionsToCheck))
-  }, [dispatch])
+    fetchPermissions(permissionsToCheck)
+  }, [])
 
   return (
     <div className="px-4">

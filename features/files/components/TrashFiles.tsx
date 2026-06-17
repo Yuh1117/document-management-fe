@@ -1,7 +1,7 @@
-'use client'
+﻿'use client'
 
 ﻿import { useMemo, useState } from 'react'
-import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { useFilesStore } from '@/store/filesStore'
 import api, { endpoints } from '@/lib/api'
 import { Spinner } from '@/components/ui/spinner'
 import { SidebarTrigger } from '@/components/ui/sidebar'
@@ -10,7 +10,6 @@ import { toast, Toaster } from 'sonner'
 import Document from '@/features/files/components/document/Document'
 import Folder from '@/features/files/components/folder/Folder'
 import { useFilesLoader } from '@/features/files/hooks/useFilesLoader'
-import { triggerReload } from '@/store/slices/filesSlice'
 import {
   Dialog,
   DialogContent,
@@ -24,14 +23,14 @@ import { useTranslation } from 'react-i18next'
 
 const TrashFilesPage = () => {
   const { t } = useTranslation()
-  const { reloadFlag } = useAppSelector((state) => state.files)
+  const { reloadFlag, triggerReload } = useFilesStore()
   const { files, loading, hasMore, observerRef } = useFilesLoader(
     endpoints['trash-files'],
     reloadFlag
   )
   const [cleaning, setCleaning] = useState<boolean>(false)
   const [open, setOpen] = useState<boolean>(false)
-  const dispatch = useAppDispatch()
+
 
   const handleCleanTrash = async () => {
     try {
@@ -40,7 +39,7 @@ const TrashFilesPage = () => {
       await api.delete(endpoints['files-delete-permanent'])
 
       setOpen(false)
-      dispatch(triggerReload())
+      triggerReload()
       toast.success(t('trash.clean_success'), {
         duration: 2000,
       })

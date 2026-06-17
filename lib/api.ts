@@ -1,11 +1,5 @@
 import axios from 'axios'
-import type { AppStore } from '@/store'
-import { setAccessToken, logout } from '@/store/slices/userSlice'
-
-let storeRef: AppStore | null = null
-export function injectStore(store: AppStore) {
-  storeRef = store
-}
+import { useAuthStore } from '@/store/authStore'
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL
 const LANGUAGE_STORAGE_KEY = 'language'
@@ -103,7 +97,7 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   const isRefreshRequest = config.url?.includes(endpoints['refresh'])
   if (!isRefreshRequest) {
-    const token = storeRef?.getState().users.accessToken
+    const token = useAuthStore.getState().accessToken
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`
     }
@@ -169,13 +163,13 @@ api.interceptors.response.use(
         }
       )
       const newToken = res.data.data.accessToken
-      storeRef?.dispatch(setAccessToken(newToken))
+      useAuthStore.getState().setAccessToken(newToken)
       notifySubscribers(newToken)
       originalRequest.headers['Authorization'] = `Bearer ${newToken}`
       return api(originalRequest)
     } catch (refreshError) {
       rejectSubscribers(refreshError)
-      storeRef?.dispatch(logout())
+      useAuthStore.getState().clearAuth()
       window.location.href = '/login'
       return Promise.reject(error)
     } finally {

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 ﻿import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
@@ -7,9 +7,10 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Spinner } from '@/components/ui/spinner'
 import api, { endpoints } from '@/lib/api'
 import { formatTime } from '@/lib/format'
-import { useAppSelector } from '@/store/hooks'
+
 import type { IFolder } from '@/types/type'
 import { useEffect, useState } from 'react'
+import { useAuthStore } from '@/store/authStore'
 import { useTranslation } from 'react-i18next'
 
 type Props = {
@@ -20,7 +21,7 @@ type Props = {
 
 const FolderDetail = ({ isSheetOpen, setIsSheetOpen, data }: Props) => {
   const { t } = useTranslation()
-  const userId = useAppSelector((state) => state.users.user?.id)
+  const userId = useAuthStore((s) => s.user?.id)
   const [loadingDetail, setLoadingDetail] = useState<boolean>(false)
   const [folderDetail, setFolderDetail] = useState<IFolder | null>(null)
 

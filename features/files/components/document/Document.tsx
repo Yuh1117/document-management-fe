@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 ﻿import { Fragment, type ReactNode, useState } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
@@ -8,25 +8,13 @@ import api, { endpoints } from '@/lib/api'
 import { Checkbox } from '@/components/ui/checkbox'
 import EllipsisDropDown from '../EllipsisDropdown'
 import { toast } from 'sonner'
-import { useAppDispatch } from '@/store/hooks'
-import {
-  openShareModal,
-  openTransferModal,
-  setPermission,
-  triggerReload,
-} from '@/store/slices/filesSlice'
+
+import { useFilesStore } from '@/store/filesStore'
+import { useDocumentStore } from '@/store/documentStore'
 import { cn } from '@/lib/utils'
 import EllipsisDropDownDeleted from '../EllipsisDropdownDeleted'
 import { Spinner } from '@/components/ui/spinner'
 import { getIconComponentByMimeType } from '@/lib/fileIcons'
-import {
-  openDocumentDetail,
-  openDocumentModal,
-  openPreviewModal,
-  openShareUrlModal,
-  openSummarizeModal,
-  openVersionModal,
-} from '@/store/slices/documentSlice'
 import { truncateFileName } from '@/lib/format'
 import { useTranslation } from 'react-i18next'
 import DocumentStatusBadge from './DocumentStatusBadge'
@@ -72,7 +60,9 @@ const Document = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false)
   const [, setDownloading] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
-  const dispatch = useAppDispatch()
+
+  const { openShareModal, setPermission, openTransferModal, triggerReload } = useFilesStore()
+  const { openDocumentDetail, openDocumentModal, openPreviewModal, openShareUrlModal, openVersionModal, openSummarizeModal } = useDocumentStore()
   const { t } = useTranslation()
   const { icon: Icon, color } = getIconComponentByMimeType(data.mimeType)
   const snippet = showSnippet ? data.snippet : null
@@ -93,11 +83,11 @@ const Document = ({
   }
 
   const handleViewDetail = () => {
-    dispatch(openDocumentDetail({ data: data }))
+    openDocumentDetail(data)
   }
 
   const handlePreview = () => {
-    dispatch(openPreviewModal({ data: data }))
+    openPreviewModal(data)
   }
 
   const handleDownload = async () => {
@@ -132,7 +122,7 @@ const Document = ({
   }
 
   const handleOpenEdit = () => {
-    dispatch(openDocumentModal({ data: data }))
+    openDocumentModal(data)
   }
 
   const handleSoftDelete = async () => {
@@ -142,7 +132,7 @@ const Document = ({
       const req: number[] = [data.id]
       await api.patch(endpoints['documents'], req)
 
-      dispatch(triggerReload())
+      triggerReload()
       toast.success(t('common.trash_success'), {
         duration: 2000,
       })
@@ -163,7 +153,7 @@ const Document = ({
       const req: number[] = [data.id]
       await api.patch(endpoints['document-restore'], req)
 
-      dispatch(triggerReload())
+      triggerReload()
       toast.success(t('common.restore_success'), {
         duration: 2000,
       })
@@ -186,7 +176,7 @@ const Document = ({
         data: req,
       })
 
-      dispatch(triggerReload())
+      triggerReload()
       toast.success(t('common.delete_success'), {
         duration: 2000,
       })
@@ -201,24 +191,24 @@ const Document = ({
   }
 
   const handleOpenShareUrl = () => {
-    dispatch(openShareUrlModal({ data: data }))
+    openShareUrlModal(data)
   }
 
   const handleOpenShare = () => {
-    dispatch(openShareModal({ data: data }))
-    dispatch(setPermission(permission))
+    openShareModal(data)
+    setPermission(permission)
   }
 
   const handleOpenTransfer = (mode: 'copy' | 'move') => {
-    dispatch(openTransferModal({ data: data, mode: mode }))
+    openTransferModal(data, mode)
   }
 
   const handleOpenVersion = () => {
-    dispatch(openVersionModal({ data: data }))
+    openVersionModal(data)
   }
 
   const handleOpenSummarize = () => {
-    dispatch(openSummarizeModal({ data }))
+    openSummarizeModal(data)
   }
 
   return (

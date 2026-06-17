@@ -1,7 +1,9 @@
-'use client'
+﻿'use client'
 
+import { useFilesStore } from '@/store/filesStore'
+import { useDocumentStore } from '@/store/documentStore'
+import { useFolderStore } from '@/store/folderStore'
 import { useMemo } from 'react'
-import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { endpoints } from '@/lib/api'
 import { Spinner } from '@/components/ui/spinner'
 import { Button } from '@/components/ui/button'
@@ -21,20 +23,6 @@ import { useDownloadFiles } from '@/features/files/hooks/useDownloadFiles'
 import ShareUrlModal from '@/features/files/components/document/ShareUrlModal'
 import TransferModal from '@/features/files/components/TransferModal'
 import ShareModal from '@/features/files/components/ShareModal'
-import {
-  closeDocumentDetail,
-  closeDocumentModal,
-  closePreviewModal,
-  closeShareUrlModal,
-  closeSummarizeModal,
-  closeVersionModal,
-} from '@/store/slices/documentSlice'
-import {
-  closeShareModal,
-  closeTransferModal,
-  closeUploadModeModal,
-} from '@/store/slices/filesSlice'
-import { closeFolderDetail, closeFolderModal } from '@/store/slices/folderSlice'
 import UploadModeModal from '@/features/files/components/UploadModeModal'
 import DocumentVersionModal from '@/features/files/components/document/DocumentVersionModal'
 import DocumentPreviewModal from '@/features/files/components/document/DocumentPreviewModal'
@@ -43,16 +31,19 @@ import { useTranslation } from 'react-i18next'
 
 const MyFilesPage = () => {
   const { t } = useTranslation()
-  const fileState = useAppSelector((state) => state.files)
-  const documentState = useAppSelector((state) => state.documents)
-  const folderState = useAppSelector((state) => state.folders)
+  const fileState = useFilesStore()
+  const documentState = useDocumentStore()
+  const folderState = useFolderStore()
+  const { closeShareModal, closeTransferModal, closeUploadModeModal } = fileState
+  const { closeDocumentDetail, closeDocumentModal, closePreviewModal, closeShareUrlModal, closeSummarizeModal, closeVersionModal } = documentState
+  const { closeFolderDetail, closeFolderModal } = folderState
   const { files, loading, hasMore, observerRef } = useFilesLoader(
     endpoints['my-files'],
     fileState.reloadFlag
   )
   const multi = useMultiSelect()
   const { downloading, download } = useDownloadFiles()
-  const dispatch = useAppDispatch()
+
 
   const folders = useMemo(() => files.filter((f) => f.type === 'folder'), [files])
   const documents = useMemo(() => files.filter((f) => f.type === 'document'), [files])
@@ -170,66 +161,66 @@ const MyFilesPage = () => {
       <UploadModeModal
         files={fileState.uploadModeModal.files}
         open={fileState.uploadModeModal.open}
-        onOpenChange={(open) => !open && dispatch(closeUploadModeModal())}
+        onOpenChange={(open) => !open && closeUploadModeModal()}
       />
 
       <FolderDetail
         data={folderState.folderDetail.data}
         isSheetOpen={folderState.folderDetail.open}
-        setIsSheetOpen={(open) => !open && dispatch(closeFolderDetail())}
+        setIsSheetOpen={(open) => !open && closeFolderDetail()}
       />
       <DocumentDetail
         data={documentState.documentDetail.data}
         isSheetOpen={documentState.documentDetail.open}
-        setIsSheetOpen={(open) => !open && dispatch(closeDocumentDetail())}
+        setIsSheetOpen={(open) => !open && closeDocumentDetail()}
       />
 
       <DocumentPreviewModal
         data={documentState.previewModal.data}
         open={documentState.previewModal.open}
-        onOpenChange={(open) => !open && dispatch(closePreviewModal())}
+        onOpenChange={(open) => !open && closePreviewModal()}
       />
 
       <FolderModal
         open={folderState.folderModal.open}
-        onOpenChange={(open) => !open && dispatch(closeFolderModal())}
+        onOpenChange={(open) => !open && closeFolderModal()}
         isEditing={folderState.folderModal.isEditing}
         data={folderState.folderModal.data}
       />
       <DocumentModal
         open={documentState.documentModal.open}
-        onOpenChange={(open) => !open && dispatch(closeDocumentModal())}
+        onOpenChange={(open) => !open && closeDocumentModal()}
         data={documentState.documentModal.data}
       />
 
       <ShareUrlModal
         doc={documentState.shareUrlModal.data}
         open={documentState.shareUrlModal.open}
-        onOpenChange={(open) => !open && dispatch(closeShareUrlModal())}
+        onOpenChange={(open) => !open && closeShareUrlModal()}
       />
       <ShareModal
         data={fileState.shareModal.data}
         open={fileState.shareModal.open}
-        onOpenChange={(open) => !open && dispatch(closeShareModal())}
+        onOpenChange={(open) => !open && closeShareModal()}
       />
 
       <TransferModal
         data={fileState.transferModal.data}
         open={fileState.transferModal.open}
-        onOpenChange={(open) => !open && dispatch(closeTransferModal())}
+        onOpenChange={(open) => !open && closeTransferModal()}
         mode={fileState.transferModal.mode}
       />
 
       <DocumentVersionModal
         data={documentState.documentVersion.data}
         open={documentState.documentVersion.open}
-        onOpenChange={(open) => !open && dispatch(closeVersionModal())}
+        onOpenChange={(open) => !open && closeVersionModal()}
       />
 
       <DocumentSummarizeModal
         data={documentState.summarizeModal.data}
         open={documentState.summarizeModal.open}
-        onOpenChange={(open) => !open && dispatch(closeSummarizeModal())}
+        onOpenChange={(open) => !open && closeSummarizeModal()}
       />
     </div>
   )

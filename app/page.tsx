@@ -1,4 +1,8 @@
-'use client'
+﻿import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Trang chủ',
+}
 
 import { PublicHomeRoute } from '@/features/auth/components/ProtectedRoute'
 import LandingPage from '@/features/landing/components/LandingPage'

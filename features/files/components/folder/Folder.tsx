@@ -10,17 +10,12 @@ import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import EllipsisDropDown from '../EllipsisDropdown'
-import { useAppDispatch } from '@/store/hooks'
-import {
-  openShareModal,
-  openTransferModal,
-  setPermission,
-  triggerReload,
-} from '@/store/slices/filesSlice'
+
+import { useFilesStore } from '@/store/filesStore'
+import { useFolderStore } from '@/store/folderStore'
 import EllipsisDropDownDeleted from '../EllipsisDropdownDeleted'
 import { Spinner } from '@/components/ui/spinner'
 import { toast } from 'sonner'
-import { openFolderDetail, openFolderModal } from '@/store/slices/folderSlice'
 import { useTranslation } from 'react-i18next'
 
 type Props = {
@@ -44,7 +39,9 @@ const Folder = ({
   const nav = useRouter()
   const [, setDownloading] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
-  const dispatch = useAppDispatch()
+
+  const { openShareModal, setPermission, openTransferModal, triggerReload } = useFilesStore()
+  const { openFolderDetail, openFolderModal } = useFolderStore()
   const { t } = useTranslation()
 
   const handleDropdownToggle = (open: boolean) => {
@@ -62,7 +59,7 @@ const Folder = ({
   }
 
   const handleViewDetail = () => {
-    dispatch(openFolderDetail({ data: data }))
+    openFolderDetail(data)
   }
 
   const handleDownload = async () => {
@@ -97,7 +94,7 @@ const Folder = ({
   }
 
   const handleOpenEdit = () => {
-    dispatch(openFolderModal({ isEditing: true, data: data }))
+    openFolderModal(data, true)
   }
 
   const handleSoftDelete = async () => {
@@ -107,7 +104,7 @@ const Folder = ({
       const req: number[] = [data.id]
       await api.patch(endpoints['folders'], req)
 
-      dispatch(triggerReload())
+      triggerReload()
       toast.success(t('common.trash_success'), {
         duration: 2000,
       })
@@ -128,7 +125,7 @@ const Folder = ({
       const req: number[] = [data.id]
       await api.patch(endpoints['folder-restore'], req)
 
-      dispatch(triggerReload())
+      triggerReload()
       toast.success(t('common.restore_success'), {
         duration: 2000,
       })
@@ -151,7 +148,7 @@ const Folder = ({
         data: req,
       })
 
-      dispatch(triggerReload())
+      triggerReload()
       toast.success(t('common.delete_success'), {
         duration: 2000,
       })
@@ -166,12 +163,12 @@ const Folder = ({
   }
 
   const handleOpenShare = () => {
-    dispatch(openShareModal({ data: data }))
-    dispatch(setPermission(permission))
+    openShareModal(data)
+    setPermission(permission)
   }
 
   const handleOpenTransfer = (mode: 'copy' | 'move') => {
-    dispatch(openTransferModal({ data: data, mode: mode }))
+    openTransferModal(data, mode)
   }
 
   return (

@@ -26,13 +26,12 @@ import {
 } from '@/components/ui/table'
 import api, { endpoints } from '@/lib/api'
 import { ALL_PERMISSIONS } from '@/constants/permissions'
-import { useAppDispatch } from '@/store/hooks'
-import { fetchPermissions } from '@/store/slices/permissionSlice'
 import type { ISetting } from '@/types/type'
 import { PencilLine, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useSearchParams } from '@/hooks/useQueryParams'
 import { useTranslation } from 'react-i18next'
+import { usePermissionStore } from '@/store/permissionStore'
 
 const SettingAdminPage = () => {
   const { t } = useTranslation()
@@ -46,7 +45,7 @@ const SettingAdminPage = () => {
   const [isEditing, setIsEditing] = useState(false)
   const [data, setData] = useState<ISetting | null>()
   const [deletingId, setDeletingId] = useState<number | null>(null)
-  const dispatch = useAppDispatch()
+  const { fetchPermissions } = usePermissionStore()
 
   const loadSettings = async () => {
     try {
@@ -118,8 +117,8 @@ const SettingAdminPage = () => {
       ALL_PERMISSIONS.SETTINGS.DELETE,
     ].map(({ apiPath, method }) => ({ apiPath, method }))
 
-    dispatch(fetchPermissions(permissionsToCheck))
-  }, [dispatch])
+    fetchPermissions(permissionsToCheck)
+  }, [])
 
   return (
     <div className="px-4">

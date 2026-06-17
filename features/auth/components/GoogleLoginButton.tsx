@@ -2,28 +2,25 @@
 
 import { useGoogleLogin } from '@react-oauth/google'
 import { useRouter } from 'next/navigation'
-import { useAppDispatch } from '@/store/hooks'
+import { useAuthStore } from '@/store/authStore'
 import Api, { endpoints } from '@/lib/api'
 import type { Dispatch, SetStateAction } from 'react'
-import { login } from '@/store/slices/userSlice'
 import { useTranslation } from 'react-i18next'
 import { FcGoogle } from 'react-icons/fc'
 import { Button } from '@/components/ui/button'
 
 const GoogleLoginButton = ({ setMsg }: { setMsg: Dispatch<SetStateAction<string>> }) => {
-  const dispatch = useAppDispatch()
+  const { setAuth } = useAuthStore()
   const nav = useRouter()
   const { t } = useTranslation()
 
   const handleLoginGoogle = useGoogleLogin({
     onSuccess: async (response: any) => {
       try {
-        const res = await Api.post(endpoints['google-login'], {
-          code: response.code,
-        })
+        const res = await Api.post(endpoints['google-login'], { code: response.code })
 
         if (res.data.data.accessToken) {
-          dispatch(login({ user: res.data.data.user, accessToken: res.data.data.accessToken }))
+          setAuth(res.data.data.user, res.data.data.accessToken)
           nav.push('/')
         } else {
           sessionStorage.setItem('signupNewUser', JSON.stringify(res.data.data))

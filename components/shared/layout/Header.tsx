@@ -30,8 +30,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '../../ui/avatar'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { logoutAsync } from '@/store/slices/userSlice'
+import { useAuthStore } from '@/store/authStore'
+import api, { endpoints } from '@/lib/api'
 import Setting from '@/components/shared/settings/SettingButton'
 import type { IAccount } from '@/types/type'
 import SearchBar from './Search'
@@ -45,9 +45,15 @@ const logo = {
 }
 
 const Account = ({ user }: { user: IAccount | null }) => {
-  const dispatch = useAppDispatch()
+  const { clearAuth } = useAuthStore()
   const nav = useRouter()
   const { t } = useTranslation()
+
+  const handleLogout = async () => {
+    try { await api.post(endpoints['logout']) } catch {}
+    clearAuth()
+    nav.push('/login')
+  }
 
   if (user) {
     return (
@@ -76,7 +82,7 @@ const Account = ({ user }: { user: IAccount | null }) => {
             <DropdownMenuItem className="font-medium">{t('nav.notifications')}</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => dispatch(logoutAsync())} className="font-medium">
+          <DropdownMenuItem onClick={handleLogout} className="font-medium">
             <span className="text-red-500">{t('nav.logout')}</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -86,7 +92,7 @@ const Account = ({ user }: { user: IAccount | null }) => {
 }
 
 const Header = () => {
-  const user = useAppSelector((state) => state.users.user)
+  const user = useAuthStore((s) => s.user)
   const [openModal, setOpenModal] = useState<boolean>(false)
   const { t } = useTranslation()
 

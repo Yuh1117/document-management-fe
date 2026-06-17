@@ -11,21 +11,23 @@ import { DropdownMenuGroup } from '@radix-ui/react-dropdown-menu'
 import { FileUp, FolderPlus, FolderUp, Plus } from 'lucide-react'
 import { useSidebar } from '@/components/ui/sidebar'
 import { useParams } from 'next/navigation'
-import { useAppDispatch } from '@/store/hooks'
-import { openUploadModeModal, triggerReload } from '@/store/slices/filesSlice'
+
+import { useFilesStore } from '@/store/filesStore'
+import { useFolderStore } from '@/store/folderStore'
 import api, { endpoints } from '@/lib/api'
 import { toast } from 'sonner'
 import { useState } from 'react'
 import { Spinner } from '@/components/ui/spinner'
 import { Separator } from '@/components/ui/separator'
-import { openFolderModal } from '@/store/slices/folderSlice'
 import { useTranslation } from 'react-i18next'
 
 const NewDropDown = () => {
+  const { openUploadModeModal, triggerReload } = useFilesStore()
+  const { openFolderModal } = useFolderStore()
   const { t } = useTranslation()
   const { state } = useSidebar()
   const { id } = useParams<{ id: string }>()
-  const dispatch = useAppDispatch()
+
   const [isUploading, setIsUploading] = useState<boolean>(false)
 
   const handleUpload = async (files: FileList | null) => {
@@ -47,13 +49,9 @@ const NewDropDown = () => {
 
       const conflicts = res.data.data.conflicts
       if (conflicts?.length) {
-        dispatch(
-          openUploadModeModal({
-            files: Array.from(files).filter((f) => conflicts.includes(f.name)),
-          })
-        )
+        openUploadModeModal(Array.from(files).filter((f) => conflicts.includes(f.name)))
       } else {
-        dispatch(triggerReload())
+        triggerReload()
         toast.success(t('upload.upload_success'), {
           duration: 2000,
         })
@@ -104,7 +102,7 @@ const NewDropDown = () => {
       }
 
       await api.post(endpoints['upload-folder'], formData)
-      dispatch(triggerReload())
+      triggerReload()
 
       toast.success(t('upload.folder_upload_success'), {
         duration: 2000,
@@ -137,7 +135,7 @@ const NewDropDown = () => {
   }
 
   const handleAddFolder = () => {
-    dispatch(openFolderModal({ isEditing: false, data: null }))
+    openFolderModal(null, false)
   }
 
   return (

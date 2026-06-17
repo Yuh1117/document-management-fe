@@ -3,7 +3,7 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { ShieldAlert } from 'lucide-react'
 import { Spinner } from '@/components/ui/spinner'
-import { useAppSelector } from '@/store/hooks'
+import { usePermissionStore } from '@/store/permissionStore'
 import { useTranslation } from 'react-i18next'
 
 type Props = {
@@ -13,7 +13,7 @@ type Props = {
 }
 
 const Access = ({ children, permission, hideChildren = false }: Props) => {
-  const { permissionsMap, loading } = useAppSelector((state) => state.permissions)
+  const { permissionsMap, loading } = usePermissionStore()
   const { t } = useTranslation()
   const key = `${permission.apiPath}|${permission.method.toUpperCase()}`
   const allow = permissionsMap[key] === true

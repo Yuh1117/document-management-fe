@@ -20,9 +20,9 @@ import {
 import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
 import api, { endpoints } from '@/lib/api'
-import { useAppDispatch } from '@/store/hooks'
-import { triggerReload } from '@/store/slices/filesSlice'
-import { closeFolderModal } from '@/store/slices/folderSlice'
+
+import { useFilesStore } from '@/store/filesStore'
+import { useFolderStore } from '@/store/folderStore'
 import type { IFolder } from '@/types/type'
 import { AlertCircleIcon } from 'lucide-react'
 import { useEffect, useState, type ChangeEvent } from 'react'
@@ -38,11 +38,13 @@ type Props = {
 }
 
 const FolderModal = ({ open, onOpenChange, isEditing, data }: Props) => {
+  const { triggerReload } = useFilesStore()
+  const { closeFolderModal } = useFolderStore()
   const { t } = useTranslation()
   const form = useForm<IFolder>()
   const [loading, setLoading] = useState<boolean>(false)
   const [msg, setMsg] = useState<string>('')
-  const dispatch = useAppDispatch()
+
   const { id } = useParams<{ id: string }>()
 
   const setError = (field: keyof IFolder, message: string): void => {
@@ -75,7 +77,7 @@ const FolderModal = ({ open, onOpenChange, isEditing, data }: Props) => {
         setLoading(true)
         if (isEditing) {
           await api.patch(endpoints['folder-detail'](data.id), data)
-          dispatch(closeFolderModal())
+          closeFolderModal()
         } else {
           if (id) {
             const parent: { id: number } = {
@@ -85,9 +87,9 @@ const FolderModal = ({ open, onOpenChange, isEditing, data }: Props) => {
           }
 
           await api.post(endpoints['folders'], data)
-          dispatch(closeFolderModal())
+          closeFolderModal()
         }
-        dispatch(triggerReload())
+        triggerReload()
       } catch (error: any) {
         const errors = error.response.data.error
         if (error.response?.status === 400) {

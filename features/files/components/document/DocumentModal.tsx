@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 ﻿import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -21,9 +21,9 @@ import { Input } from '@/components/ui/input'
 import { Spinner } from '@/components/ui/spinner'
 import { Textarea } from '@/components/ui/textarea'
 import api, { endpoints } from '@/lib/api'
-import { useAppDispatch } from '@/store/hooks'
-import { closeDocumentModal } from '@/store/slices/documentSlice'
-import { triggerReload } from '@/store/slices/filesSlice'
+
+import { useDocumentStore } from '@/store/documentStore'
+import { useFilesStore } from '@/store/filesStore'
 import type { IDocument } from '@/types/type'
 import { AlertCircleIcon } from 'lucide-react'
 import { useEffect, useRef, useState, type ChangeEvent } from 'react'
@@ -37,11 +37,13 @@ type Props = {
 }
 
 const DocumentModal = ({ open, onOpenChange, data }: Props) => {
+  const { closeDocumentModal } = useDocumentStore()
+  const { triggerReload } = useFilesStore()
   const { t } = useTranslation()
   const form = useForm<IDocument>()
   const [loading, setLoading] = useState<boolean>(false)
   const [msg, setMsg] = useState<string>('')
-  const dispatch = useAppDispatch()
+
   const nameInputRef = useRef<HTMLInputElement | null>(null)
 
   const setError = (field: keyof IDocument, message: string): void => {
@@ -74,8 +76,8 @@ const DocumentModal = ({ open, onOpenChange, data }: Props) => {
         setLoading(true)
 
         await api.patch(endpoints['document-detail'](data.id), data)
-        dispatch(closeDocumentModal())
-        dispatch(triggerReload())
+        closeDocumentModal()
+        triggerReload()
       } catch (error: any) {
         const errors = error.response.data.error
         if (error.response?.status === 400) {

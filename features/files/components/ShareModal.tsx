@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 ﻿import {
   Dialog,
@@ -37,8 +37,7 @@ import type { IDocument, IDocumentShare, IFolder, IFolderShare } from '@/types/t
 import { isDocument } from '@/lib/format'
 import api, { endpoints } from '@/lib/api'
 import { Spinner } from '@/components/ui/spinner'
-import { useAppDispatch, useAppSelector } from '@/store/hooks'
-import { resetPermission } from '@/store/slices/filesSlice'
+import { useFilesStore } from '@/store/filesStore'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
 
@@ -74,9 +73,9 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
   const [value, setValue] = useState<string>('')
   const [openSelect, setOpenSelect] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
-  const permission = useAppSelector((state) => state.files.permission)
+  const { permission, resetPermission } = useFilesStore()
   const [sharing, setSharing] = useState<boolean>(false)
-  const dispatch = useAppDispatch()
+
 
   const loadUserPermissions = async () => {
     if (!data) return
@@ -236,7 +235,7 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
       open={open}
       onOpenChange={() => {
         onOpenChange(false)
-        dispatch(resetPermission())
+        resetPermission()
       }}
     >
       <DialogContent className="max-w-md">
@@ -466,7 +465,7 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
             variant="outline"
             onClick={() => {
               onOpenChange(false)
-              dispatch(resetPermission())
+              resetPermission()
             }}
           >
             {t('common.ok')}

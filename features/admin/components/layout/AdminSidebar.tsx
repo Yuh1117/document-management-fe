@@ -15,9 +15,9 @@ import {
 } from '@/components/ui/sidebar'
 import { NavUser } from './NavUser'
 import { NavMain } from './AdminNavMain'
-import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { useAuthStore } from '@/store/authStore'
+import { usePermissionStore } from '@/store/permissionStore'
 import { ALL_PERMISSIONS } from '@/constants/permissions'
-import { fetchPermissions } from '@/store/slices/permissionSlice'
 import { useTranslation } from 'react-i18next'
 
 export type NavItem = {
@@ -25,79 +25,40 @@ export type NavItem = {
   url: string
   icon: LucideIcon
   access: boolean
-  permission?: {
-    name: string
-    apiPath: string
-    method: string
-    module: string
-  }
+  permission?: { name: string; apiPath: string; method: string; module: string }
 }
 
 export function AdminSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation()
-  const user = useAppSelector((state) => state.users.user)
-  const permissions = useAppSelector((state) => state.permissions.permissionsMap)
-  const dispatch = useAppDispatch()
+  const user = useAuthStore((s) => s.user)
+  const { permissionsMap, fetchPermissions } = usePermissionStore()
 
   const navMainItems: NavItem[] = [
     { title: t('admin.dashboard'), url: '/admin', icon: ChartPie, access: true },
-    {
-      title: t('admin.settings'),
-      url: '/admin/settings',
-      icon: Settings2,
-      access: false,
-      permission: ALL_PERMISSIONS.SETTINGS.LIST,
-    },
-    {
-      title: t('admin.users'),
-      url: '/admin/users',
-      icon: User,
-      access: false,
-      permission: ALL_PERMISSIONS.USERS.LIST,
-    },
-    {
-      title: t('admin.roles'),
-      url: '/admin/roles',
-      icon: Shield,
-      access: false,
-      permission: ALL_PERMISSIONS.ROLES.LIST,
-    },
-    {
-      title: t('admin.permissions'),
-      url: '/admin/permissions',
-      icon: Lock,
-      access: false,
-      permission: ALL_PERMISSIONS.PERMISSIONS.LIST,
-    },
-    {
-      title: t('admin.summary_feedback'),
-      url: '/admin/summary-feedback',
-      icon: MessageSquareMore,
-      access: true,
-    },
+    { title: t('admin.settings'), url: '/admin/settings', icon: Settings2, access: false, permission: ALL_PERMISSIONS.SETTINGS.LIST },
+    { title: t('admin.users'), url: '/admin/users', icon: User, access: false, permission: ALL_PERMISSIONS.USERS.LIST },
+    { title: t('admin.roles'), url: '/admin/roles', icon: Shield, access: false, permission: ALL_PERMISSIONS.ROLES.LIST },
+    { title: t('admin.permissions'), url: '/admin/permissions', icon: Lock, access: false, permission: ALL_PERMISSIONS.PERMISSIONS.LIST },
+    { title: t('admin.summary_feedback'), url: '/admin/summary-feedback', icon: MessageSquareMore, access: true },
   ]
 
   const [navItems, setNavItems] = React.useState<NavItem[]>(navMainItems)
 
   React.useEffect(() => {
-    const permissionsToCheck = navMainItems.flatMap((item) =>
+    const permsToCheck = navMainItems.flatMap((item) =>
       item.permission ? [{ apiPath: item.permission.apiPath, method: item.permission.method }] : []
     )
-
-    dispatch(fetchPermissions(permissionsToCheck))
-  }, [dispatch])
+    fetchPermissions(permsToCheck)
+  }, [])
 
   React.useEffect(() => {
-    const updatedNav = navMainItems.map((item) => {
+    const updated = navMainItems.map((item) => {
       if (!item.permission) return { ...item, access: true }
       const key = `${item.permission.apiPath}|${item.permission.method.toUpperCase()}`
-      return {
-        ...item,
-        access: permissions?.[key] === true,
-      }
+      return { ...item, access: permissionsMap?.[key] === true }
     })
-    setNavItems(updatedNav)
-  }, [permissions])
+    setNavItems(updated)
+  }, [permissionsMap])
 
   return (
     <Sidebar variant="inset" {...props}>

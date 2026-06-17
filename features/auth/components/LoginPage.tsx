@@ -19,8 +19,7 @@ import { AlertCircleIcon, Loader2Icon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import Api, { endpoints } from '@/lib/api'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { useAppDispatch } from '@/store/hooks'
-import { login } from '@/store/slices/userSlice'
+import { useAuthStore } from '@/store/authStore'
 import { toast, Toaster } from 'sonner'
 import GoogleLoginButton from '@/features/auth/components/GoogleLoginButton'
 import { ChangeLanguage } from '@/components/shared/settings/ChangeLanguage'
@@ -37,7 +36,7 @@ const Login = () => {
   const { t } = useTranslation()
   const [msg, setMsg] = useState<string>('')
   const nav = useRouter()
-  const dispatch = useAppDispatch()
+  const { setAuth } = useAuthStore()
   const [successMsg] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null
     const msg = sessionStorage.getItem('loginSuccessMsg')
@@ -95,7 +94,7 @@ const Login = () => {
       try {
         setLoading(true)
         const res = await Api.post(endpoints['login'], data)
-        dispatch(login({ user: res.data.data.user, accessToken: res.data.data.accessToken }))
+        setAuth(res.data.data.user, res.data.data.accessToken)
         nav.push('/')
       } catch (error: any) {
         if (error.response?.status === 401) {

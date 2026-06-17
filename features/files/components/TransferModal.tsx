@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 ﻿import { useMemo, useState, useEffect } from 'react'
 import {
@@ -14,8 +14,8 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { ChevronRight, ArrowLeft, Folder } from 'lucide-react'
 import type { IDocument, IFolder } from '@/types/type'
 import { toast } from 'sonner'
-import { useAppDispatch } from '@/store/hooks'
-import { triggerReload } from '@/store/slices/filesSlice'
+
+import { useFilesStore } from '@/store/filesStore'
 import api, { endpoints } from '@/lib/api'
 import { useFilesLoader } from '@/features/files/hooks/useFilesLoader'
 import { Spinner } from '@/components/ui/spinner'
@@ -31,6 +31,7 @@ type Props = {
 }
 
 const TransferModal = ({ data, open, onOpenChange, mode }: Props) => {
+  const { triggerReload } = useFilesStore()
   const { t } = useTranslation()
 
   const rootEntries = [{ id: 0, name: t('pages.my_files'), endpoint: endpoints['my-files'] }]
@@ -38,7 +39,7 @@ const TransferModal = ({ data, open, onOpenChange, mode }: Props) => {
   const [selectedFolder, setSelectedFolder] = useState<number | null>(null)
   const [currentEndpoint, setCurrentEndpoint] = useState<string | null>(null)
   const [breadcrumb, setBreadcrumb] = useState<{ id: number; name: string }[]>([])
-  const dispatch = useAppDispatch()
+
   const [transfering, setTransfering] = useState<boolean>(false)
   const { files, loading, hasMore, observerRef } = useFilesLoader(currentEndpoint, open)
 
@@ -70,7 +71,7 @@ const TransferModal = ({ data, open, onOpenChange, mode }: Props) => {
 
       await api.post(url, req)
 
-      dispatch(triggerReload())
+      triggerReload()
       toast.success(t('transfer.success'))
       onOpenChange(false)
     } catch (error) {

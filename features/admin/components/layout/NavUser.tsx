@@ -18,17 +18,23 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
-import { useAppDispatch } from '@/store/hooks'
-import { logout } from '@/store/slices/userSlice'
+import { useAuthStore } from '@/store/authStore'
+import api, { endpoints } from '@/lib/api'
 import type { IAccount } from '@/types/type'
 import { useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 
 export function NavUser({ user }: { user: IAccount | null }) {
   const { isMobile } = useSidebar()
-  const dispatch = useAppDispatch()
+  const { clearAuth } = useAuthStore()
   const nav = useRouter()
   const { t } = useTranslation()
+
+  const handleLogout = async () => {
+    try { await api.post(endpoints['logout']) } catch {}
+    clearAuth()
+    nav.push('/login')
+  }
 
   return (
     <SidebarMenu>
@@ -68,7 +74,7 @@ export function NavUser({ user }: { user: IAccount | null }) {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => dispatch(logout())} className="font-medium">
+            <DropdownMenuItem onClick={handleLogout} className="font-medium">
               <span className="text-red-500">{t('nav.logout')}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>

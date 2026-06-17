@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 ﻿import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Spinner } from '@/components/ui/spinner'
@@ -7,13 +7,13 @@ import { Label } from '@/components/ui/label'
 import type { IDocument } from '@/types/type'
 import { formatFileSize, formatTime } from '@/lib/format'
 import { Separator } from '@/components/ui/separator'
-import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { useDocumentStore } from '@/store/documentStore'
 import { Textarea } from '@/components/ui/textarea'
 import { useEffect, useState } from 'react'
 import api, { endpoints } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Sparkles } from 'lucide-react'
-import { openSummarizeModal } from '@/store/slices/documentSlice'
+import { useAuthStore } from '@/store/authStore'
 import { useTranslation } from 'react-i18next'
 import DocumentStatusBadge from './DocumentStatusBadge'
 
@@ -24,9 +24,10 @@ type Props = {
 }
 
 const DocumentDetail = ({ isSheetOpen, setIsSheetOpen, data }: Props) => {
+  const { openSummarizeModal } = useDocumentStore()
   const { t } = useTranslation()
-  const dispatch = useAppDispatch()
-  const userId = useAppSelector((state) => state.users.user?.id)
+
+  const userId = useAuthStore((s) => s.user?.id)
   const [loadingDetail, setLoadingDetail] = useState<boolean>(false)
   const [documentDetail, setDocumentDetail] = useState<IDocument | null>(null)
 
@@ -47,7 +48,7 @@ const DocumentDetail = ({ isSheetOpen, setIsSheetOpen, data }: Props) => {
   const handleOpenSummarize = () => {
     const doc = documentDetail ?? data
     if (doc) {
-      dispatch(openSummarizeModal({ data: doc }))
+      openSummarizeModal(doc)
     }
   }
 

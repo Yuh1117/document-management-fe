@@ -15,8 +15,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { useParams } from 'next/navigation'
 import api, { endpoints } from '@/lib/api'
 import { toast } from 'sonner'
-import { useAppDispatch } from '@/store/hooks'
-import { triggerReload } from '@/store/slices/filesSlice'
+
+import { useFilesStore } from '@/store/filesStore'
 import { Spinner } from '@/components/ui/spinner'
 import { useTranslation } from 'react-i18next'
 
@@ -27,10 +27,11 @@ type Props = {
 }
 
 const UploadModeModal = ({ open, onOpenChange, files }: Props) => {
+  const { triggerReload } = useFilesStore()
   const { t } = useTranslation()
   const [mode, setMode] = useState<string>('replace')
   const { id } = useParams<{ id: string }>()
-  const dispatch = useAppDispatch()
+
   const [isUploading, setIsUploading] = useState<boolean>(false)
 
   const handleUpload = async () => {
@@ -65,7 +66,7 @@ const UploadModeModal = ({ open, onOpenChange, files }: Props) => {
       })
     } finally {
       setIsUploading(false)
-      dispatch(triggerReload())
+      triggerReload()
     }
   }
 

@@ -1,32 +1,48 @@
 'use client'
 
-import { useEffect } from 'react'
-import { Provider } from 'react-redux'
+import { useEffect, useState } from 'react'
 import { GoogleOAuthProvider } from '@react-oauth/google'
-import { store } from '@/store'
-import { useAppDispatch } from '@/store/hooks'
-import { initAuth } from '@/store/slices/userSlice'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useAuthStore } from '@/store/authStore'
+import { usePermissionStore } from '@/store/permissionStore'
+import api, { endpoints } from '@/lib/api'
 import { ThemeProvider } from '@/components/shared/settings/ThemeProvider'
 import '@/lib/i18n'
 
 const AuthInit = ({ children }: { children: React.ReactNode }) => {
-  const dispatch = useAppDispatch()
+  const { setAuth, setLoading } = useAuthStore()
+  const { clearPermissions } = usePermissionStore()
 
   useEffect(() => {
-    dispatch(initAuth())
-  }, [dispatch])
+    const init = async () => {
+      try {
+        const res = await api.post(endpoints['refresh'])
+        const { accessToken, user } = res.data.data
+        setAuth(user, accessToken)
+      } catch {
+        clearPermissions()
+      } finally {
+        setLoading(false)
+      }
+    }
+    init()
+  }, [])
 
   return <>{children}</>
 }
 
 export function Providers({ children }: { children: React.ReactNode }) {
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: { queries: { retry: false, refetchOnWindowFocus: false } },
+  }))
+
   return (
     <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
-      <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
         <ThemeProvider defaultTheme="light" storageKey="ui-theme">
           <AuthInit>{children}</AuthInit>
         </ThemeProvider>
-      </Provider>
+      </QueryClientProvider>
     </GoogleOAuthProvider>
   )
 }
