@@ -2,10 +2,7 @@ import { cookies } from 'next/headers'
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
-export async function serverFetch<T>(
-  path: string,
-  options?: RequestInit
-): Promise<T | null> {
+export async function serverFetch<T>(path: string, options?: RequestInit): Promise<T | null> {
   try {
     const cookieStore = await cookies()
     const token = cookieStore.get('access_token')?.value

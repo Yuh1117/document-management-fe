@@ -1,6 +1,6 @@
 ﻿'use client'
 
-﻿import { Badge } from '@/components/ui/badge'
+import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'

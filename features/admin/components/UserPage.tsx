@@ -188,10 +188,7 @@ const UserAdminPage = ({ initialUsers = [], initialTotalPages = 1 }: Props) => {
                   </TableRow>
                 ) : error ? (
                   <TableRow>
-                    <TableCell
-                      colSpan={5}
-                      className="text-center text-sm text-destructive py-10"
-                    >
+                    <TableCell colSpan={5} className="text-center text-sm text-destructive py-10">
                       {t('common.error_system')}
                     </TableCell>
                   </TableRow>

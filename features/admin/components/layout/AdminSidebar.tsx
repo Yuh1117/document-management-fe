@@ -35,11 +35,40 @@ export function AdminSidebar(props: React.ComponentProps<typeof Sidebar>) {
 
   const navMainItems: NavItem[] = [
     { title: t('admin.dashboard'), url: '/admin', icon: ChartPie, access: true },
-    { title: t('admin.settings'), url: '/admin/settings', icon: Settings2, access: false, permission: ALL_PERMISSIONS.SETTINGS.LIST },
-    { title: t('admin.users'), url: '/admin/users', icon: User, access: false, permission: ALL_PERMISSIONS.USERS.LIST },
-    { title: t('admin.roles'), url: '/admin/roles', icon: Shield, access: false, permission: ALL_PERMISSIONS.ROLES.LIST },
-    { title: t('admin.permissions'), url: '/admin/permissions', icon: Lock, access: false, permission: ALL_PERMISSIONS.PERMISSIONS.LIST },
-    { title: t('admin.summary_feedback'), url: '/admin/summary-feedback', icon: MessageSquareMore, access: true },
+    {
+      title: t('admin.settings'),
+      url: '/admin/settings',
+      icon: Settings2,
+      access: false,
+      permission: ALL_PERMISSIONS.SETTINGS.LIST,
+    },
+    {
+      title: t('admin.users'),
+      url: '/admin/users',
+      icon: User,
+      access: false,
+      permission: ALL_PERMISSIONS.USERS.LIST,
+    },
+    {
+      title: t('admin.roles'),
+      url: '/admin/roles',
+      icon: Shield,
+      access: false,
+      permission: ALL_PERMISSIONS.ROLES.LIST,
+    },
+    {
+      title: t('admin.permissions'),
+      url: '/admin/permissions',
+      icon: Lock,
+      access: false,
+      permission: ALL_PERMISSIONS.PERMISSIONS.LIST,
+    },
+    {
+      title: t('admin.summary_feedback'),
+      url: '/admin/summary-feedback',
+      icon: MessageSquareMore,
+      access: true,
+    },
   ]
 
   const [navItems, setNavItems] = React.useState<NavItem[]>(navMainItems)

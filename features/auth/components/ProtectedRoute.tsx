@@ -26,7 +26,11 @@ export const AdminRoute = ({ children }: RouteGuardProps) => {
   const { user, loading } = useAuthStore()
   if (loading) return <LoadingScreen />
   return user ? (
-    user.role.name.startsWith('ROLE_ADMIN') ? <>{children}</> : <NotPermitted />
+    user.role.name.startsWith('ROLE_ADMIN') ? (
+      <>{children}</>
+    ) : (
+      <NotPermitted />
+    )
   ) : (
     <NotLogin />
   )

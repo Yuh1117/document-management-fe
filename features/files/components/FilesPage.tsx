@@ -39,7 +39,13 @@ const Files = ({ mode }: { mode: string }) => {
   }
 
   return (
-    <Suspense fallback={<div className="flex justify-center items-center h-full"><Spinner /></div>}>
+    <Suspense
+      fallback={
+        <div className="flex justify-center items-center h-full">
+          <Spinner />
+        </div>
+      }
+    >
       {page}
     </Suspense>
   )

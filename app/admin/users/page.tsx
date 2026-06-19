@@ -29,9 +29,6 @@ export default async function AdminUsersPage({
   const data = await serverFetch<PagedResult<IUser>>(`/api/admin/users?${query}`)
 
   return (
-    <UserAdminPage
-      initialUsers={data?.result ?? []}
-      initialTotalPages={data?.totalPages ?? 1}
-    />
+    <UserAdminPage initialUsers={data?.result ?? []} initialTotalPages={data?.totalPages ?? 1} />
   )
 }

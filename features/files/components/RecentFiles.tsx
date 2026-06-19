@@ -34,7 +34,14 @@ const RecentFilesPage = () => {
   const documentState = useDocumentStore()
   const folderState = useFolderStore()
   const { closeShareModal, closeTransferModal, closeUploadModeModal } = fileState
-  const { closeDocumentDetail, closeDocumentModal, closePreviewModal, closeShareUrlModal, closeSummarizeModal, closeVersionModal } = documentState
+  const {
+    closeDocumentDetail,
+    closeDocumentModal,
+    closePreviewModal,
+    closeShareUrlModal,
+    closeSummarizeModal,
+    closeVersionModal,
+  } = documentState
   const { closeFolderDetail, closeFolderModal } = folderState
   const { files, loading, hasMore, observerRef } = useFilesLoader(
     endpoints['recent-files'],
@@ -42,7 +49,6 @@ const RecentFilesPage = () => {
   )
   const multi = useMultiSelect()
   const { downloading, download } = useDownloadFiles()
-
 
   return (
     <div className="bg-muted dark:bg-muted flex flex-col rounded-xl p-2 select-none">

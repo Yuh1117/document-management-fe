@@ -29,9 +29,6 @@ export default async function AdminRolesPage({
   const data = await serverFetch<PagedResult<IRole>>(`/api/admin/roles?${query}`)
 
   return (
-    <RoleAdminPage
-      initialRoles={data?.result ?? []}
-      initialTotalPages={data?.totalPages ?? 1}
-    />
+    <RoleAdminPage initialRoles={data?.result ?? []} initialTotalPages={data?.totalPages ?? 1} />
   )
 }

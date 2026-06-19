@@ -1,6 +1,6 @@
 'use client'
 
-﻿import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { IFileItem } from '@/types/type'
 import api, { endpoints } from '@/lib/api'
 

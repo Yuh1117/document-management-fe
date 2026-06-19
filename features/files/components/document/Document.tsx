@@ -1,6 +1,6 @@
 ﻿'use client'
 
-﻿import { Fragment, type ReactNode, useState } from 'react'
+import { Fragment, type ReactNode, useState } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import type { IDocument } from '@/types/type'
@@ -62,7 +62,14 @@ const Document = ({
   const [loading, setLoading] = useState<boolean>(false)
 
   const { openShareModal, setPermission, openTransferModal, triggerReload } = useFilesStore()
-  const { openDocumentDetail, openDocumentModal, openPreviewModal, openShareUrlModal, openVersionModal, openSummarizeModal } = useDocumentStore()
+  const {
+    openDocumentDetail,
+    openDocumentModal,
+    openPreviewModal,
+    openShareUrlModal,
+    openVersionModal,
+    openSummarizeModal,
+  } = useDocumentStore()
   const { t } = useTranslation()
   const { icon: Icon, color } = getIconComponentByMimeType(data.mimeType)
   const snippet = showSnippet ? data.snippet : null

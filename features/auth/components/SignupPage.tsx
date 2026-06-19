@@ -39,14 +39,12 @@ const Signup = () => {
   const { t } = useTranslation()
   const [msg, setMsg] = useState<string>('')
   const nav = useRouter()
-  const [newUser] = useState<{ email: string; firstName: string; lastName: string } | null>(
-    () => {
-      if (typeof window === 'undefined') return null
-      const raw = sessionStorage.getItem('signupNewUser')
-      if (raw) sessionStorage.removeItem('signupNewUser')
-      return raw ? JSON.parse(raw) : null
-    }
-  )
+  const [newUser] = useState<{ email: string; firstName: string; lastName: string } | null>(() => {
+    if (typeof window === 'undefined') return null
+    const raw = sessionStorage.getItem('signupNewUser')
+    if (raw) sessionStorage.removeItem('signupNewUser')
+    return raw ? JSON.parse(raw) : null
+  })
   const isGoogleAuth = !!newUser
 
   const setError = (field: keyof SignupFormValues, message: string): void => {
@@ -171,7 +169,10 @@ const Signup = () => {
           error.response?.status === 400 &&
           Array.isArray(error.response.data?.error)
         ) {
-          const errors = error.response.data.error as { field: keyof SignupFormValues; message: string }[]
+          const errors = error.response.data.error as {
+            field: keyof SignupFormValues
+            message: string
+          }[]
           errors.forEach((err) => {
             setError(err.field, err.message)
           })

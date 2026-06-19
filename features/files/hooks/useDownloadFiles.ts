@@ -1,6 +1,6 @@
 'use client'
 
-﻿import api, { endpoints } from '@/lib/api'
+import api, { endpoints } from '@/lib/api'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'

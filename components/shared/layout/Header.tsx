@@ -50,7 +50,9 @@ const Account = ({ user }: { user: IAccount | null }) => {
   const { t } = useTranslation()
 
   const handleLogout = async () => {
-    try { await api.post(endpoints['logout']) } catch {}
+    try {
+      await api.post(endpoints['logout'])
+    } catch {}
     clearAuth()
     nav.push('/login')
   }

@@ -1,6 +1,6 @@
 ﻿'use client'
 
-﻿import { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useFilesStore } from '@/store/filesStore'
 import api, { endpoints } from '@/lib/api'
 import { Spinner } from '@/components/ui/spinner'
@@ -30,7 +30,6 @@ const TrashFilesPage = () => {
   )
   const [cleaning, setCleaning] = useState<boolean>(false)
   const [open, setOpen] = useState<boolean>(false)
-
 
   const handleCleanTrash = async () => {
     try {

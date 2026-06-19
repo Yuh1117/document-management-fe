@@ -53,7 +53,14 @@ const SearchFilesPage = () => {
   const documentState = useDocumentStore()
   const folderState = useFolderStore()
   const { closeShareModal, closeTransferModal, closeUploadModeModal } = fileState
-  const { closeDocumentDetail, closeDocumentModal, closePreviewModal, closeShareUrlModal, closeSummarizeModal, closeVersionModal } = documentState
+  const {
+    closeDocumentDetail,
+    closeDocumentModal,
+    closePreviewModal,
+    closeShareUrlModal,
+    closeSummarizeModal,
+    closeVersionModal,
+  } = documentState
   const { closeFolderDetail, closeFolderModal } = folderState
   const { files, loading, hasMore, observerRef } = useFilesLoader(
     endpoint,
@@ -62,7 +69,6 @@ const SearchFilesPage = () => {
   )
   const multi = useMultiSelect()
   const { downloading, download } = useDownloadFiles()
-
 
   const folders = useMemo(() => files.filter((f) => f.type === 'folder'), [files])
   const documents = useMemo(() => files.filter((f) => f.type === 'document'), [files])

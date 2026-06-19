@@ -1,6 +1,6 @@
 'use client'
 
-﻿import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import type { IDocument } from '@/types/type'
 import { toast } from 'sonner'
 import api, { endpoints } from '@/lib/api'

@@ -112,7 +112,9 @@ export function truncateFileName(name: string, maxBaseLength = 12): string {
 }
 
 export function isDocument(data: unknown): data is IDocument {
-  return data !== null && typeof data === 'object' && 'originalFilename' in data && 'mimeType' in data
+  return (
+    data !== null && typeof data === 'object' && 'originalFilename' in data && 'mimeType' in data
+  )
 }
 
 export function isFolder(data: unknown): data is IFolder {

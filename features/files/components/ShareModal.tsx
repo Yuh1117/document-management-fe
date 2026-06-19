@@ -1,6 +1,6 @@
 ﻿'use client'
 
-﻿import {
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -76,7 +76,6 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
   const [loading, setLoading] = useState<boolean>(false)
   const { permission, resetPermission } = useFilesStore()
   const [sharing, setSharing] = useState<boolean>(false)
-
 
   const loadUserPermissions = async () => {
     if (!data) return
