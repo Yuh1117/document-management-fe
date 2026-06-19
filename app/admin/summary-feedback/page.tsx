@@ -1,7 +1,9 @@
 ﻿import type { Metadata } from 'next'
+import { getT } from '@/lib/getMetadata'
 
-export const metadata: Metadata = {
-  title: 'Phản hồi tóm tắt | Admin',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT()
+  return { title: `${t.admin.summary_feedback} | Admin` }
 }
 
 import SummaryFeedbackAdminPage from '@/features/admin/components/SummaryFeedbackPage'

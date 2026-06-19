@@ -21,6 +21,7 @@ const ChangeLanguage = () => {
   const handleLanguageChange = (value: string) => {
     i18n.changeLanguage(value)
     localStorage.setItem('language', value)
+    document.cookie = `language=${value}; path=/; max-age=31536000`
   }
 
   return (

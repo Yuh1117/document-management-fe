@@ -1,7 +1,9 @@
 ﻿import type { Metadata } from 'next'
+import { getT } from '@/lib/getMetadata'
 
-export const metadata: Metadata = {
-  title: 'Thùng rác',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT()
+  return { title: t.trash.title }
 }
 
 import Files from '@/features/files/components/FilesPage'

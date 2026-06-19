@@ -2,9 +2,11 @@ import type { Metadata } from 'next'
 import PermissionAdminPage from '@/features/admin/components/PermissionPage'
 import { serverFetch } from '@/lib/serverApi'
 import type { IPermission } from '@/types/type'
+import { getT } from '@/lib/getMetadata'
 
-export const metadata: Metadata = {
-  title: 'Quyền hạn | Admin',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT()
+  return { title: `${t.admin.permissions} | Admin` }
 }
 
 interface PagedResult<T> {

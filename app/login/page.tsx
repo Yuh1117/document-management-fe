@@ -1,7 +1,9 @@
 ﻿import type { Metadata } from 'next'
+import { getT } from '@/lib/getMetadata'
 
-export const metadata: Metadata = {
-  title: 'Đăng nhập',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT()
+  return { title: t.login.label }
 }
 
 import { AuthRoute } from '@/features/auth/components/ProtectedRoute'

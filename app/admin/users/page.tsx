@@ -2,9 +2,11 @@ import type { Metadata } from 'next'
 import UserAdminPage from '@/features/admin/components/UserPage'
 import { serverFetch } from '@/lib/serverApi'
 import type { IUser } from '@/types/type'
+import { getT } from '@/lib/getMetadata'
 
-export const metadata: Metadata = {
-  title: 'Người dùng | Admin',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT()
+  return { title: `${t.admin.users} | Admin` }
 }
 
 interface PagedResult<T> {

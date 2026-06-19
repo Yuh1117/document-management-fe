@@ -2,9 +2,11 @@ import type { Metadata } from 'next'
 import RoleAdminPage from '@/features/admin/components/RolePage'
 import { serverFetch } from '@/lib/serverApi'
 import type { IRole } from '@/types/type'
+import { getT } from '@/lib/getMetadata'
 
-export const metadata: Metadata = {
-  title: 'Vai trò | Admin',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT()
+  return { title: `${t.admin.roles} | Admin` }
 }
 
 interface PagedResult<T> {

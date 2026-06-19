@@ -1,7 +1,9 @@
 ﻿import type { Metadata } from 'next'
+import { getT } from '@/lib/getMetadata'
 
-export const metadata: Metadata = {
-  title: 'Tổng quan | Admin',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT()
+  return { title: `${t.admin.dashboard} | Admin` }
 }
 
 import DashBoard from '@/features/admin/components/DashboardPage'
