@@ -20,6 +20,7 @@ import { useTranslation } from 'react-i18next'
 import type { LoginFormValues } from './LoginPage'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import Api, { endpoints } from '@/lib/api'
+import axios from 'axios'
 import { toast, Toaster } from 'sonner'
 import GoogleLoginButton from '@/features/auth/components/GoogleLoginButton'
 import { ChangeLanguage } from '@/components/shared/settings/ChangeLanguage'
@@ -164,10 +165,14 @@ const Signup = () => {
 
         sessionStorage.setItem('loginSuccessMsg', t('signup.success'))
         nav.push('/login')
-      } catch (error: any) {
-        if (error.response?.status === 400 && Array.isArray(error.response.data.error)) {
-          const errors = error.response.data.error
-          errors.forEach((err: any) => {
+      } catch (error) {
+        if (
+          axios.isAxiosError(error) &&
+          error.response?.status === 400 &&
+          Array.isArray(error.response.data?.error)
+        ) {
+          const errors = error.response.data.error as { field: keyof SignupFormValues; message: string }[]
+          errors.forEach((err) => {
             setError(err.field, err.message)
           })
         } else {

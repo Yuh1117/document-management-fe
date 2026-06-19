@@ -36,6 +36,7 @@ import MultiEmailInput from './MultiInputEmail'
 import type { IDocument, IDocumentShare, IFolder, IFolderShare } from '@/types/type'
 import { isDocument } from '@/lib/format'
 import api, { endpoints } from '@/lib/api'
+import axios from 'axios'
 import { Spinner } from '@/components/ui/spinner'
 import { useFilesStore } from '@/store/filesStore'
 import { toast } from 'sonner'
@@ -129,36 +130,27 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
     try {
       setSharing(true)
 
-      let url = ''
-      const payload: any = { shares: people }
-
-      if (isDocument(data)) {
-        payload['documentId'] = data.id
-        url = endpoints['share-doc']
-      } else {
-        payload['folderId'] = data.id
-        url = endpoints['share-folder']
-      }
+      const shares = people
+      const payload = isDocument(data)
+        ? { shares, documentId: data.id }
+        : { shares, folderId: data.id }
+      const url = isDocument(data) ? endpoints['share-doc'] : endpoints['share-folder']
 
       await api.post(url, payload)
 
       toast.success(t('share.share_success'), { duration: 2000 })
       return true
-    } catch (error: any) {
-      console.error('Lỗi khi chia sẻ', error)
-      const errors = error.response.data.error
-      let errorMsg: string = ''
+    } catch (error) {
+      console.error('Share error', error)
+      let errorMsg = t('common.error_system')
 
-      if (error.response?.status === 400) {
+      if (axios.isAxiosError(error) && error.response?.status === 400) {
+        const errors = error.response.data?.error
         if (Array.isArray(errors)) {
-          errors.forEach((err: { field: string; message: string }) => {
-            errorMsg += err.message + '\n'
-          })
-        } else {
+          errorMsg = errors.map((err: { field: string; message: string }) => err.message).join('\n')
+        } else if (typeof errors === 'string') {
           errorMsg = errors
         }
-      } else {
-        errorMsg = t('common.error_system')
       }
 
       toast.error(t('share.share_failed'), { duration: 3000, description: errorMsg })

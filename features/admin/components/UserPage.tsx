@@ -26,6 +26,7 @@ import {
 import api, { endpoints } from '@/lib/api'
 import { ALL_PERMISSIONS } from '@/constants/permissions'
 import type { IUser } from '@/types/type'
+import { toast } from 'sonner'
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar'
 import { PencilLine, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -42,6 +43,7 @@ const UserAdminPage = ({ initialUsers = [], initialTotalPages = 1 }: Props) => {
   const { t } = useTranslation()
   const [users, setUsers] = useState<IUser[]>(initialUsers)
   const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<boolean>(false)
   const [q, setQ] = useSearchParams()
   const page = parseInt(q.get('page') || '1')
   const [kwInput, setKwInput] = useState<string>(q.get('kw') || '')
@@ -55,6 +57,7 @@ const UserAdminPage = ({ initialUsers = [], initialTotalPages = 1 }: Props) => {
   const loadUsers = async () => {
     try {
       setLoading(true)
+      setError(false)
 
       let url = `${endpoints['users']}?page=${page}`
 
@@ -65,8 +68,10 @@ const UserAdminPage = ({ initialUsers = [], initialTotalPages = 1 }: Props) => {
       const res = await api.get(url)
       setUsers(res.data.data.result)
       setTotalPages(res.data.data.totalPages)
-    } catch (error) {
-      console.error(error)
+    } catch (err) {
+      console.error(err)
+      setError(true)
+      toast.error(t('common.error_system'))
     } finally {
       setLoading(false)
     }
@@ -179,6 +184,15 @@ const UserAdminPage = ({ initialUsers = [], initialTotalPages = 1 }: Props) => {
                       <div className="flex justify-center items-center py-10">
                         <Spinner size={28} />
                       </div>
+                    </TableCell>
+                  </TableRow>
+                ) : error ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={5}
+                      className="text-center text-sm text-destructive py-10"
+                    >
+                      {t('common.error_system')}
                     </TableCell>
                   </TableRow>
                 ) : users.length === 0 ? (

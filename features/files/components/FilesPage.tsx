@@ -1,32 +1,48 @@
 'use client'
 
-import MyFilesPage from './MyFiles'
-import FolderFilesPage from './FolderFiles'
-import TrashFilesPage from './TrashFiles'
-import SearchFilesPage from './SearchFiles'
-import SharedFilesPage from './SharedFiles'
-import RecentFilesPage from './RecentFiles'
+import { lazy, Suspense } from 'react'
+import { Spinner } from '@/components/ui/spinner'
 import { useTranslation } from 'react-i18next'
+
+const MyFilesPage = lazy(() => import('./MyFiles'))
+const FolderFilesPage = lazy(() => import('./FolderFiles'))
+const TrashFilesPage = lazy(() => import('./TrashFiles'))
+const SearchFilesPage = lazy(() => import('./SearchFiles'))
+const SharedFilesPage = lazy(() => import('./SharedFiles'))
+const RecentFilesPage = lazy(() => import('./RecentFiles'))
 
 const Files = ({ mode }: { mode: string }) => {
   const { t } = useTranslation()
 
+  let page: React.ReactNode
   switch (mode) {
     case 'my-files':
-      return <MyFilesPage />
+      page = <MyFilesPage />
+      break
     case 'search':
-      return <SearchFilesPage />
+      page = <SearchFilesPage />
+      break
     case 'folder':
-      return <FolderFilesPage />
+      page = <FolderFilesPage />
+      break
     case 'shared':
-      return <SharedFilesPage />
+      page = <SharedFilesPage />
+      break
     case 'recent':
-      return <RecentFilesPage />
+      page = <RecentFilesPage />
+      break
     case 'trash':
-      return <TrashFilesPage />
+      page = <TrashFilesPage />
+      break
     default:
       return <div>{t('common.not_found')}</div>
   }
+
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center h-full"><Spinner /></div>}>
+      {page}
+    </Suspense>
+  )
 }
 
 export default Files

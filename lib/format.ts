@@ -111,10 +111,10 @@ export function truncateFileName(name: string, maxBaseLength = 12): string {
   return `${start}...${end}`
 }
 
-export function isDocument(data: any): data is IDocument {
-  return data && 'originalFilename' in data && 'mimeType' in data
+export function isDocument(data: unknown): data is IDocument {
+  return data !== null && typeof data === 'object' && 'originalFilename' in data && 'mimeType' in data
 }
 
-export function isFolder(data: any): data is IFolder {
-  return data && 'inheritPermissions' in data
+export function isFolder(data: unknown): data is IFolder {
+  return data !== null && typeof data === 'object' && 'inheritPermissions' in data
 }

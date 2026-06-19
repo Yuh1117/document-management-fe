@@ -27,6 +27,7 @@ import api, { endpoints } from '@/lib/api'
 import { ALL_PERMISSIONS } from '@/constants/permissions'
 import { getMethodColor } from '@/lib/format'
 import type { IPermission } from '@/types/type'
+import { toast } from 'sonner'
 import { PencilLine, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useSearchParams } from '@/hooks/useQueryParams'
@@ -42,6 +43,7 @@ const PermissionAdminPage = ({ initialPermissions = [], initialTotalPages = 1 }:
   const { t } = useTranslation()
   const [permissions, setPermissions] = useState<IPermission[]>(initialPermissions)
   const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<boolean>(false)
   const [q, setQ] = useSearchParams()
   const page = parseInt(q.get('page') || '1')
   const [kwInput, setKwInput] = useState<string>(q.get('kw') || '')
@@ -55,6 +57,7 @@ const PermissionAdminPage = ({ initialPermissions = [], initialTotalPages = 1 }:
   const loadPermissions = async () => {
     try {
       setLoading(true)
+      setError(false)
 
       let url = `${endpoints['permissions']}?page=${page}`
 
@@ -65,8 +68,10 @@ const PermissionAdminPage = ({ initialPermissions = [], initialTotalPages = 1 }:
       const res = await api.get(url)
       setPermissions(res.data.data.result)
       setTotalPages(res.data.data.totalPages)
-    } catch (error) {
-      console.error(error)
+    } catch (err) {
+      console.error(err)
+      setError(true)
+      toast.error(t('common.error_system'))
     } finally {
       setLoading(false)
     }
@@ -179,6 +184,15 @@ const PermissionAdminPage = ({ initialPermissions = [], initialTotalPages = 1 }:
                       <div className="flex justify-center items-center py-10">
                         <Spinner size={28} />
                       </div>
+                    </TableCell>
+                  </TableRow>
+                ) : error ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={5}
+                      className="text-center text-sm text-destructive py-10"
+                    >
+                      {t('common.error_system')}
                     </TableCell>
                   </TableRow>
                 ) : permissions.length === 0 ? (

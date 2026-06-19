@@ -1,9 +1,11 @@
 'use client'
 
 import { useGoogleLogin } from '@react-oauth/google'
+import type { CodeResponse } from '@react-oauth/google'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/store/authStore'
 import Api, { endpoints } from '@/lib/api'
+import axios from 'axios'
 import type { Dispatch, SetStateAction } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FcGoogle } from 'react-icons/fc'
@@ -15,7 +17,7 @@ const GoogleLoginButton = ({ setMsg }: { setMsg: Dispatch<SetStateAction<string>
   const { t } = useTranslation()
 
   const handleLoginGoogle = useGoogleLogin({
-    onSuccess: async (response: any) => {
+    onSuccess: async (response: CodeResponse) => {
       try {
         const res = await Api.post(endpoints['google-login'], { code: response.code })
 
@@ -26,9 +28,9 @@ const GoogleLoginButton = ({ setMsg }: { setMsg: Dispatch<SetStateAction<string>
           sessionStorage.setItem('signupNewUser', JSON.stringify(res.data.data))
           nav.push('/signup')
         }
-      } catch (error: any) {
-        if (error.response?.status === 401) {
-          setMsg(error.response.data)
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+          setMsg(String(error.response.data))
         } else {
           setMsg(t('validation.system_error'))
         }

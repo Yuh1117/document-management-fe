@@ -13,7 +13,7 @@ const MAX_NOT_PROCESSED_STATUS_CHECKS = 12
 
 export function useFilesLoader(
   endpoint: string | null,
-  reloadFlag?: any,
+  reloadFlag?: unknown,
   query?: string | Record<string, string>
 ) {
   const [files, setFiles] = useState<IFileItem[]>([])

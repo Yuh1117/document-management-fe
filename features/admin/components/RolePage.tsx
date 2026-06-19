@@ -26,6 +26,7 @@ import {
 import api, { endpoints } from '@/lib/api'
 import { ALL_PERMISSIONS } from '@/constants/permissions'
 import type { IRole } from '@/types/type'
+import { toast } from 'sonner'
 import { PencilLine, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useSearchParams } from '@/hooks/useQueryParams'
@@ -41,6 +42,7 @@ const RoleAdminPage = ({ initialRoles = [], initialTotalPages = 1 }: Props) => {
   const { t } = useTranslation()
   const [roles, setRoles] = useState<IRole[]>(initialRoles)
   const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<boolean>(false)
   const [q, setQ] = useSearchParams()
   const page = parseInt(q.get('page') || '1')
   const [kwInput, setKwInput] = useState<string>(q.get('kw') || '')
@@ -54,6 +56,7 @@ const RoleAdminPage = ({ initialRoles = [], initialTotalPages = 1 }: Props) => {
   const loadRoles = async () => {
     try {
       setLoading(true)
+      setError(false)
 
       let url = `${endpoints['roles']}?page=${page}`
 
@@ -64,8 +67,10 @@ const RoleAdminPage = ({ initialRoles = [], initialTotalPages = 1 }: Props) => {
       const res = await api.get(url)
       setRoles(res.data.data.result)
       setTotalPages(res.data.data.totalPages)
-    } catch (error) {
-      console.error(error)
+    } catch (err) {
+      console.error(err)
+      setError(true)
+      toast.error(t('common.error_system'))
     } finally {
       setLoading(false)
     }
@@ -176,6 +181,15 @@ const RoleAdminPage = ({ initialRoles = [], initialTotalPages = 1 }: Props) => {
                       <div className="flex justify-center items-center py-10">
                         <Spinner size={28} />
                       </div>
+                    </TableCell>
+                  </TableRow>
+                ) : error ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={5}
+                      className="text-center text-sm text-destructive py-10"
+                    >
+                      {t('common.error_system')}
                     </TableCell>
                   </TableRow>
                 ) : roles.length === 0 ? (
