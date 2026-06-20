@@ -1,8 +1,8 @@
-'use client'
+﻿'use client'
 
 import { Button } from '@/components/ui/button'
-import { ChangeLanguage } from '@/components/shared/settings/ChangeLanguage'
-import { ModeToggle } from '@/components/shared/settings/ThemeToggle'
+import { ChangeLanguage } from '@/features/shared/components/settings/ChangeLanguage'
+import { ModeToggle } from '@/features/shared/components/settings/ThemeToggle'
 import { getIconComponentByMimeType } from '@/lib/fileIcons'
 import {
   ArrowRight,

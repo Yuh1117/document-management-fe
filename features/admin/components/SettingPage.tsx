@@ -29,7 +29,7 @@ import { ALL_PERMISSIONS } from '@/constants/permissions'
 import type { ISetting } from '@/types/type'
 import { PencilLine, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { useSearchParams } from '@/hooks/useQueryParams'
+import { useSearchParams } from '@/features/shared/hooks/useQueryParams'
 import { useTranslation } from 'react-i18next'
 import { usePermissionStore } from '@/store/permissionStore'
 

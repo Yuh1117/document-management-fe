@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
 import { GoogleOAuthProvider } from '@react-oauth/google'
@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useAuthStore } from '@/store/authStore'
 import { usePermissionStore } from '@/store/permissionStore'
 import api, { endpoints } from '@/lib/api'
-import { ThemeProvider } from '@/components/shared/settings/ThemeProvider'
+import { ThemeProvider } from '@/features/shared/components/settings/ThemeProvider'
 import '@/lib/i18n'
 
 const AuthInit = ({ children }: { children: React.ReactNode }) => {

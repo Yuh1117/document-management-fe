@@ -9,7 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
 import { PublicHomeRoute } from '@/features/auth/components/ProtectedRoute'
 import LandingPage from '@/features/landing/components/LandingPage'
 import Home from '@/features/files/components/HomePage'
-import { MainLayout } from '@/components/shared/layout/MainLayout'
+import { MainLayout } from '@/features/shared/components/layout/MainLayout'
 
 export default function RootPage() {
   return (

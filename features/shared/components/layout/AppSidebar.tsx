@@ -1,9 +1,9 @@
-'use client'
+﻿'use client'
 
 import * as React from 'react'
 import { Home, Box, Users, Trash, Clock } from 'lucide-react'
 
-import { NavMain } from '@/components/shared/layout/NavMain'
+import { NavMain } from '@/features/shared/components/layout/NavMain'
 import { Sidebar, SidebarContent, SidebarHeader, SidebarRail } from '@/components/ui/sidebar'
 import { NewDropDown } from '@/features/files/components/NewDropdown'
 import type { NavItem } from '@/features/admin/components/layout/AdminSidebar'

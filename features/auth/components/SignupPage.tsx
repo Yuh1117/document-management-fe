@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -23,8 +23,8 @@ import Api, { endpoints } from '@/lib/api'
 import axios from 'axios'
 import { toast, Toaster } from 'sonner'
 import GoogleLoginButton from '@/features/auth/components/GoogleLoginButton'
-import { ChangeLanguage } from '@/components/shared/settings/ChangeLanguage'
-import { ModeToggle } from '@/components/shared/settings/ThemeToggle'
+import { ChangeLanguage } from '@/features/shared/components/settings/ChangeLanguage'
+import { ModeToggle } from '@/features/shared/components/settings/ThemeToggle'
 
 interface SignupFormValues extends LoginFormValues {
   confirmPassword: string

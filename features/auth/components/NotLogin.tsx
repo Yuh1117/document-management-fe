@@ -1,11 +1,11 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { UserRoundCheck } from 'lucide-react'
-import { ChangeLanguage } from '@/components/shared/settings/ChangeLanguage'
-import { ModeToggle } from '@/components/shared/settings/ThemeToggle'
+import { ChangeLanguage } from '@/features/shared/components/settings/ChangeLanguage'
+import { ModeToggle } from '@/features/shared/components/settings/ThemeToggle'
 import { useTranslation } from 'react-i18next'
 
 const NotLogin = () => {

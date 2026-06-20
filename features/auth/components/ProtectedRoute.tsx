@@ -1,11 +1,11 @@
-'use client'
+﻿'use client'
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/store/authStore'
 import NotLogin from './NotLogin'
 import NotPermitted from './NotPermitted'
-import LoadingScreen from '@/components/shared/LoadingScreen'
+import LoadingScreen from '@/features/shared/components/LoadingScreen'
 
 type RouteGuardProps = { children: React.ReactNode }
 type PublicHomeRouteProps = RouteGuardProps & { fallback: React.ReactNode }

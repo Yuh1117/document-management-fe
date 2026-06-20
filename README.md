@@ -1,10 +1,10 @@
 # Document Management System (Frontend)
 
-A modern React + Vite frontend for a document management system. This repository contains the client application (UI, routes, components and state management) used to interact with the DMS backend.
+A modern Next.js frontend for a document management system. This repository contains the client application — UI, routes, components, and state management — used to interact with the DMS backend.
 
 Key goals:
 
-- Provide an intuitive interface for uploading, sharing, organizing and managing documents.
+- Provide an intuitive interface for uploading, sharing, organizing, and managing documents.
 - Support role & permission management, user admin pages, and an accessible client experience.
 
 ## Quick start
@@ -12,26 +12,21 @@ Key goals:
 Prerequisites
 
 - Node.js 20+
-- A package manager: npm, yarn or pnpm
+- npm (or yarn / pnpm)
 
-Install dependencies (pick one)
+Install dependencies
 
 ```bash
-# npm
 npm install
-
-# or yarn
-yarn install
-
-# or pnpm
-pnpm install
 ```
 
-Run in development mode (Vite)
+Run in development mode
 
 ```bash
 npm run dev
 ```
+
+The dev server starts on port **5173** by default (`next dev -p 5173`).
 
 Build for production
 
@@ -39,82 +34,118 @@ Build for production
 npm run build
 ```
 
-Preview production build locally
+Start production server
 
 ```bash
-npm run preview
+npm start
 ```
 
-Lint code
+Format / lint code
 
 ```bash
-npm run lint
+npm run format        # prettier --write
+npm run format:check  # prettier --check
+npm run lint:eslint   # eslint
 ```
 
 ## Environment
 
-```env
-# Backend API base URL (include protocol and path if needed)
-VITE_API_BASE_URL=http://localhost:8080/api
+Create a `.env.local` file at the project root:
 
-# Google OAuth client id (if used)
-VITE_GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
+```env
+# Backend API base URL (include protocol and path)
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8080/api
+
+# Google OAuth client ID
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
 ```
 
 ## Local backend / integration
 
 This repository contains the frontend only. For local development:
 
-- Run the backend locally (default port often `8080`) and set `VITE_API_BASE_URL=http://localhost:8080/api`.
-- If the backend uses a different port/path, update `VITE_API_BASE_URL` accordingly.
-- Ensure CORS is enabled on the backend for the FE origin, or configure a dev proxy in `vite.config.ts`.
-
-## Available scripts
-
-Scripts are defined in `package.json`:
-
-- `dev` — start the Vite dev server
-- `build` — TypeScript project build (`tsc -b`) and Vite production build
-- `preview` — preview the built production bundle
-- `lint` — run ESLint across the repository
-
-If `npm run build` fails due to TypeScript errors, run the TypeScript build directly to see errors:
-
-```bash
-npx tsc -b --verbose
-```
+- Run the backend locally (default port `8080`) and set `NEXT_PUBLIC_API_BASE_URL=http://localhost:8080/api`.
+- If the backend runs on a different port or path, update the env variable accordingly.
+- Ensure CORS is enabled on the backend for the frontend origin.
 
 ## Tech stack
 
-- React 19
-- Vite 7
-- TypeScript
-- Redux Toolkit (state management)
-- React Router (routing)
-- Tailwind CSS v4 (utility styling)
-- Radix UI + shadcn/ui primitives for accessible components
-- React Hook Form + Zod (form validation)
-- @react-oauth/google (Google OAuth)
-- Sonner for toast notifications
-- Axios for HTTP requests
-- i18next / react-i18next for localization (EN/VI)
-- Lucide React for icons
+- **Next.js 16** (App Router) + **React 19**
+- **TypeScript**
+- **Zustand** (client-side state management)
+- **TanStack Query v5** (server-state / data fetching)
+- **Tailwind CSS v4** (utility styling)
+- **Radix UI + shadcn/ui** primitives for accessible components
+- **React Hook Form + Zod** (form validation)
+- **@react-oauth/google** (Google OAuth)
+- **Sonner** for toast notifications
+- **Axios** for HTTP requests
+- **i18next / react-i18next** for localization (EN/VI)
+- **Lucide React** + **React Icons** for icons
+- **docx-preview** for Word document rendering
+- **xlsx** for spreadsheet handling
 
-## Project structure (high level)
+## Project structure
 
-Top-level `src/` contains the application code. Notable directories:
+```
+app/                    # Next.js App Router pages (routing only)
+  layout.tsx            # Root layout
+  page.tsx              # Landing / home page
+  login/                # Auth pages
+  signup/
+  admin/                # Admin section
+    layout.tsx
+    page.tsx
+    users/
+    roles/
+    permissions/
+    settings/
+    summary-feedback/
+  (main)/               # Client (end-user) section
 
-- `src/pages/` — top-level route pages (client + admin)
-- `src/components/` — reusable UI components, organized by area (admin, client, ui, shared)
-- `src/redux/` — Redux store, hooks and slices
-- `src/hooks/` — custom React hooks
-- `src/config/` — API clients and app-wide config
-- `src/lib/` — small utilities
-- `src/types/` — shared TypeScript type definitions
-- `public/` — static assets and localized translation files
+components/
+  ui/                   # shadcn/ui primitives (Button, Dialog, etc.)
 
-Because this app includes both admin and client views, files and folders are grouped by feature for clarity (roles, permissions, users, documents, folders, etc.).
+features/               # All feature logic lives here
+  shared/               # Cross-feature shared code
+    components/
+      layout/           # AppSidebar, Header, MainLayout, NavMain, Search
+      settings/         # ThemeToggle, ChangeLanguage, SettingButton, ThemeProvider
+      LoadingScreen.tsx
+    hooks/
+      useMobile.ts
+      useQueryParams.ts
+  admin/
+    components/         # Admin pages and sub-components
+  auth/
+    components/         # Login, Signup, ProtectedRoute, etc.
+  files/
+    components/         # File/folder/document components
+    hooks/              # useFilesLoader, useMultiSelect, useDownloadFiles
+  landing/
+    components/         # Landing page
+
+store/                  # Zustand stores
+  authStore.ts
+  documentStore.ts
+  filesStore.ts
+  folderStore.ts
+  permissionStore.ts
+lib/                    # Utilities and API clients
+  api.ts                # Axios client (client-side)
+  serverApi.ts          # Server-side API helper
+  i18n.tsx              # i18next setup
+constants/              # App-wide constants (e.g. permissions)
+types/                  # Shared TypeScript type definitions
+public/
+  locales/en/           # English translations
+  locales/vi/           # Vietnamese translations
+```
 
 ## Localization
 
 The app uses `i18next` and includes `public/locales/` with `en` and `vi` translation files. Add or edit translations there to update UI text.
+
+## Docker
+
+A production Dockerfile is provided (`Dockerfile.prod`) along with an nginx config (`nginx.prod.conf`) for serving the built app.
