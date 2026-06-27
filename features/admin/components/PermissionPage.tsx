@@ -117,7 +117,7 @@ const PermissionAdminPage = ({ initialPermissions = [], initialTotalPages = 1 }:
     if (page > 0) {
       loadPermissions()
     }
-  }, [q])
+  }, [q.toString()])
 
   useEffect(() => {
     const permissionsToCheck = [

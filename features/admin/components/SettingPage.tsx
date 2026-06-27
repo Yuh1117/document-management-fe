@@ -107,7 +107,7 @@ const SettingAdminPage = () => {
     if (page > 0) {
       loadSettings()
     }
-  }, [q])
+  }, [q.toString()])
 
   useEffect(() => {
     const permissionsToCheck = [

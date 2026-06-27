@@ -117,7 +117,7 @@ const UserAdminPage = ({ initialUsers = [], initialTotalPages = 1 }: Props) => {
     if (page > 0) {
       loadUsers()
     }
-  }, [q])
+  }, [q.toString()])
 
   useEffect(() => {
     const permissionsToCheck = [

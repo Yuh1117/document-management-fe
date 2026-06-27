@@ -116,7 +116,7 @@ const RoleAdminPage = ({ initialRoles = [], initialTotalPages = 1 }: Props) => {
     if (page > 0) {
       loadRoles()
     }
-  }, [q])
+  }, [q.toString()])
 
   useEffect(() => {
     const permissionsToCheck = [
