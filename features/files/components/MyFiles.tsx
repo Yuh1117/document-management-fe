@@ -28,8 +28,9 @@ import DocumentVersionModal from '@/features/files/components/document/DocumentV
 import DocumentPreviewModal from '@/features/files/components/document/DocumentPreviewModal'
 import DocumentSummarizeModal from '@/features/files/components/document/DocumentSummarizeModal'
 import { useTranslation } from 'react-i18next'
+import type { IFileItem } from '@/types/type'
 
-const MyFilesPage = () => {
+const MyFilesPage = ({ initialItems }: { initialItems?: IFileItem[] }) => {
   const { t } = useTranslation()
   const fileState = useFilesStore()
   const documentState = useDocumentStore()
@@ -46,7 +47,9 @@ const MyFilesPage = () => {
   const { closeFolderDetail, closeFolderModal } = folderState
   const { files, loading, hasMore, observerRef } = useFilesLoader(
     endpoints['my-files'],
-    fileState.reloadFlag
+    fileState.reloadFlag,
+    undefined,
+    initialItems
   )
   const multi = useMultiSelect()
   const { downloading, download } = useDownloadFiles()

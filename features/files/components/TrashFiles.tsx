@@ -20,13 +20,16 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { useTranslation } from 'react-i18next'
+import type { IFileItem } from '@/types/type'
 
-const TrashFilesPage = () => {
+const TrashFilesPage = ({ initialItems }: { initialItems?: IFileItem[] }) => {
   const { t } = useTranslation()
   const { reloadFlag, triggerReload } = useFilesStore()
   const { files, loading, hasMore, observerRef } = useFilesLoader(
     endpoints['trash-files'],
-    reloadFlag
+    reloadFlag,
+    undefined,
+    initialItems
   )
   const [cleaning, setCleaning] = useState<boolean>(false)
   const [open, setOpen] = useState<boolean>(false)

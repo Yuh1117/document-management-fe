@@ -7,7 +7,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 import Files from '@/features/files/components/FilesPage'
+import { serverFetch } from '@/lib/serverApi'
+import { endpoints } from '@/lib/endpoints'
+import type { IFileItem } from '@/types/type'
 
-export default function TrashPage() {
-  return <Files mode="trash" />
+export default async function TrashPage() {
+  const data = await serverFetch<{ result: IFileItem[] }>(`${endpoints['trash-files']}?page=1`)
+  return <Files mode="trash" initialItems={data?.result ?? []} />
 }

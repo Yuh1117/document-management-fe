@@ -14,15 +14,17 @@ const MAX_NOT_PROCESSED_STATUS_CHECKS = 12
 export function useFilesLoader(
   endpoint: string | null,
   reloadFlag?: unknown,
-  query?: string | Record<string, string>
+  query?: string | Record<string, string>,
+  initialItems?: IFileItem[]
 ) {
-  const [files, setFiles] = useState<IFileItem[]>([])
+  const [files, setFiles] = useState<IFileItem[]>(initialItems ?? [])
   const [loading, setLoading] = useState<boolean>(false)
   const [page, setPage] = useState<number>(0)
   const [hasMore, setHasMore] = useState<boolean>(true)
   const [loadKey, setLoadKey] = useState<boolean>(false)
   const observerRef = useRef<HTMLDivElement | null>(null)
   const notProcessedStatusCheckCountRef = useRef<Map<number, number>>(new Map())
+  const skipFirstPageLoad = useRef(!!initialItems?.length)
 
   const stableQuery = useMemo(() => {
     const params = new URLSearchParams()
@@ -120,10 +122,19 @@ export function useFilesLoader(
   }
 
   useEffect(() => {
+    if (skipFirstPageLoad.current && page === 1) {
+      skipFirstPageLoad.current = false
+      return
+    }
     if (endpoint && page > 0) loadFiles()
   }, [page, loadKey])
 
   useEffect(() => {
+    if (skipFirstPageLoad.current) {
+      setPage(1)
+      setHasMore(true)
+      return
+    }
     setFiles([])
     notProcessedStatusCheckCountRef.current.clear()
     setPage(1)

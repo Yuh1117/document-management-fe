@@ -28,8 +28,9 @@ import DocumentPreviewModal from '@/features/files/components/document/DocumentP
 import DocumentSummarizeModal from '@/features/files/components/document/DocumentSummarizeModal'
 import UploadModeModal from '@/features/files/components/UploadModeModal'
 import { useTranslation } from 'react-i18next'
+import type { IFileItem } from '@/types/type'
 
-const SharedFilesPage = () => {
+const SharedFilesPage = ({ initialItems }: { initialItems?: IFileItem[] }) => {
   const { t } = useTranslation()
   const fileState = useFilesStore()
   const documentState = useDocumentStore()
@@ -46,7 +47,9 @@ const SharedFilesPage = () => {
   const { closeFolderDetail, closeFolderModal } = folderState
   const { files, loading, hasMore, observerRef } = useFilesLoader(
     endpoints['shared-files'],
-    fileState.reloadFlag
+    fileState.reloadFlag,
+    undefined,
+    initialItems
   )
   const multi = useMultiSelect()
   const { downloading, download } = useDownloadFiles()

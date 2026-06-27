@@ -7,7 +7,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 import Files from '@/features/files/components/FilesPage'
+import { serverFetch } from '@/lib/serverApi'
+import { endpoints } from '@/lib/endpoints'
+import type { IFileItem } from '@/types/type'
 
-export default function RecentPage() {
-  return <Files mode="recent" />
+export default async function RecentPage() {
+  const data = await serverFetch<{ result: IFileItem[] }>(`${endpoints['recent-files']}?page=1`)
+  return <Files mode="recent" initialItems={data?.result ?? []} />
 }

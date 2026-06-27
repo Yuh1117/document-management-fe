@@ -1,5 +1,8 @@
 import axios from 'axios'
 import { useAuthStore } from '@/store/authStore'
+import { endpoints } from '@/lib/endpoints'
+
+export { endpoints }
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL
 const LANGUAGE_STORAGE_KEY = 'language'
@@ -7,86 +10,6 @@ const LANGUAGE_STORAGE_KEY = 'language'
 export function getAcceptLanguage(): string {
   if (typeof window === 'undefined') return 'vi'
   return localStorage.getItem(LANGUAGE_STORAGE_KEY) || 'vi'
-}
-
-export const endpoints = {
-  login: '/api/login',
-  signup: '/api/signup',
-  profile: '/api/secure/profile',
-  'google-login': '/api/auth/google',
-  refresh: '/api/auth/refresh',
-  logout: '/api/auth/logout',
-
-  settings: '/api/admin/settings',
-  'settings-detail': (id: string | number) => `/api/admin/settings/${id}`,
-
-  users: '/api/admin/users',
-  'users-detail': (id: string | number) => `/api/admin/users/${id}`,
-
-  roles: '/api/admin/roles',
-  'roles-detail': (id: string | number) => `/api/admin/roles/${id}`,
-
-  permissions: '/api/admin/permissions',
-  'permissions-detail': (id: string | number) => `/api/admin/permissions/${id}`,
-  'check-permissions': '/api/secure/check-permissions',
-
-  'my-files': '/api/secure/files/my-files',
-  'folder-files': (folderId: string | number) => `/api/secure/files/folders/${folderId}`,
-  'trash-files': '/api/secure/files/trash',
-  'search-files': '/api/secure/files/search',
-  'advanced-search': '/api/secure/files/advanced-search',
-  'shared-files': '/api/secure/files/shared',
-  'recent-files': '/api/secure/files/recent',
-
-  folders: '/api/secure/folders',
-  documents: '/api/secure/documents',
-  'folder-restore': '/api/secure/folders/restore',
-  'document-restore': '/api/secure/documents/restore',
-  'folder-delete-permanent': '/api/secure/folders/permanent',
-  'document-delete-permanent': '/api/secure/documents/permanent',
-  'files-delete-permanent': '/api/secure/files/permanent',
-  'folder-detail': (folderId: string | number) => `/api/secure/folders/${folderId}`,
-  'document-detail': (documentId: string | number) => `/api/secure/documents/${documentId}`,
-  'document-processing-status': '/api/secure/documents/processing-status',
-  'document-version': (documentId: string | number) =>
-    `/api/secure/documents/${documentId}/versions`,
-  'document-preview': (documentId: string | number) =>
-    `/api/secure/documents/${documentId}/preview`,
-  'document-summarize': (documentId: string | number) =>
-    `/api/secure/documents/${documentId}/summarize`,
-
-  'upload-multiple-documents': '/api/secure/documents/upload',
-  'upload-folder': 'api/secure/folders/upload',
-  'upload-replace-doc': '/api/secure/documents/upload-replace',
-  'upload-keep-doc': '/api/secure/documents/upload-keep',
-
-  'download-single-document': (documentId: string | number) =>
-    `/api/secure/documents/download/${documentId}`,
-  'download-multiple-documents': '/api/secure/documents/download/multiple',
-  'download-single-folder': (folderId: string | number) =>
-    `/api/secure/folders/download/${folderId}`,
-  'download-multiple-folders': '/api/secure/folders/download/multiple',
-  'download-multiple-files': '/api/secure/files/download/multiple',
-  'download-document-version': (documentId: string | number, versionId: string | number) =>
-    `/api/secure/documents/${documentId}/versions/${versionId}/download`,
-
-  'share-url': '/api/secure/documents/share-url',
-  'copy-doc': '/api/secure/documents/copy',
-  'move-doc': '/api/secure/documents/move',
-  'copy-folder': '/api/secure/folders/copy',
-  'move-folder': '/api/secure/folders/move',
-  'share-doc': '/api/secure/documents/share',
-  'share-folder': '/api/secure/folders/share',
-  'share-doc-detail': (documentId: string | number) => `/api/secure/documents/share/${documentId}`,
-  'share-folder-detail': (folderId: string | number) => `/api/secure/folders/share/${folderId}`,
-  'hide-data': '/api/secure/documents/hide-data',
-  'extract-data': '/api/secure/documents/extract-data',
-
-  'document-summary-feedback': (documentId: string | number) =>
-    `/api/secure/documents/${documentId}/summary-feedback`,
-  'summary-feedback-stats': '/api/secure/documents/summary-feedback/stats',
-  'summarize-models': '/api/admin/documents/summarize/models',
-  'summarize-models-reload': '/api/admin/documents/summarize/models/reload',
 }
 
 const api = axios.create({
