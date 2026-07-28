@@ -17,11 +17,11 @@ import { AlertCircleIcon } from 'lucide-react'
 
 type Props = {
   open: boolean
-  deletingId: number | null
+  deletingId: string | null
   onCancel: () => void
   name: string
   load: () => void
-  endpoint: (id: number) => string
+  endpoint: (id: string) => string
 }
 
 const DeleteModal = ({ open, deletingId, onCancel, name, load, endpoint }: Props) => {

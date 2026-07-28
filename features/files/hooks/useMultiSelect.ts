@@ -4,8 +4,8 @@ import { useState } from 'react'
 
 export const useMultiSelect = () => {
   const [isMultiSelectMode, setIsMultiSelectMode] = useState(false)
-  const [selectedDocs, setSelectedDocs] = useState<number[]>([])
-  const [selectedFolders, setSelectedFolders] = useState<number[]>([])
+  const [selectedDocs, setSelectedDocs] = useState<string[]>([])
+  const [selectedFolders, setSelectedFolders] = useState<string[]>([])
 
   const toggleMode = () => {
     setIsMultiSelectMode((prev) => !prev)

@@ -80,8 +80,8 @@ const FolderModal = ({ open, onOpenChange, isEditing, data }: Props) => {
           closeFolderModal()
         } else {
           if (id) {
-            const parent: { id: number } = {
-              id: parseInt(id),
+            const parent: { id: string } = {
+              id,
             }
             data = { ...data, parent }
           }

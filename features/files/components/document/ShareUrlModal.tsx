@@ -43,15 +43,15 @@ type Props = {
 
 const ShareUrlModal = ({ open, onOpenChange, doc }: Props) => {
   const { t } = useTranslation()
-  const form = useForm<{ id: number; expiredTime: number }>()
+  const form = useForm<{ id: string; expiredTime: number }>()
   const [signedUrl, setSignedUrl] = useState<string | null>(null)
   const [sharing, setSharing] = useState<boolean>(false)
 
-  const onSubmit = async (data: { id: number; expiredTime: number }) => {
+  const onSubmit = async (data: { id: string; expiredTime: number }) => {
     try {
       setSharing(true)
 
-      const req: { documentId: number; expiredTime: number } = {
+      const req: { documentId: string; expiredTime: number } = {
         documentId: data.id,
         expiredTime: data.expiredTime,
       }

@@ -50,7 +50,7 @@ const RoleAdminPage = ({ initialRoles = [], initialTotalPages = 1 }: Props) => {
   const [showModal, setShowModal] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [data, setData] = useState<IRole | null>()
-  const [deletingId, setDeletingId] = useState<number | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
   const { fetchPermissions } = usePermissionStore()
 
   const loadRoles = async () => {
@@ -108,7 +108,7 @@ const RoleAdminPage = ({ initialRoles = [], initialTotalPages = 1 }: Props) => {
     setData(setting)
   }
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
     setDeletingId(id)
   }
 

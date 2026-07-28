@@ -51,7 +51,7 @@ const UserAdminPage = ({ initialUsers = [], initialTotalPages = 1 }: Props) => {
   const [showModal, setShowModal] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [data, setData] = useState<IUser | null>()
-  const [deletingId, setDeletingId] = useState<number | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
   const { fetchPermissions } = usePermissionStore()
 
   const loadUsers = async () => {
@@ -109,7 +109,7 @@ const UserAdminPage = ({ initialUsers = [], initialTotalPages = 1 }: Props) => {
     setData(users)
   }
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
     setDeletingId(id)
   }
 

@@ -1,5 +1,5 @@
 export interface IPermission {
-  id: number
+  id: string
   name: string
   apiPath: string
   method: string
@@ -9,7 +9,7 @@ export interface IPermission {
 }
 
 export interface IRole {
-  id: number
+  id: string
   name: string
   description: string
   permissions: IPermission[]
@@ -18,7 +18,7 @@ export interface IRole {
 }
 
 export interface IAccount {
-  id: number
+  id: string
   email: string
   firstName: string
   lastName: string
@@ -29,7 +29,7 @@ export interface IAccount {
 }
 
 export interface IUser {
-  id: number
+  id: string
   email: string
   password: string
   firstName: string
@@ -41,7 +41,7 @@ export interface IUser {
 }
 
 export interface ISetting {
-  id: number
+  id: string
   key: string
   value: string
   description: string
@@ -52,7 +52,7 @@ export interface ISetting {
 }
 
 export interface IDocument {
-  id: number
+  id: string
   name: string
   description: string
   originalFilename: string
@@ -63,7 +63,7 @@ export interface IDocument {
   snippet?: string | null
   processingStatus?: 'PROCESSING' | 'COMPLETED' | 'FAILED' | string | null
   deleted: boolean
-  folder?: { id: number }
+  folder?: { id: string }
   storageType: string
   createdAt?: string
   updatedAt?: string
@@ -72,18 +72,18 @@ export interface IDocument {
 }
 
 export interface IDocumentSummarize {
-  id: number
+  id: string
   summaryText: string
   modelName: string | null
   promptVersion: string | null
 }
 
 export interface IFolder {
-  id: number
+  id: string
   name: string
   inheritPermissions: boolean
   deleted: boolean
-  parent?: { id: number }
+  parent?: { id: string }
   documents?: IDocument[]
   folders?: ISubFolder[]
   createdAt?: string
@@ -93,7 +93,7 @@ export interface IFolder {
 }
 
 export interface ISubFolder {
-  id: number
+  id: string
   name: string
   inheritPermissions: boolean
   isDeleted: boolean
@@ -123,7 +123,7 @@ export interface IFolderShare {
 }
 
 export interface IDocumentVersion {
-  id: number
+  id: string
   name: string
   storedFilename: string
   filePath: string
@@ -136,15 +136,15 @@ export interface IDocumentVersion {
 }
 
 export interface ISummaryFeedbackRes {
-  id: number
-  documentId: number
+  id: string
+  documentId: string
   isHelpful: boolean
   comment?: string
   createdAt?: string
 }
 
 export interface ISummaryFeedbackDocumentStats {
-  documentId: number
+  documentId: string
   helpfulCount: number
   notHelpfulCount: number
   totalCount: number

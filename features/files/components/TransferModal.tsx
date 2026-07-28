@@ -34,11 +34,14 @@ const TransferModal = ({ data, open, onOpenChange, mode }: Props) => {
   const { triggerReload } = useFilesStore()
   const { t } = useTranslation()
 
-  const rootEntries = [{ id: 0, name: t('pages.my_files'), endpoint: endpoints['my-files'] }]
+  const ROOT_ID = 'ROOT' as const
+  const rootEntries = [
+    { id: ROOT_ID, name: t('pages.my_files'), endpoint: endpoints['my-files'] },
+  ]
 
-  const [selectedFolder, setSelectedFolder] = useState<number | null>(null)
+  const [selectedFolder, setSelectedFolder] = useState<string | null>(null)
   const [currentEndpoint, setCurrentEndpoint] = useState<string | null>(null)
-  const [breadcrumb, setBreadcrumb] = useState<{ id: number; name: string }[]>([])
+  const [breadcrumb, setBreadcrumb] = useState<{ id: string; name: string }[]>([])
 
   const [transfering, setTransfering] = useState<boolean>(false)
   const { files, loading, hasMore, observerRef } = useFilesLoader(currentEndpoint, open)
@@ -48,7 +51,7 @@ const TransferModal = ({ data, open, onOpenChange, mode }: Props) => {
     try {
       setTransfering(true)
 
-      const targetFolderId = selectedFolder === 0 ? null : selectedFolder
+      const targetFolderId = selectedFolder === ROOT_ID ? null : selectedFolder
       const req = {
         ids: [data?.id],
         targetFolderId: targetFolderId,
@@ -94,7 +97,7 @@ const TransferModal = ({ data, open, onOpenChange, mode }: Props) => {
       setCurrentEndpoint(null)
     } else {
       const last = newBreadcrumb.at(-1)!
-      if (last.id > 0) {
+      if (last.id !== ROOT_ID) {
         setCurrentEndpoint(endpoints['folder-files'](last.id))
       } else {
         const root = rootEntries.find((r) => r.id === last.id)

@@ -22,8 +22,8 @@ type Props = {
   data: IFolder
   permission: string
   isMultiSelectMode?: boolean
-  selectedFolders?: number[]
-  setSelectedFolders?: (data: number[]) => void
+  selectedFolders?: string[]
+  setSelectedFolders?: (data: string[]) => void
   withCardContent?: boolean
 }
 
@@ -101,7 +101,7 @@ const Folder = ({
     try {
       setLoading(true)
 
-      const req: number[] = [data.id]
+      const req: string[] = [data.id]
       await api.patch(endpoints['folders'], req)
 
       triggerReload()
@@ -122,7 +122,7 @@ const Folder = ({
     try {
       setLoading(true)
 
-      const req: number[] = [data.id]
+      const req: string[] = [data.id]
       await api.patch(endpoints['folder-restore'], req)
 
       triggerReload()
@@ -143,7 +143,7 @@ const Folder = ({
     try {
       setLoading(true)
 
-      const req: number[] = [data.id]
+      const req: string[] = [data.id]
       await api.delete(endpoints['folder-delete-permanent'], {
         data: req,
       })

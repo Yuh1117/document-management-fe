@@ -307,7 +307,7 @@ const UserModal = ({ open, onOpenChange, isEditing, data, loadUsers }: Props) =>
                       <Select
                         value={field.value?.id.toString() || ''}
                         onValueChange={(v: string) => {
-                          const selectedRole = roles?.find((r) => r.id === parseInt(v))
+                          const selectedRole = roles?.find((r) => r.id === v)
                           if (selectedRole) {
                             form.setValue('role', selectedRole)
                           }

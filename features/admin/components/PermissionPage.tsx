@@ -51,7 +51,7 @@ const PermissionAdminPage = ({ initialPermissions = [], initialTotalPages = 1 }:
   const [showModal, setShowModal] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [data, setData] = useState<IPermission | null>()
-  const [deletingId, setDeletingId] = useState<number | null>(null)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
   const { fetchPermissions } = usePermissionStore()
 
   const loadPermissions = async () => {
@@ -109,7 +109,7 @@ const PermissionAdminPage = ({ initialPermissions = [], initialTotalPages = 1 }:
     setData(setting)
   }
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
     setDeletingId(id)
   }
 

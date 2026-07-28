@@ -23,8 +23,8 @@ type Props = {
   data: IDocument
   permission: string
   isMultiSelectMode?: boolean
-  selectedDocs?: number[]
-  setSelectedDocs?: (data: number[]) => void
+  selectedDocs?: string[]
+  setSelectedDocs?: (data: string[]) => void
   showSnippet?: boolean
 }
 
@@ -136,7 +136,7 @@ const Document = ({
     try {
       setLoading(true)
 
-      const req: number[] = [data.id]
+      const req: string[] = [data.id]
       await api.patch(endpoints['documents'], req)
 
       triggerReload()
@@ -157,7 +157,7 @@ const Document = ({
     try {
       setLoading(true)
 
-      const req: number[] = [data.id]
+      const req: string[] = [data.id]
       await api.patch(endpoints['document-restore'], req)
 
       triggerReload()
@@ -178,7 +178,7 @@ const Document = ({
     try {
       setLoading(true)
 
-      const req: number[] = [data.id]
+      const req: string[] = [data.id]
       await api.delete(endpoints['document-delete-permanent'], {
         data: req,
       })

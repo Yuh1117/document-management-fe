@@ -56,7 +56,7 @@ type Props = {
 }
 
 interface Person {
-  id: number
+  id: string
   name: string
   email: string
   avatar: string
@@ -159,7 +159,7 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
     }
   }
 
-  const removeShare = async (data: IDocument | IFolder, ids: number[]): Promise<boolean> => {
+  const removeShare = async (data: IDocument | IFolder, ids: string[]): Promise<boolean> => {
     try {
       setSharing(true)
 

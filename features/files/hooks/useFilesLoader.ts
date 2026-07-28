@@ -5,7 +5,7 @@ import type { IFileItem } from '@/types/type'
 import api, { endpoints } from '@/lib/api'
 
 type DocumentProcessingStatus = {
-  id: number
+  id: string
   processingStatus: string | null
 }
 
@@ -23,7 +23,7 @@ export function useFilesLoader(
   const [hasMore, setHasMore] = useState<boolean>(true)
   const [loadKey, setLoadKey] = useState<boolean>(false)
   const observerRef = useRef<HTMLDivElement | null>(null)
-  const notProcessedStatusCheckCountRef = useRef<Map<number, number>>(new Map())
+  const notProcessedStatusCheckCountRef = useRef<Map<string, number>>(new Map())
   const skipFirstPageLoad = useRef(!!initialItems?.length)
 
   const stableQuery = useMemo(() => {

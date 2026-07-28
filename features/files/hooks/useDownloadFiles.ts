@@ -9,7 +9,7 @@ export function useDownloadFiles() {
   const { t } = useTranslation()
   const [downloading, setDownloading] = useState(false)
 
-  const download = async (docs: number[], folders: number[]) => {
+  const download = async (docs: string[], folders: string[]) => {
     if (docs.length === 0 && folders.length === 0) return
     try {
       setDownloading(true)
