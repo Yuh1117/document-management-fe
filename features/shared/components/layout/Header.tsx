@@ -1,0 +1,211 @@
+﻿'use client'
+
+import { useMemo, useState } from 'react'
+import { Menu, Shield } from 'lucide-react'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
+import { Button } from '@/components/ui/button'
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from '@/components/ui/navigation-menu'
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useAuthStore } from '@/store/authStore'
+import api, { endpoints } from '@/lib/api'
+import Setting from '@/features/shared/components/settings/SettingButton'
+import type { IAccount } from '@/types/type'
+import SearchBar from './Search'
+import HideDataModal from '@/features/files/components/document/HideDataModal'
+import { useTranslation } from 'react-i18next'
+
+const logo = {
+  url: '',
+  title: 'DMS',
+  icon: <img src="/react.svg" alt="Logo" />,
+}
+
+const Account = ({ user }: { user: IAccount | null }) => {
+  const { clearAuth } = useAuthStore()
+  const nav = useRouter()
+  const { t } = useTranslation()
+
+  const handleLogout = async () => {
+    try {
+      await api.post(endpoints['logout'])
+    } catch {}
+    clearAuth()
+    nav.push('/login')
+  }
+
+  if (user) {
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <Avatar className="w-10 h-10 cursor-pointer">
+            <AvatarImage src={user.avatar} alt="avatar" />
+            <AvatarFallback className="rounded-lg">a</AvatarFallback>
+          </Avatar>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="mr-2">
+          <DropdownMenuLabel>
+            <div className="flex flex-col">
+              <span>{`${user.lastName} ${user.firstName}`}</span>
+              <span className="text-muted-foreground truncate text-xs">{user.email}</span>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            {user.role.name.startsWith('ROLE_ADMIN') && (
+              <DropdownMenuItem className="font-medium" onClick={() => nav.push('/admin')}>
+                {t('nav.admin')}
+              </DropdownMenuItem>
+            )}
+            <DropdownMenuItem className="font-medium">{t('nav.account')}</DropdownMenuItem>
+            <DropdownMenuItem className="font-medium">{t('nav.notifications')}</DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleLogout} className="font-medium">
+            <span className="text-red-500">{t('nav.logout')}</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+  }
+}
+
+const Header = () => {
+  const user = useAuthStore((s) => s.user)
+  const [openModal, setOpenModal] = useState<boolean>(false)
+  const { t } = useTranslation()
+
+  const desktopMenu = useMemo(() => {
+    return (
+      <NavigationMenu>
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>{t('nav.other')}</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul className="grid w-[120px] gap-4">
+                <li onClick={() => setOpenModal(true)} className="cursor-pointer">
+                  <NavigationMenuLink asChild>
+                    <div className="flex-row items-center gap-2">
+                      <Shield className="text-black-900" />
+                      {t('nav.hide_data')}
+                    </div>
+                  </NavigationMenuLink>
+                </li>
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
+    )
+  }, [t])
+
+  const mobileMenu = useMemo(() => {
+    return (
+      <Accordion type="single" collapsible className="flex w-full flex-col gap-4">
+        <AccordionItem value="item-1" className="border-b-0">
+          <AccordionTrigger className="text-md py-0 font-semibold hover:no-underline">
+            {t('nav.other')}
+          </AccordionTrigger>
+          <AccordionContent className="mt-2">
+            <ul>
+              <li onClick={() => setOpenModal(true)}>
+                <div className="flex rounded-xl p-3 hover:bg-muted hover:text-accent-foreground items-center gap-2">
+                  <Shield className="text-black-900" />
+                  {t('nav.hide_data')}
+                </div>
+              </li>
+            </ul>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    )
+  }, [t])
+
+  return (
+    <section className="py-3 sticky top-0 z-50 bg-background">
+      <div className="mx-auto px-4">
+        <nav className="hidden grid-cols-[minmax(180px,1fr)_minmax(320px,540px)_minmax(120px,1fr)] items-center gap-6 lg:grid">
+          <div className="flex min-w-0 items-center gap-6">
+            <Link href={logo.url || '/'} className="flex items-center gap-2">
+              <span className="flex items-center gap-3 text-2xl font-semibold tracking-tighter">
+                {logo.title}
+              </span>
+            </Link>
+            <div className="flex items-center">{desktopMenu}</div>
+          </div>
+
+          <div className="flex min-w-0 justify-center">
+            <SearchBar />
+          </div>
+
+          <div className="flex justify-end gap-3">
+            <Setting />
+            <Account user={user} />
+          </div>
+        </nav>
+
+        <div className="block lg:hidden">
+          <div className="flex items-center justify-between gap-3">
+            <a href={logo.url} className="flex items-center gap-2">
+              <span className="text-lg font-semibold tracking-tighter">{logo.title}</span>
+            </a>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <Menu className="size-4" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent className="overflow-y-auto" aria-describedby={undefined}>
+                <SheetHeader>
+                  <SheetTitle>
+                    <a href={logo.url} className="flex items-center gap-2">
+                      <span className="text-lg font-semibold tracking-tighter">{logo.title}</span>
+                    </a>
+                  </SheetTitle>
+                </SheetHeader>
+                <div className="flex flex-col gap-6 p-4">
+                  {mobileMenu}
+
+                  <div className="flex gap-3">
+                    <Setting />
+                    <Account user={user} />
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+          <div className="mt-3">
+            <SearchBar />
+          </div>
+        </div>
+      </div>
+
+      <HideDataModal open={openModal} onOpenChange={setOpenModal} />
+    </section>
+  )
+}
+
+export default Header

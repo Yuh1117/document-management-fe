@@ -1,0 +1,197 @@
+﻿'use client'
+
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Spinner } from '@/components/ui/spinner'
+import { Textarea } from '@/components/ui/textarea'
+import api, { endpoints } from '@/lib/api'
+
+import { useDocumentStore } from '@/store/documentStore'
+import { useFilesStore } from '@/store/filesStore'
+import type { IDocument } from '@/types/type'
+import { AlertCircleIcon } from 'lucide-react'
+import { useEffect, useRef, useState, type ChangeEvent } from 'react'
+import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+
+type Props = {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  data: IDocument | null | undefined
+}
+
+const DocumentModal = ({ open, onOpenChange, data }: Props) => {
+  const { closeDocumentModal } = useDocumentStore()
+  const { triggerReload } = useFilesStore()
+  const { t } = useTranslation()
+  const form = useForm<IDocument>()
+  const [loading, setLoading] = useState<boolean>(false)
+  const [msg, setMsg] = useState<string>('')
+
+  const nameInputRef = useRef<HTMLInputElement | null>(null)
+
+  const setError = (field: keyof IDocument, message: string): void => {
+    form.setError(field, { type: 'manual', message: message })
+  }
+
+  const validateEmpty = (field: keyof IDocument, value: string): boolean => {
+    form.clearErrors(field)
+    if (!value) {
+      setError(field, t('validation.required', { field: t('common.name') }))
+      return false
+    }
+    return true
+  }
+
+  const validate = (data: IDocument): boolean => {
+    let flag = true
+    if (!validateEmpty('name', data.name)) {
+      flag = false
+    }
+    return flag
+  }
+
+  const onSubmit = async (data: IDocument) => {
+    form.clearErrors()
+    setMsg('')
+
+    if (validate(data) === true) {
+      try {
+        setLoading(true)
+
+        await api.patch(endpoints['document-detail'](data.id), data)
+        closeDocumentModal()
+        triggerReload()
+      } catch (error: any) {
+        const errors = error.response.data.error
+        if (error.response?.status === 400) {
+          if (Array.isArray(errors)) {
+            errors.forEach((err: any) => {
+              setError(err.field, err.message)
+            })
+          } else {
+            setMsg(errors)
+          }
+        } else {
+          setMsg(t('validation.system_error'))
+        }
+      } finally {
+        setLoading(false)
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (open) {
+      if (data) {
+        form.reset(data)
+        requestAnimationFrame(() => {
+          const input = nameInputRef.current
+          if (input) {
+            const value = input.value
+            const dotIndex = value.lastIndexOf('.')
+            if (dotIndex > 0) {
+              input.focus()
+              input.setSelectionRange(0, dotIndex)
+            } else {
+              input.focus()
+              input.select()
+            }
+          }
+        })
+      } else {
+        form.reset()
+      }
+      form.clearErrors()
+      setMsg('')
+    }
+  }, [open])
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>{t('document.rename_title')}</DialogTitle>
+        </DialogHeader>
+        {msg && (
+          <Alert className="border-red-500" variant="destructive">
+            <AlertCircleIcon />
+            <AlertDescription>{msg}</AlertDescription>
+          </Alert>
+        )}
+        <Form {...form}>
+          <form className="p-1" onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="flex flex-col gap-6">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('common.name')}</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        ref={nameInputRef}
+                        value={field.value || ''}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                          form.setValue('name', e.target.value)
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('common.description')}</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        value={field.value || ''}
+                        onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+                          form.setValue('description', e.target.value)
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </form>
+        </Form>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            {t('common.cancel')}
+          </Button>
+          <Button onClick={() => form.handleSubmit(onSubmit)()} disabled={loading}>
+            {loading ? <Spinner size={16} /> : t('common.save')}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+export default DocumentModal

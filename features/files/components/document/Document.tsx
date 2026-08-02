@@ -1,0 +1,295 @@
+﻿'use client'
+
+import { Fragment, type ReactNode, useState } from 'react'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import type { IDocument } from '@/types/type'
+import api, { endpoints } from '@/lib/api'
+import { Checkbox } from '@/components/ui/checkbox'
+import EllipsisDropDown from '../EllipsisDropdown'
+import { toast } from 'sonner'
+
+import { useFilesStore } from '@/store/filesStore'
+import { useDocumentStore } from '@/store/documentStore'
+import { cn } from '@/lib/utils'
+import EllipsisDropDownDeleted from '../EllipsisDropdownDeleted'
+import { Spinner } from '@/components/ui/spinner'
+import { getIconComponentByMimeType } from '@/lib/fileIcons'
+import { truncateFileName } from '@/lib/format'
+import { useTranslation } from 'react-i18next'
+import DocumentStatusBadge from './DocumentStatusBadge'
+
+type Props = {
+  data: IDocument
+  permission: string
+  isMultiSelectMode?: boolean
+  selectedDocs?: string[]
+  setSelectedDocs?: (data: string[]) => void
+  showSnippet?: boolean
+}
+
+const renderSnippet = (snippet: string) => {
+  return snippet.split(/(<mark>|<\/mark>)/g).reduce<ReactNode[]>((nodes, part, index, parts) => {
+    if (part === '<mark>' || part === '</mark>') return nodes
+
+    const isMarked = parts[index - 1] === '<mark>' && parts[index + 1] === '</mark>'
+    nodes.push(
+      isMarked ? (
+        <mark
+          key={index}
+          className="rounded bg-yellow-200 px-0.5 text-foreground dark:bg-yellow-500/40"
+        >
+          {part}
+        </mark>
+      ) : (
+        <Fragment key={index}>{part}</Fragment>
+      )
+    )
+    return nodes
+  }, [])
+}
+
+const Document = ({
+  data,
+  permission,
+  isMultiSelectMode,
+  selectedDocs,
+  setSelectedDocs,
+  showSnippet = false,
+}: Props) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false)
+  const [, setDownloading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false)
+
+  const { openShareModal, setPermission, openTransferModal, triggerReload } = useFilesStore()
+  const {
+    openDocumentDetail,
+    openDocumentModal,
+    openPreviewModal,
+    openShareUrlModal,
+    openVersionModal,
+    openSummarizeModal,
+  } = useDocumentStore()
+  const { t } = useTranslation()
+  const { icon: Icon, color } = getIconComponentByMimeType(data.mimeType)
+  const snippet = showSnippet ? data.snippet : null
+  const fileNameMaxLength = snippet ? 24 : 7
+
+  const handleDropdownToggle = (open: boolean) => {
+    setIsDropdownOpen(open)
+  }
+
+  const handleToggleCheck = () => {
+    if (isMultiSelectMode && selectedDocs && setSelectedDocs) {
+      if (selectedDocs.includes(data.id)) {
+        setSelectedDocs(selectedDocs.filter((id) => id !== data.id))
+      } else {
+        setSelectedDocs([...selectedDocs, data.id])
+      }
+    }
+  }
+
+  const handleViewDetail = () => {
+    openDocumentDetail(data)
+  }
+
+  const handlePreview = () => {
+    openPreviewModal(data)
+  }
+
+  const handleDownload = async () => {
+    try {
+      setDownloading(true)
+
+      const res = await api.get(endpoints['download-single-document'](data.id), {
+        responseType: 'blob',
+      })
+
+      const url = window.URL.createObjectURL(new Blob([res.data]))
+      const link = document.createElement('a')
+
+      link.href = url
+      link.setAttribute('download', data.name)
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      window.URL.revokeObjectURL(url)
+
+      toast.success(t('document.download_success'), {
+        duration: 2000,
+      })
+    } catch (error) {
+      console.error('Download failed:', error)
+      toast.error(t('document.download_failed'), {
+        duration: 2000,
+      })
+    } finally {
+      setDownloading(false)
+    }
+  }
+
+  const handleOpenEdit = () => {
+    openDocumentModal(data)
+  }
+
+  const handleSoftDelete = async () => {
+    try {
+      setLoading(true)
+
+      const req: string[] = [data.id]
+      await api.patch(endpoints['documents'], req)
+
+      triggerReload()
+      toast.success(t('common.trash_success'), {
+        duration: 2000,
+      })
+    } catch (error) {
+      console.error('Soft delete failed:', error)
+      toast.error(t('common.trash_failed'), {
+        duration: 2000,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleRestore = async () => {
+    try {
+      setLoading(true)
+
+      const req: string[] = [data.id]
+      await api.patch(endpoints['document-restore'], req)
+
+      triggerReload()
+      toast.success(t('common.restore_success'), {
+        duration: 2000,
+      })
+    } catch (error) {
+      console.error('Restore failed:', error)
+      toast.error(t('common.restore_failed'), {
+        duration: 2000,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleHardDelete = async () => {
+    try {
+      setLoading(true)
+
+      const req: string[] = [data.id]
+      await api.delete(endpoints['document-delete-permanent'], {
+        data: req,
+      })
+
+      triggerReload()
+      toast.success(t('common.delete_success'), {
+        duration: 2000,
+      })
+    } catch (error) {
+      console.error('Hard delete failed:', error)
+      toast.error(t('common.delete_failed'), {
+        duration: 2000,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleOpenShareUrl = () => {
+    openShareUrlModal(data)
+  }
+
+  const handleOpenShare = () => {
+    openShareModal(data)
+    setPermission(permission)
+  }
+
+  const handleOpenTransfer = (mode: 'copy' | 'move') => {
+    openTransferModal(data, mode)
+  }
+
+  const handleOpenVersion = () => {
+    openVersionModal(data)
+  }
+
+  const handleOpenSummarize = () => {
+    openSummarizeModal(data)
+  }
+
+  return (
+    <Card
+      onDoubleClick={() => {
+        if (!isMultiSelectMode) handlePreview()
+      }}
+      onClick={handleToggleCheck}
+      className={cn(
+        'bg-background hover:bg-input/50 py-4 rounded-2xl border-1 transition-all duration-200',
+        snippet && 'h-[280px]',
+        isDropdownOpen && 'bg-input/50'
+      )}
+    >
+      <CardHeader className="flex items-center justify-between gap-2">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <Icon size={20} color={color} className="shrink-0" />
+          <Label className="shrink-0 whitespace-nowrap">
+            {truncateFileName(data.name, fileNameMaxLength)}
+          </Label>
+          <DocumentStatusBadge document={data} compact className="ml-auto" />
+        </div>
+        <div className="shrink-0">
+          {loading ? (
+            <Spinner />
+          ) : data.deleted ? (
+            <EllipsisDropDownDeleted
+              handleDropdownToggle={handleDropdownToggle}
+              handleRestore={handleRestore}
+              handleHardDelete={handleHardDelete}
+            />
+          ) : isMultiSelectMode && selectedDocs && setSelectedDocs ? (
+            <Checkbox
+              className="border-2 border-black dark:border-white"
+              checked={selectedDocs.includes(data.id)}
+              onCheckedChange={handleToggleCheck}
+            />
+          ) : (
+            <EllipsisDropDown
+              type={'document'}
+              permission={permission}
+              handleDropdownToggle={handleDropdownToggle}
+              handleDownload={handleDownload}
+              handleViewDetail={handleViewDetail}
+              handleOpenEdit={handleOpenEdit}
+              handleSoftDelete={handleSoftDelete}
+              handleOpenShareUrl={handleOpenShareUrl}
+              handleOpenTransfer={handleOpenTransfer}
+              handleOpenShare={handleOpenShare}
+              handleOpenVersion={handleOpenVersion}
+              handlePreview={handlePreview}
+              handleOpenSummarize={handleOpenSummarize}
+            />
+          )}
+        </div>
+      </CardHeader>
+      <CardContent>
+        {snippet ? (
+          <div className="flex h-[160px] gap-3">
+            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-muted">
+              <Icon size={40} color={color} />
+            </div>
+            <p className="min-w-0 flex-1 overflow-y-auto whitespace-normal break-words rounded-md border bg-muted/50 p-3 text-xs leading-5 text-muted-foreground select-text [scrollbar-color:transparent_transparent] [scrollbar-gutter:stable] [scrollbar-width:thin] hover:[scrollbar-color:hsl(var(--muted-foreground)/0.3)_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-transparent hover:[&::-webkit-scrollbar-thumb]:bg-muted-foreground/30">
+              {renderSnippet(snippet)}
+            </p>
+          </div>
+        ) : (
+          <div className="flex h-[150px] items-center justify-center rounded-xl bg-muted">
+            <Icon size={50} color={color} />
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
+export default Document

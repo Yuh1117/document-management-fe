@@ -8,8 +8,16 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-dist
-dist-ssr
+
+# next.js
+/.next/
+/out/
+next-env.d.ts
+*.tsbuildinfo
+
+# vercel
+.vercel
+
 *.local
 
 # Editor directories and files
