@@ -7,6 +7,20 @@ Key goals:
 - Provide an intuitive interface for uploading, sharing, organizing, and managing documents.
 - Support role & permission management, user admin pages, and an accessible client experience.
 
+## System overview
+
+This repository is one of three services that make up the DMS:
+
+| Repository                             | Role                                                                                                                                                                       |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **document-management-be**             | Spring Boot REST API — auth, document/folder management, permissions, file storage, RabbitMQ publisher. Also owns the `docker-compose.yml` that runs the backing services. |
+| **document-management-processor**      | Python/FastAPI — OCR, chunking, embeddings, Elasticsearch indexing, Gemini summarization, RabbitMQ worker                                                                  |
+| **document-management-fe** (this repo) | Next.js 16 (App Router) frontend — UI, routing, admin panel, i18n                                                                                                          |
+
+This app talks only to the backend. Search and AI summarization are served by the
+processor but proxied through the backend, so there is no direct connection from
+the browser to the processor.
+
 ## Quick start
 
 Prerequisites
@@ -39,6 +53,8 @@ Start production server
 ```bash
 npm start
 ```
+
+This also binds port **5173** (`next start -p 5173`).
 
 Format / lint code
 
@@ -81,7 +97,10 @@ This repository contains the frontend only. For local development:
 - **Sonner** for toast notifications
 - **Axios** for HTTP requests
 - **i18next / react-i18next** for localization (EN/VI)
+- **next-themes** for light/dark theme switching
+- **cmdk** for the command palette / search UI
 - **Lucide React** + **React Icons** for icons
+- **react-markdown + remark-gfm** for rendering AI-generated summaries
 - **docx-preview** for Word document rendering
 - **xlsx** for spreadsheet handling
 
@@ -90,6 +109,8 @@ This repository contains the frontend only. For local development:
 ```
 app/                    # Next.js App Router pages (routing only)
   layout.tsx            # Root layout
+  providers.tsx         # Client-side providers (Query, theme, i18n)
+  icon.svg              # Favicon — auto-linked by Next.js, adapts to light/dark
   page.tsx              # Landing / home page
   login/                # Auth pages
   signup/
@@ -137,7 +158,8 @@ lib/                    # Utilities and API clients
   i18n.tsx              # i18next setup
 constants/              # App-wide constants (e.g. permissions)
 types/                  # Shared TypeScript type definitions
-public/
+public/                 # Static assets served verbatim at /
+  react.svg             # Header logo
   locales/en/           # English translations
   locales/vi/           # Vietnamese translations
 ```
@@ -149,3 +171,9 @@ The app uses `i18next` and includes `public/locales/` with `en` and `vi` transla
 ## Docker
 
 A production Dockerfile is provided (`Dockerfile.prod`) along with an nginx config (`nginx.prod.conf`) for serving the built app.
+
+Note that the frontend is **not** part of the `docker-compose.yml` in the backend
+repository — that file covers the backend, processor, worker, and their
+infrastructure only. Run this app separately with `npm run dev` or its own image.
+`docker-compose.prod.yml` has a `frontend` service, but it is commented out and
+still references stale `VITE_*` build args from before the migration to Next.js.
