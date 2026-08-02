@@ -36,6 +36,7 @@ type Props = {
 const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
   const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
+  const [initialLoading, setInitialLoading] = useState(false)
   const [result, setResult] = useState<IDocumentSummarize | null>(null)
   const [feedbackStats, setFeedbackStats] = useState<ISummaryFeedbackDocumentStats | null>(null)
   const [myFeedback, setMyFeedback] = useState<ISummaryFeedbackRes | null>(null)
@@ -45,13 +46,38 @@ const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
   const [pendingVote, setPendingVote] = useState<boolean | null>(null)
 
   useEffect(() => {
-    if (open) {
-      setResult(null)
-      setFeedbackStats(null)
-      setMyFeedback(null)
-      setShowCommentBox(false)
-      setComment('')
-      setPendingVote(null)
+    if (!open || !data) return
+
+    const documentId = data.id
+    let active = true
+
+    setResult(null)
+    setFeedbackStats(null)
+    setMyFeedback(null)
+    setShowCommentBox(false)
+    setComment('')
+    setPendingVote(null)
+
+    const loadExistingSummary = async () => {
+      try {
+        setInitialLoading(true)
+        const res = await api.get(endpoints['document-summarize'](documentId))
+        const existing = res.data.data as IDocumentSummarize | null
+        if (!active || !existing) return
+
+        setResult(existing)
+        await loadFeedbackStats()
+      } catch (err) {
+        console.error(err)
+      } finally {
+        if (active) setInitialLoading(false)
+      }
+    }
+
+    void loadExistingSummary()
+
+    return () => {
+      active = false
     }
   }, [open, data?.id])
 
@@ -69,7 +95,7 @@ const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
     if (!data) return
     try {
       setLoading(true)
-      const res = await api.get(endpoints['document-summarize'](data.id))
+      const res = await api.post(endpoints['document-summarize'](data.id))
       setResult(res.data.data as IDocumentSummarize)
       await loadFeedbackStats()
       setMyFeedback(null)
@@ -163,8 +189,15 @@ const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
             </ReactMarkdown>
           </ScrollArea>
         ) : (
-          <div className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-            {t('document.summary_prompt')}
+          <div className="flex items-center justify-center gap-2 rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
+            {initialLoading ? (
+              <>
+                <Spinner size={16} />
+                {t('loading')}
+              </>
+            ) : (
+              t('document.summary_prompt')
+            )}
           </div>
         )}
         {result &&
@@ -256,12 +289,16 @@ const DocumentSummarizeModal = ({ data, open, onOpenChange }: Props) => {
                 setShowCommentBox(false)
                 setPendingVote(null)
               }}
-              disabled={loading}
+              disabled={loading || initialLoading}
             >
               {t('document.summary_clear')}
             </Button>
           )}
-          <Button type="button" onClick={runSummarize} disabled={loading || !data}>
+          <Button
+            type="button"
+            onClick={runSummarize}
+            disabled={loading || initialLoading || !data}
+          >
             {loading ? (
               <>
                 <Spinner size={16} className="me-2" />
