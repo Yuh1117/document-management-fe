@@ -18,7 +18,6 @@ import api, { endpoints } from '@/lib/api'
 import { toast } from 'sonner'
 import { useState } from 'react'
 import { Spinner } from '@/components/ui/spinner'
-import { Separator } from '@/components/ui/separator'
 import { useTranslation } from 'react-i18next'
 
 const NewDropDown = () => {
@@ -156,9 +155,10 @@ const NewDropDown = () => {
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-50" align="start">
-        <DropdownMenuGroup>
+      <DropdownMenuContent className="w-72 rounded-2xl p-3 shadow-lg" align="start">
+        <DropdownMenuGroup className="grid grid-cols-3 gap-1.5">
           <DropdownMenuItem
+            className="group flex h-24 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-transparent px-1 py-3 text-center transition-colors hover:border-border hover:bg-accent focus:border-border focus:bg-accent"
             onClick={() => {
               const input = document.createElement('input')
               input.type = 'file'
@@ -167,11 +167,12 @@ const NewDropDown = () => {
               input.click()
             }}
           >
-            <FileUp className="text-black-900" />
-            {t('upload.upload_files')}
+            <FileUp className="size-6 text-muted-foreground group-hover:text-foreground" />
+            <span className="text-xs leading-tight font-medium">{t('upload.upload_files')}</span>
           </DropdownMenuItem>
 
           <DropdownMenuItem
+            className="group flex h-24 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-transparent px-1 py-3 text-center transition-colors hover:border-border hover:bg-accent focus:border-border focus:bg-accent"
             onClick={() => {
               const input = document.createElement('input')
               input.type = 'file'
@@ -181,15 +182,16 @@ const NewDropDown = () => {
               input.click()
             }}
           >
-            <FolderUp className="text-black-900" />
-            {t('upload.upload_folder')}
+            <FolderUp className="size-6 text-muted-foreground group-hover:text-foreground" />
+            <span className="text-xs leading-tight font-medium">{t('upload.upload_folder')}</span>
           </DropdownMenuItem>
 
-          <Separator />
-
-          <DropdownMenuItem onClick={handleAddFolder}>
-            <FolderPlus className="text-black-900" />
-            {t('upload.new_folder')}
+          <DropdownMenuItem
+            className="group flex h-24 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-transparent px-1 py-3 text-center transition-colors hover:border-border hover:bg-accent focus:border-border focus:bg-accent"
+            onClick={handleAddFolder}
+          >
+            <FolderPlus className="size-6 text-muted-foreground group-hover:text-foreground" />
+            <span className="text-xs leading-tight font-medium">{t('upload.new_folder')}</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>

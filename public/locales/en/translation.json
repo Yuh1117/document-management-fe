@@ -122,6 +122,12 @@
     "advanced_search": "Advanced Search",
     "folder_files": "Files"
   },
+  "home": {
+    "my_files_desc": "Manage and access all your documents",
+    "recent_desc": "See the files you recently opened or edited",
+    "shared_desc": "Documents others have shared with you",
+    "trash_desc": "Restore or permanently delete removed files"
+  },
   "file": {
     "folders": "Folders",
     "documents": "Documents",

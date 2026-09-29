@@ -122,6 +122,12 @@
     "advanced_search": "Tìm kiếm nâng cao",
     "folder_files": "Files"
   },
+  "home": {
+    "my_files_desc": "Quản lý và truy cập tất cả tài liệu của bạn",
+    "recent_desc": "Xem các file bạn vừa mở hoặc chỉnh sửa",
+    "shared_desc": "Tài liệu được người khác chia sẻ với bạn",
+    "trash_desc": "Khôi phục hoặc xóa vĩnh viễn file đã xóa"
+  },
   "file": {
     "folders": "Thư mục",
     "documents": "Tài liệu",
