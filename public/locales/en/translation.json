@@ -104,6 +104,7 @@
     "my_files": "My Files",
     "recent": "Recent",
     "shared": "Shared",
+    "ask": "Ask",
     "trash": "Trash",
     "search": "Search",
     "other": "More",
@@ -120,6 +121,7 @@
     "shared_files": "Shared Files",
     "search": "Search",
     "advanced_search": "Advanced Search",
+    "ask": "Ask your documents",
     "folder_files": "Files"
   },
   "home": {
@@ -342,5 +344,25 @@
     "error": "Cannot preview this document",
     "no_data": "No data to display",
     "unsupported": "Preview not supported for this file type."
+  },
+  "ask": {
+    "title": "Ask your documents",
+    "placeholder": "Ask a question about your documents...",
+    "send": "Send",
+    "stop": "Stop",
+    "new_chat": "New chat",
+    "empty_title": "Ask anything about your documents",
+    "empty_hint": "Answers are generated from your own documents, with sources cited.",
+    "searching": "Searching your documents…",
+    "answering": "Writing the answer…",
+    "sources": "Sources",
+    "chunks_one": "{{count}} chunk",
+    "chunks_other": "{{count}} chunks",
+    "open_source": "Open document",
+    "open_source_failed": "Could not open this document",
+    "stopped": "(stopped)",
+    "error": "Could not answer right now. Please try again.",
+    "session_expired": "Your session has expired.",
+    "disclaimer": "AI can make mistakes. Check the cited sources."
   }
 }

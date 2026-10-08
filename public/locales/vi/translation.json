@@ -104,6 +104,7 @@
     "my_files": "Files của tôi",
     "recent": "Gần đây",
     "shared": "Được chia sẻ",
+    "ask": "Hỏi đáp",
     "trash": "Thùng rác",
     "search": "Tìm kiếm",
     "other": "Khác",
@@ -120,6 +121,7 @@
     "shared_files": "Files được chia sẻ",
     "search": "Tìm kiếm",
     "advanced_search": "Tìm kiếm nâng cao",
+    "ask": "Hỏi đáp tài liệu",
     "folder_files": "Files"
   },
   "home": {
@@ -342,5 +344,24 @@
     "error": "Không thể xem trước tài liệu",
     "no_data": "Không có dữ liệu để hiển thị",
     "unsupported": "Không hỗ trợ xem cho loại file này."
+  },
+  "ask": {
+    "title": "Hỏi đáp tài liệu",
+    "placeholder": "Nhập câu hỏi về tài liệu của bạn...",
+    "send": "Gửi",
+    "stop": "Dừng",
+    "new_chat": "Cuộc trò chuyện mới",
+    "empty_title": "Hỏi bất kỳ điều gì về tài liệu của bạn",
+    "empty_hint": "Câu trả lời được tạo từ chính các tài liệu của bạn, kèm nguồn trích dẫn.",
+    "searching": "Đang tìm trong tài liệu…",
+    "answering": "Đang soạn câu trả lời…",
+    "sources": "Nguồn",
+    "chunks_other": "{{count}} chunks",
+    "open_source": "Mở tài liệu",
+    "open_source_failed": "Không thể mở tài liệu này",
+    "stopped": "(đã dừng)",
+    "error": "Không thể trả lời lúc này. Vui lòng thử lại.",
+    "session_expired": "Phiên đăng nhập đã hết hạn.",
+    "disclaimer": "AI có thể nhầm lẫn. Hãy kiểm tra lại nguồn trích dẫn."
   }
 }

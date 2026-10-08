@@ -42,9 +42,7 @@ const Home = () => {
                   </span>
                   <div className="flex flex-col gap-0.5">
                     <span className="text-md font-medium">{t(labelKey)}</span>
-                    <span className="text-muted-foreground text-xs leading-snug">
-                      {t(descKey)}
-                    </span>
+                    <span className="text-muted-foreground text-xs leading-snug">{t(descKey)}</span>
                   </div>
                 </div>
               </Card>

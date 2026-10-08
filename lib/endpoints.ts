@@ -41,6 +41,7 @@ export const endpoints = {
     `/api/secure/documents/${documentId}/versions`,
   'document-preview': (documentId: string | number) =>
     `/api/secure/documents/${documentId}/preview`,
+  'rag-ask': '/api/secure/rag/ask',
   'document-summarize': (documentId: string | number) =>
     `/api/secure/documents/${documentId}/summarize`,
 

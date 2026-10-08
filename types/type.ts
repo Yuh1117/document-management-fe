@@ -71,6 +71,14 @@ export interface IDocument {
   updatedBy?: IUser
 }
 
+export interface IRagSource {
+  index: number
+  document_id: string
+  name: string | null
+  snippet: string
+  score: number
+}
+
 export interface IDocumentSummarize {
   id: string
   summaryText: string
