@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { MessageSquareText, SendHorizontal, Square, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { Spinner } from '@/components/ui/spinner'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import api, { endpoints } from '@/lib/api'
@@ -164,86 +165,88 @@ const AskPage = () => {
         )}
       </div>
 
-      <div className="mx-auto min-h-0 w-full max-w-5xl flex-1 space-y-4 overflow-y-auto p-3">
-        {messages.length === 0 && (
-          <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-muted-foreground">
-            <MessageSquareText className="size-8" />
-            <p className="text-sm font-medium text-foreground">{t('ask.empty_title')}</p>
-            <p className="max-w-sm text-xs">{t('ask.empty_hint')}</p>
-          </div>
-        )}
-
-        {messages.map((m) =>
-          m.role === 'user' ? (
-            <div key={m.id} className="flex justify-end">
-              <div className="max-w-[85%] whitespace-pre-wrap rounded-2xl bg-primary px-3 py-2 text-sm text-primary-foreground">
-                {m.content}
-              </div>
+      <ScrollArea className="min-h-0 w-full flex-1 [&>[data-slot=scroll-area-viewport]>div]:!block [&>[data-slot=scroll-area-viewport]>div]:h-full">
+        <div className="mx-auto h-full w-full max-w-5xl space-y-4 p-3">
+          {messages.length === 0 && (
+            <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-muted-foreground">
+              <MessageSquareText className="size-8" />
+              <p className="text-sm font-medium text-foreground">{t('ask.empty_title')}</p>
+              <p className="max-w-sm text-xs">{t('ask.empty_hint')}</p>
             </div>
-          ) : (
-            <div key={m.id} className="flex flex-col items-start gap-2">
-              <div className="max-w-[95%] px-1 py-2">
-                {m.status === 'searching' && (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Spinner size={14} />
-                    {t('ask.searching')}
-                  </div>
-                )}
-                {m.content && <AnswerMarkdown>{m.content}</AnswerMarkdown>}
-                {m.status === 'answering' && !m.content && (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Spinner size={14} />
-                    {t('ask.answering')}
-                  </div>
-                )}
-                {m.status === 'stopped' && (
-                  <p className="text-xs text-muted-foreground">{t('ask.stopped')}</p>
-                )}
-                {m.status === 'error' && (
-                  <p className="text-sm text-destructive">{m.error || t('ask.error')}</p>
-                )}
-              </div>
+          )}
 
-              {m.sources && m.sources.length > 0 && (
-                <div className="w-full max-w-[95%] space-y-1">
-                  <p className="text-xs text-muted-foreground">{t('ask.sources')}</p>
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    {groupSources(m.sources).map((g) => (
-                      <button
-                        key={g.documentId}
-                        type="button"
-                        onClick={() => openSource(g.documentId)}
-                        title={t('ask.open_source')}
-                        className="flex cursor-pointer flex-col gap-1.5 rounded-xl border bg-background/50 p-3 text-left transition hover:bg-accent hover:shadow-sm"
-                      >
-                        <span className="flex min-w-0 items-center gap-2">
-                          <SourceFileIcon name={g.name} />
-                          <span className="truncate text-sm font-medium">
-                            {g.name ?? g.documentId}
-                          </span>
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          ({t('ask.chunks', { count: g.indexes.length })})
-                        </span>
-                        <span className="line-clamp-2 text-xs text-muted-foreground">
-                          {g.snippet}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
+          {messages.map((m) =>
+            m.role === 'user' ? (
+              <div key={m.id} className="flex justify-end">
+                <div className="max-w-[85%] whitespace-pre-wrap rounded-2xl bg-primary px-3 py-2 text-sm text-primary-foreground">
+                  {m.content}
                 </div>
-              )}
+              </div>
+            ) : (
+              <div key={m.id} className="flex flex-col items-start gap-2">
+                <div className="max-w-[95%] px-1 py-2">
+                  {m.status === 'searching' && (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Spinner size={14} />
+                      {t('ask.searching')}
+                    </div>
+                  )}
+                  {m.content && <AnswerMarkdown>{m.content}</AnswerMarkdown>}
+                  {m.status === 'answering' && !m.content && (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Spinner size={14} />
+                      {t('ask.answering')}
+                    </div>
+                  )}
+                  {m.status === 'stopped' && (
+                    <p className="text-xs text-muted-foreground">{t('ask.stopped')}</p>
+                  )}
+                  {m.status === 'error' && (
+                    <p className="text-sm text-destructive">{m.error || t('ask.error')}</p>
+                  )}
+                </div>
 
-              {m.status === 'done' && m.model && (
-                <p className="text-xs text-muted-foreground">
-                  {t('document.summary_model', { name: m.model })}
-                </p>
-              )}
-            </div>
-          )
-        )}
-        <div ref={bottomRef} />
-      </div>
+                {m.sources && m.sources.length > 0 && (
+                  <div className="w-full max-w-[95%] space-y-1">
+                    <p className="text-xs text-muted-foreground">{t('ask.sources')}</p>
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      {groupSources(m.sources).map((g) => (
+                        <button
+                          key={g.documentId}
+                          type="button"
+                          onClick={() => openSource(g.documentId)}
+                          title={t('ask.open_source')}
+                          className="flex cursor-pointer flex-col gap-1.5 rounded-xl border bg-background/50 p-3 text-left transition hover:bg-accent hover:shadow-sm"
+                        >
+                          <span className="flex min-w-0 items-center gap-2">
+                            <SourceFileIcon name={g.name} />
+                            <span className="truncate text-sm font-medium">
+                              {g.name ?? g.documentId}
+                            </span>
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            ({t('ask.chunks', { count: g.indexes.length })})
+                          </span>
+                          <span className="line-clamp-2 text-xs text-muted-foreground">
+                            {g.snippet}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {m.status === 'done' && m.model && (
+                  <p className="text-xs text-muted-foreground">
+                    {t('document.summary_model', { name: m.model })}
+                  </p>
+                )}
+              </div>
+            )
+          )}
+          <div ref={bottomRef} />
+        </div>
+      </ScrollArea>
 
       <div className="mx-auto mt-2 w-full max-w-5xl space-y-1 px-3">
         <div className="flex items-end gap-2">

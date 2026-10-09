@@ -128,7 +128,8 @@
     "my_files_desc": "Manage and access all your documents",
     "recent_desc": "See the files you recently opened or edited",
     "shared_desc": "Documents others have shared with you",
-    "trash_desc": "Restore or permanently delete removed files"
+    "trash_desc": "Restore or permanently delete removed files",
+    "ask_desc": "Ask questions and get answers from your own documents"
   },
   "file": {
     "folders": "Folders",

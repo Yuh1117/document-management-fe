@@ -3,7 +3,7 @@
 import { Card } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { SidebarTrigger } from '@/components/ui/sidebar'
-import { Box, Clock, Trash, Users } from 'lucide-react'
+import { Box, Clock, MessageSquareText, Trash, Users } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 
@@ -11,6 +11,7 @@ const shortcuts = [
   { href: '/my-files', icon: Box, labelKey: 'nav.my_files', descKey: 'home.my_files_desc' },
   { href: '/recent', icon: Clock, labelKey: 'nav.recent', descKey: 'home.recent_desc' },
   { href: '/shared', icon: Users, labelKey: 'nav.shared', descKey: 'home.shared_desc' },
+  { href: '/ask', icon: MessageSquareText, labelKey: 'nav.ask', descKey: 'home.ask_desc' },
   { href: '/trash', icon: Trash, labelKey: 'nav.trash', descKey: 'home.trash_desc' },
 ]
 
