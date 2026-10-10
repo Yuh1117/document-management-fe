@@ -3,20 +3,33 @@
 import { Card } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { SidebarTrigger } from '@/components/ui/sidebar'
-import { Box, Clock, MessageSquareText, Trash, Users } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import { useAuthStore } from '@/store/authStore'
+import { Box, Clock, SendHorizontal, Trash, Users } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 const shortcuts = [
   { href: '/my-files', icon: Box, labelKey: 'nav.my_files', descKey: 'home.my_files_desc' },
   { href: '/recent', icon: Clock, labelKey: 'nav.recent', descKey: 'home.recent_desc' },
   { href: '/shared', icon: Users, labelKey: 'nav.shared', descKey: 'home.shared_desc' },
-  { href: '/ask', icon: MessageSquareText, labelKey: 'nav.ask', descKey: 'home.ask_desc' },
   { href: '/trash', icon: Trash, labelKey: 'nav.trash', descKey: 'home.trash_desc' },
 ]
 
 const Home = () => {
   const { t } = useTranslation()
+  const router = useRouter()
+  const user = useAuthStore((s) => s.user)
+  const [question, setQuestion] = useState('')
+
+  const ask = () => {
+    const q = question.trim()
+    if (!q) return
+    router.push(`/ask?q=${encodeURIComponent(q)}`)
+  }
 
   return (
     <div className="bg-muted dark:bg-muted flex flex-col rounded-xl p-2 select-none">
@@ -28,6 +41,39 @@ const Home = () => {
       </div>
 
       <ScrollArea className="p-2 h-[calc(100vh-160px)]">
+        <div className="mx-auto w-full max-w-3xl px-4 pt-10 pb-4">
+          <h2 className="mb-6 text-center text-3xl font-semibold">
+            {t('home.greeting', { name: user ? user.firstName : '' }).replace(/,\s*$/, '')}
+          </h2>
+          <div className="bg-background flex items-end gap-2 rounded-2xl border p-3 shadow-sm">
+            <Textarea
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
+                  e.preventDefault()
+                  ask()
+                }
+              }}
+              maxLength={500}
+              rows={2}
+              placeholder={t('home.ask_placeholder')}
+              className="min-h-0 resize-none select-text border-none text-base shadow-none focus-visible:ring-0"
+            />
+            <Button
+              type="button"
+              size="icon"
+              className="rounded-xl"
+              onClick={ask}
+              disabled={!question.trim()}
+              aria-label={t('ask.send')}
+            >
+              <SendHorizontal className="size-4" />
+            </Button>
+          </div>
+          <p className="text-muted-foreground mt-2 text-center text-xs">{t('home.ask_hint')}</p>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-4 sm:grid-cols-2 gap-4 p-4">
           {shortcuts.map(({ href, icon: Icon, labelKey, descKey }, index) => (
             <Link

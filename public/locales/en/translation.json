@@ -129,7 +129,9 @@
     "recent_desc": "See the files you recently opened or edited",
     "shared_desc": "Documents others have shared with you",
     "trash_desc": "Restore or permanently delete removed files",
-    "ask_desc": "Ask questions and get answers from your own documents"
+    "greeting": "Hello, {{name}}",
+    "ask_placeholder": "Ask anything about your documents...",
+    "ask_hint": "Press Enter to send"
   },
   "file": {
     "folders": "Folders",

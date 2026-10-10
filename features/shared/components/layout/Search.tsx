@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
-import { SearchCheck, SearchIcon, SlidersHorizontal, X } from 'lucide-react'
+import { MessageSquareText, SearchCheck, SearchIcon, SlidersHorizontal, X } from 'lucide-react'
+import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { Label } from '@/components/ui/label'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import { Button } from '@/components/ui/button'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   Select,
   SelectContent,
@@ -30,6 +31,7 @@ const SearchBar = () => {
   const [searchValue, setSearchValue] = useState('')
   const [searchHistory, setSearchHistory] = useState<{ label: string }[]>([])
   const nav = useRouter()
+  const pathname = usePathname()
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [kw, setKw] = useState<string>('')
   const [kwType, setKwType] = useState<string>('hybrid')
@@ -212,6 +214,18 @@ const SearchBar = () => {
         onClick={openAdvancedSearch}
       >
         <SlidersHorizontal className="size-4" />
+      </Button>
+      <Button
+        asChild
+        variant={pathname === '/ask' ? 'secondary' : 'outline'}
+        size="icon"
+        className="shrink-0 rounded-xl"
+        title={t('nav.ask')}
+        aria-label={t('nav.ask')}
+      >
+        <Link href="/ask">
+          <MessageSquareText className="size-4" />
+        </Link>
       </Button>
 
       <Dialog open={showAdvanced} onOpenChange={setShowAdvanced}>

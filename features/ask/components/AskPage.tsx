@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { MessageSquareText, SendHorizontal, Square, Trash2 } from 'lucide-react'
@@ -64,6 +65,7 @@ const groupSources = (sources: IRagSource[]): SourceGroup[] => {
 
 const AskPage = () => {
   const { t } = useTranslation()
+  const router = useRouter()
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const [streaming, setStreaming] = useState(false)
@@ -81,11 +83,21 @@ const AskPage = () => {
 
   useEffect(() => () => abortRef.current?.abort(), [])
 
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get('q')?.trim()
+    if (!q) return
+    const timer = setTimeout(() => {
+      router.replace('/ask')
+      void send(q.slice(0, MAX_QUESTION_LENGTH))
+    }, 0)
+    return () => clearTimeout(timer)
+  }, [])
+
   const updateMessage = (id: number, patch: (m: ChatMessage) => Partial<ChatMessage>) =>
     setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, ...patch(m) } : m)))
 
-  const send = async () => {
-    const question = input.trim()
+  const send = async (override?: string) => {
+    const question = (override ?? input).trim()
     if (!question || streaming) return
 
     const answerId = nextId.current + 1

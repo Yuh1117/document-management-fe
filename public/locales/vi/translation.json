@@ -129,7 +129,9 @@
     "recent_desc": "Xem các file bạn vừa mở hoặc chỉnh sửa",
     "shared_desc": "Tài liệu được người khác chia sẻ với bạn",
     "trash_desc": "Khôi phục hoặc xóa vĩnh viễn file đã xóa",
-    "ask_desc": "Đặt câu hỏi và nhận câu trả lời từ chính tài liệu của bạn"
+    "greeting": "Xin chào, {{name}}",
+    "ask_placeholder": "Hỏi bất kỳ điều gì về tài liệu của bạn...",
+    "ask_hint": "Enter để gửi"
   },
   "file": {
     "folders": "Thư mục",

@@ -1,7 +1,7 @@
 ﻿'use client'
 
 import * as React from 'react'
-import { Home, Box, Users, Trash, Clock, MessageSquareText } from 'lucide-react'
+import { Home, Box, Users, Trash, Clock } from 'lucide-react'
 
 import { NavMain } from '@/features/shared/components/layout/NavMain'
 import { Sidebar, SidebarContent, SidebarHeader, SidebarRail } from '@/components/ui/sidebar'
@@ -35,12 +35,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       title: t('nav.shared'),
       url: '/shared',
       icon: Users,
-      access: true,
-    },
-    {
-      title: t('nav.ask'),
-      url: '/ask',
-      icon: MessageSquareText,
       access: true,
     },
     {
