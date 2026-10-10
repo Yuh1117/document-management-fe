@@ -21,6 +21,17 @@ This app talks only to the backend. Search and AI summarization are served by th
 processor but proxied through the backend, so there is no direct connection from
 the browser to the processor.
 
+## Question answering (RAG)
+
+Users can ask questions about their own documents. The chat button sits next to the
+advanced-search button in the header, and the home page has a box that opens the chat
+with the question already sent (`/ask?q=...`). Answers stream in token by token from
+the backend (Server-Sent Events read with `fetch`, not `EventSource`, so the auth header
+and the token refresh on `401` still work). Each answer lists the source
+documents it used; clicking one opens the document preview.
+
+The code lives in `features/ask/`.
+
 ## Quick start
 
 Prerequisites
@@ -140,6 +151,9 @@ features/               # All feature logic lives here
     components/         # Admin pages and sub-components
   auth/
     components/         # Login, Signup, ProtectedRoute, etc.
+  ask/
+    components/         # AskPage (chat UI), AnswerMarkdown
+    lib/                # streamAsk (SSE client), mimeFromName
   files/
     components/         # File/folder/document components
     hooks/              # useFilesLoader, useMultiSelect, useDownloadFiles
