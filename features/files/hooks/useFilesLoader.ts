@@ -56,8 +56,7 @@ export function useFilesLoader(
       setFiles((prev) => [...prev, ...data.result])
 
       const totalPages = typeof data.totalPages === 'number' ? data.totalPages : null
-      const moreToLoad =
-        data.result.length > 0 && (totalPages === null || page < totalPages)
+      const moreToLoad = data.result.length > 0 && (totalPages === null || page < totalPages)
 
       setHasMore(moreToLoad)
 

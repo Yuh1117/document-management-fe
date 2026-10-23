@@ -14,12 +14,23 @@ This repository is one of three services that make up the DMS:
 | Repository                             | Role                                                                                                                                                                       |
 | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **document-management-be**             | Spring Boot REST API — auth, document/folder management, permissions, file storage, RabbitMQ publisher. Also owns the `docker-compose.yml` that runs the backing services. |
-| **document-management-processor**      | Python/FastAPI — OCR, chunking, embeddings, Elasticsearch indexing, Gemini summarization, RabbitMQ worker                                                                  |
+| **document-management-processor**      | Python/FastAPI — OCR, chunking, embeddings, Elasticsearch indexing, local LLM summarization (Ollama), RabbitMQ worker                                                      |
 | **document-management-fe** (this repo) | Next.js 16 (App Router) frontend — UI, routing, admin panel, i18n                                                                                                          |
 
 This app talks only to the backend. Search and AI summarization are served by the
 processor but proxied through the backend, so there is no direct connection from
 the browser to the processor.
+
+## Question answering (RAG)
+
+Users can ask questions about their own documents. The chat button sits next to the
+advanced-search button in the header, and the home page has a box that opens the chat
+with the question already sent (`/ask?q=...`). Answers stream in token by token from
+the backend (Server-Sent Events read with `fetch`, not `EventSource`, so the auth header
+and the token refresh on `401` still work). Each answer lists the source
+documents it used; clicking one opens the document preview.
+
+The code lives in `features/ask/`.
 
 ## Quick start
 
@@ -140,6 +151,9 @@ features/               # All feature logic lives here
     components/         # Admin pages and sub-components
   auth/
     components/         # Login, Signup, ProtectedRoute, etc.
+  ask/
+    components/         # AskPage (chat UI), AnswerMarkdown
+    lib/                # streamAsk (SSE client), mimeFromName
   files/
     components/         # File/folder/document components
     hooks/              # useFilesLoader, useMultiSelect, useDownloadFiles

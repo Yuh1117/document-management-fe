@@ -104,6 +104,7 @@
     "my_files": "Files của tôi",
     "recent": "Gần đây",
     "shared": "Được chia sẻ",
+    "ask": "Hỏi đáp",
     "trash": "Thùng rác",
     "search": "Tìm kiếm",
     "other": "Khác",
@@ -120,7 +121,17 @@
     "shared_files": "Files được chia sẻ",
     "search": "Tìm kiếm",
     "advanced_search": "Tìm kiếm nâng cao",
+    "ask": "Hỏi đáp tài liệu",
     "folder_files": "Files"
+  },
+  "home": {
+    "my_files_desc": "Quản lý và truy cập tất cả tài liệu của bạn",
+    "recent_desc": "Xem các file bạn vừa mở hoặc chỉnh sửa",
+    "shared_desc": "Tài liệu được người khác chia sẻ với bạn",
+    "trash_desc": "Khôi phục hoặc xóa vĩnh viễn file đã xóa",
+    "greeting": "Xin chào, {{name}}",
+    "ask_placeholder": "Hỏi bất kỳ điều gì về tài liệu của bạn...",
+    "ask_hint": "Enter để gửi"
   },
   "file": {
     "folders": "Thư mục",
@@ -336,5 +347,24 @@
     "error": "Không thể xem trước tài liệu",
     "no_data": "Không có dữ liệu để hiển thị",
     "unsupported": "Không hỗ trợ xem cho loại file này."
+  },
+  "ask": {
+    "title": "Hỏi đáp tài liệu",
+    "placeholder": "Nhập câu hỏi về tài liệu của bạn...",
+    "send": "Gửi",
+    "stop": "Dừng",
+    "new_chat": "Cuộc trò chuyện mới",
+    "empty_title": "Hỏi bất kỳ điều gì về tài liệu của bạn",
+    "empty_hint": "Câu trả lời được tạo từ chính các tài liệu của bạn, kèm nguồn trích dẫn.",
+    "searching": "Đang tìm trong tài liệu…",
+    "answering": "Đang soạn câu trả lời…",
+    "sources": "Nguồn",
+    "chunks_other": "{{count}} chunks",
+    "open_source": "Mở tài liệu",
+    "open_source_failed": "Không thể mở tài liệu này",
+    "stopped": "(đã dừng)",
+    "error": "Không thể trả lời lúc này. Vui lòng thử lại.",
+    "session_expired": "Phiên đăng nhập đã hết hạn.",
+    "disclaimer": "AI có thể nhầm lẫn. Hãy kiểm tra lại nguồn trích dẫn."
   }
 }

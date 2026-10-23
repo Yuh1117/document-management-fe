@@ -35,9 +35,7 @@ const TransferModal = ({ data, open, onOpenChange, mode }: Props) => {
   const { t } = useTranslation()
 
   const ROOT_ID = 'ROOT' as const
-  const rootEntries = [
-    { id: ROOT_ID, name: t('pages.my_files'), endpoint: endpoints['my-files'] },
-  ]
+  const rootEntries = [{ id: ROOT_ID, name: t('pages.my_files'), endpoint: endpoints['my-files'] }]
 
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null)
   const [currentEndpoint, setCurrentEndpoint] = useState<string | null>(null)
