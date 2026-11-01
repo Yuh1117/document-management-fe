@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { MessageSquareText, SendHorizontal, Square, Trash2 } from 'lucide-react'
+import { MessageSquareText, Plus, SendHorizontal, Square } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -171,7 +171,7 @@ const AskPage = () => {
         </div>
         {messages.length > 0 && (
           <Button variant="ghost" size="sm" onClick={reset}>
-            <Trash2 className="size-4" />
+            <Plus className="size-4" />
             {t('ask.new_chat')}
           </Button>
         )}
