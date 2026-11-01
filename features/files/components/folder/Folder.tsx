@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Folder as FolderIcon } from 'lucide-react'
 import type { IFolder } from '@/types/type'
 import api, { endpoints } from '@/lib/api'
@@ -185,7 +186,19 @@ const Folder = ({
       <CardHeader className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <FolderIcon size={20} />
-          <Label className="truncate max-w-[110px]">{data.name}</Label>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Label
+                className="max-w-[110px] cursor-pointer truncate"
+                onClick={() => {
+                  if (!isMultiSelectMode) nav.push(`/folders/${data.id}`)
+                }}
+              >
+                {data.name}
+              </Label>
+            </TooltipTrigger>
+            <TooltipContent>{data.name}</TooltipContent>
+          </Tooltip>
         </div>
         <div>
           {loading ? (
