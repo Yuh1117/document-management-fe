@@ -359,7 +359,7 @@
     "searching": "Đang tìm trong tài liệu…",
     "answering": "Đang soạn câu trả lời…",
     "sources": "Nguồn",
-    "chunks_other": "{{count}} chunks",
+    "chunks_other": "{{count}} đoạn trích",
     "open_source": "Mở tài liệu",
     "open_source_failed": "Không thể mở tài liệu này",
     "stopped": "(đã dừng)",
