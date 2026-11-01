@@ -16,6 +16,7 @@ import EllipsisDropDownDeleted from '../EllipsisDropdownDeleted'
 import { Spinner } from '@/components/ui/spinner'
 import { getIconComponentByMimeType } from '@/lib/fileIcons'
 import { truncateFileName } from '@/lib/format'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useTranslation } from 'react-i18next'
 import DocumentStatusBadge from './DocumentStatusBadge'
 
@@ -233,9 +234,19 @@ const Document = ({
       <CardHeader className="flex items-center justify-between gap-2">
         <div className="flex min-w-0 flex-1 items-center gap-3">
           <Icon size={20} color={color} className="shrink-0" />
-          <Label className="shrink-0 whitespace-nowrap">
-            {truncateFileName(data.name, fileNameMaxLength)}
-          </Label>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Label
+                className="shrink-0 cursor-pointer whitespace-nowrap"
+                onClick={() => {
+                  if (!isMultiSelectMode) handlePreview()
+                }}
+              >
+                {truncateFileName(data.name, fileNameMaxLength)}
+              </Label>
+            </TooltipTrigger>
+            <TooltipContent>{data.name}</TooltipContent>
+          </Tooltip>
           <DocumentStatusBadge document={data} compact className="ml-auto" />
         </div>
         <div className="shrink-0">
