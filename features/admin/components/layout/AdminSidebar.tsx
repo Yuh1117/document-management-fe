@@ -94,13 +94,11 @@ export function AdminSidebar(props: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="grid flex-1 text-left text-lg leading-tight">
-                  <span className="truncate font-medium">DMS</span>
-                  <span className="truncate text-xs">ADMIN</span>
-                </div>
-              </a>
+            <SidebarMenuButton size="lg" render={<a href="#" />}>
+              <div className="grid flex-1 text-left text-lg leading-tight">
+                <span className="truncate font-medium">DMS</span>
+                <span className="truncate text-xs">ADMIN</span>
+              </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

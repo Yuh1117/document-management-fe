@@ -107,11 +107,9 @@ const Header = () => {
             <NavigationMenuContent>
               <ul className="grid w-[120px] gap-4">
                 <li onClick={() => setOpenModal(true)} className="cursor-pointer">
-                  <NavigationMenuLink asChild>
-                    <div className="flex-row items-center gap-2">
-                      <Shield className="text-black-900" />
-                      {t('nav.hide_data')}
-                    </div>
+                  <NavigationMenuLink render={<div className="flex-row items-center gap-2" />}>
+                    <Shield className="text-black-900" />
+                    {t('nav.hide_data')}
                   </NavigationMenuLink>
                 </li>
               </ul>
@@ -124,7 +122,7 @@ const Header = () => {
 
   const mobileMenu = useMemo(() => {
     return (
-      <Accordion type="single" collapsible className="flex w-full flex-col gap-4">
+      <Accordion className="flex w-full flex-col gap-4">
         <AccordionItem value="item-1" className="border-b-0">
           <AccordionTrigger className="text-md py-0 font-semibold hover:no-underline">
             {t('nav.other')}
@@ -173,10 +171,8 @@ const Header = () => {
               <span className="text-lg font-semibold tracking-tighter">{logo.title}</span>
             </a>
             <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <Menu className="size-4" />
-                </Button>
+              <SheetTrigger render={<Button variant="outline" size="icon" />}>
+                <Menu className="size-4" />
               </SheetTrigger>
               <SheetContent className="overflow-y-auto" aria-describedby={undefined}>
                 <SheetHeader>

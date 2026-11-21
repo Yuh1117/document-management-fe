@@ -216,16 +216,15 @@ const SearchBar = () => {
         <SlidersHorizontal className="size-4" />
       </Button>
       <Button
-        asChild
         variant={pathname === '/ask' ? 'secondary' : 'outline'}
         size="icon"
         className="shrink-0 rounded-xl"
         title={t('nav.ask')}
         aria-label={t('nav.ask')}
+        nativeButton={false}
+        render={<Link href="/ask" />}
       >
-        <Link href="/ask">
-          <MessageSquareText className="size-4" />
-        </Link>
+        <MessageSquareText className="size-4" />
       </Button>
 
       <Dialog open={showAdvanced} onOpenChange={setShowAdvanced}>
@@ -237,7 +236,11 @@ const SearchBar = () => {
           <div className="grid grid-cols-4 gap-4 p-1">
             <Label className="col-span-1">{t('search.doc_type')}</Label>
             <div className="col-span-3">
-              <Select value={type} onValueChange={(s: string) => setType(s)}>
+              <Select
+                value={type}
+                onValueChange={(s: string) => setType(s)}
+                items={{ any: t('search.any'), pdf: 'PDF', word: 'DOC', image: t('search.image') }}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder={t('search.doc_type')} />
                 </SelectTrigger>
@@ -252,7 +255,11 @@ const SearchBar = () => {
 
             <Label className="col-span-1">{t('search.file_size')}</Label>
             <div className="col-span-3 flex items-center gap-4">
-              <Select value={sizeType} onValueChange={(s: string) => setSizeType(s)}>
+              <Select
+                value={sizeType}
+                onValueChange={(s: string) => setSizeType(s)}
+                items={{ minSize: t('search.larger_than'), maxSize: t('search.smaller_than') }}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -274,7 +281,15 @@ const SearchBar = () => {
 
             <Label className="col-span-4">{t('search.keyword')}</Label>
             <div className="col-span-1">
-              <Select value={kwType} onValueChange={(s: string) => setKwType(s)}>
+              <Select
+                value={kwType}
+                onValueChange={(s: string) => setKwType(s)}
+                items={{
+                  hybrid: t('search.hybrid'),
+                  full_text: t('search.full_text'),
+                  semantic: t('search.semantic'),
+                }}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>

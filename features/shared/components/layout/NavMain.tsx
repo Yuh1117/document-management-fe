@@ -29,14 +29,12 @@ export function NavMain({
           <SidebarMenuItem key={item.url}>
             <SidebarMenuButton
               tooltip={item.title}
-              asChild
               isActive={pathname === item.url}
               className="p-5"
+              render={<Link href={item.url} />}
             >
-              <Link href={item.url}>
-                <item.icon />
-                <span>{item.title}</span>
-              </Link>
+              <item.icon />
+              <span>{item.title}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}

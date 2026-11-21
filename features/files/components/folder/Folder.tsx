@@ -187,15 +187,17 @@ const Folder = ({
         <div className="flex items-center gap-3">
           <FolderIcon size={20} />
           <Tooltip>
-            <TooltipTrigger asChild>
-              <Label
-                className="max-w-[110px] cursor-pointer truncate"
-                onClick={() => {
-                  if (!isMultiSelectMode) nav.push(`/folders/${data.id}`)
-                }}
-              >
-                {data.name}
-              </Label>
+            <TooltipTrigger
+              render={
+                <Label
+                  className="max-w-[110px] cursor-pointer truncate"
+                  onClick={() => {
+                    if (!isMultiSelectMode) nav.push(`/folders/${data.id}`)
+                  }}
+                />
+              }
+            >
+              {data.name}
             </TooltipTrigger>
             <TooltipContent>{data.name}</TooltipContent>
           </Tooltip>

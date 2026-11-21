@@ -235,15 +235,17 @@ const Document = ({
         <div className="flex min-w-0 flex-1 items-center gap-3">
           <Icon size={20} color={color} className="shrink-0" />
           <Tooltip>
-            <TooltipTrigger asChild>
-              <Label
-                className="shrink-0 cursor-pointer whitespace-nowrap"
-                onClick={() => {
-                  if (!isMultiSelectMode) handlePreview()
-                }}
-              >
-                {truncateFileName(data.name, fileNameMaxLength)}
-              </Label>
+            <TooltipTrigger
+              render={
+                <Label
+                  className="shrink-0 cursor-pointer whitespace-nowrap"
+                  onClick={() => {
+                    if (!isMultiSelectMode) handlePreview()
+                  }}
+                />
+              }
+            >
+              {truncateFileName(data.name, fileNameMaxLength)}
             </TooltipTrigger>
             <TooltipContent>{data.name}</TooltipContent>
           </Tooltip>
