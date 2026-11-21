@@ -1,6 +1,6 @@
 ﻿'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Menu, Shield } from 'lucide-react'
 import {
   Accordion,
@@ -97,6 +97,19 @@ const Header = () => {
   const user = useAuthStore((s) => s.user)
   const [openModal, setOpenModal] = useState<boolean>(false)
   const { t } = useTranslation()
+  const headerRef = useRef<HTMLElement>(null)
+
+  // Expose the real header height so the fixed sidebar sits right below it on every screen size
+  useEffect(() => {
+    const el = headerRef.current
+    if (!el) return
+    const update = () =>
+      document.documentElement.style.setProperty('--header-height', `${el.offsetHeight}px`)
+    update()
+    const observer = new ResizeObserver(update)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
 
   const desktopMenu = useMemo(() => {
     return (
@@ -143,7 +156,7 @@ const Header = () => {
   }, [t])
 
   return (
-    <section className="py-3 sticky top-0 z-50 bg-background">
+    <section ref={headerRef} className="py-3 sticky top-0 z-50 bg-background">
       <div className="mx-auto px-4">
         <nav className="hidden grid-cols-[minmax(180px,1fr)_minmax(320px,540px)_minmax(120px,1fr)] items-center gap-6 lg:grid">
           <div className="flex min-w-0 items-center gap-6">

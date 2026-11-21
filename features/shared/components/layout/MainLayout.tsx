@@ -6,12 +6,12 @@ import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 
 export function MainLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <SidebarProvider className="flex-col">
       <Header />
-      <SidebarProvider className="min-h-0">
-        <AppSidebar className="border-none pt-18" />
+      <div className="flex flex-1">
+        <AppSidebar className="top-(--header-height) h-[calc(100svh-var(--header-height))] border-none" />
         <SidebarInset className="pe-2">{children}</SidebarInset>
-      </SidebarProvider>
-    </>
+      </div>
+    </SidebarProvider>
   )
 }
