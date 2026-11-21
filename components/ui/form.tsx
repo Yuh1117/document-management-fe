@@ -92,7 +92,10 @@ function FormLabel({ className, ...props }: React.ComponentProps<typeof Label>) 
   )
 }
 
-function FormControl({ children, ...props }: { children: React.ReactElement<Record<string, unknown>> } & React.HTMLAttributes<HTMLElement>) {
+function FormControl({
+  children,
+  ...props
+}: { children: React.ReactElement<Record<string, unknown>> } & React.HTMLAttributes<HTMLElement>) {
   const { error, formItemId, formDescriptionId, formMessageId } = useFormField()
 
   return React.cloneElement(
@@ -101,7 +104,9 @@ function FormControl({ children, ...props }: { children: React.ReactElement<Reco
       {
         'data-slot': 'form-control',
         id: formItemId,
-        'aria-describedby': !error ? `${formDescriptionId}` : `${formDescriptionId} ${formMessageId}`,
+        'aria-describedby': !error
+          ? `${formDescriptionId}`
+          : `${formDescriptionId} ${formMessageId}`,
         'aria-invalid': !!error,
       } as React.HTMLAttributes<HTMLElement>,
       props,
