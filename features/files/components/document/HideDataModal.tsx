@@ -285,7 +285,7 @@ const HideDataModal = ({ open, onOpenChange }: Props) => {
             </Form>
 
             {decryptedData && (
-              <div className="mt-4 p-2 border rounded-xl bg-gray-100">
+              <div className="mt-4 p-2 border rounded-xl bg-muted">
                 <h3 className="font-semibold">{t('hide_data.decrypted_label')}</h3>
                 <p>{decryptedData}</p>
               </div>

@@ -82,7 +82,7 @@ const Home = () => {
               className="animate-in fade-in-0 slide-in-from-bottom-2 fill-mode-backwards"
               style={{ animationDelay: `${index * 75}ms`, animationDuration: '400ms' }}
             >
-              <Card className="bg-background hover:border-primary/40 group cursor-pointer rounded-xl border-1 p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
+              <Card className="bg-background hover:ring-primary/40 group cursor-pointer rounded-xl p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
                 <div className="flex items-start gap-3">
                   <span className="bg-muted text-muted-foreground group-hover:text-foreground flex size-11 shrink-0 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-110">
                     <Icon className="size-5" />

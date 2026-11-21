@@ -226,7 +226,7 @@ const Document = ({
       }}
       onClick={handleToggleCheck}
       className={cn(
-        'bg-background hover:bg-input/50 py-4 rounded-2xl border-1 transition-all duration-200',
+        'bg-background hover:bg-input/50 py-4 rounded-2xl transition-all duration-200',
         snippet && 'h-[280px]',
         isDropdownOpen && 'bg-input/50'
       )}
