@@ -367,5 +367,29 @@
     "error": "Could not answer right now. Please try again.",
     "session_expired": "Your session has expired.",
     "disclaimer": "AI can make mistakes. Check the cited sources."
+  },
+  "browse": {
+    "type": "Type",
+    "any_type": "Any type",
+    "type_folder": "Folders",
+    "type_pdf": "PDF",
+    "type_word": "Word",
+    "type_image": "Images",
+    "modified": "Modified",
+    "any_time": "Any time",
+    "modified_today": "Today",
+    "modified_7d": "Last 7 days",
+    "modified_30d": "Last 30 days",
+    "modified_365d": "Last year",
+    "clear_filters": "Clear filters",
+    "sort_name": "Name",
+    "sort_updatedAt": "Date modified",
+    "sort_size": "Size",
+    "asc": "Ascending",
+    "desc": "Descending",
+    "grid_view": "Grid view",
+    "list_view": "List view",
+    "owner": "Owner",
+    "modified_column": "Last modified"
   }
 }

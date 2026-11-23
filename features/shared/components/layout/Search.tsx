@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 import { Label } from '@/components/ui/label'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import { Button } from '@/components/ui/button'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
   Select,
   SelectContent,
@@ -38,6 +38,27 @@ const SearchBar = () => {
   const [type, setType] = useState('any')
   const [size, setSize] = useState<number>()
   const [sizeType, setSizeType] = useState('minSize')
+  const searchParams = useSearchParams()
+
+  // Keep the inputs in sync with the URL so the current search stays visible
+  // (after submitting, on reload, or when opening a shared search link).
+  useEffect(() => {
+    const isBasic = pathname === '/search'
+    const isAdvanced = pathname.startsWith('/advanced-search')
+    if (!isBasic && !isAdvanced) return
+
+    const urlKw = searchParams.get('kw') ?? ''
+    setSearchValue(urlKw)
+
+    if (isAdvanced) {
+      const urlSize = parseFloat(searchParams.get('size') ?? '')
+      setKw(urlKw)
+      setKwType(searchParams.get('kwType') || 'hybrid')
+      setType(searchParams.get('type') || 'any')
+      setSize(Number.isNaN(urlSize) ? undefined : urlSize)
+      setSizeType(searchParams.get('sizeType') || 'minSize')
+    }
+  }, [pathname, searchParams])
 
   const handleSearch = (value: string) => {
     const trimmed = value.trim()
@@ -74,7 +95,6 @@ const SearchBar = () => {
     }
 
     nav.push(`/advanced-search/?${query.toString()}`)
-    setSearchValue('')
     setShowAdvanced(false)
   }
 

@@ -15,12 +15,15 @@ import { cn } from '@/lib/utils'
 import EllipsisDropDownDeleted from '../EllipsisDropdownDeleted'
 import { Spinner } from '@/components/ui/spinner'
 import { getIconComponentByMimeType } from '@/lib/fileIcons'
-import { truncateFileName } from '@/lib/format'
+import { formatFileSize, truncateFileName } from '@/lib/format'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useTranslation } from 'react-i18next'
+import { LIST_COLUMNS, LIST_ROW, ownerName } from '../listLayout'
+import { formatTime } from '@/lib/format'
 import DocumentStatusBadge from './DocumentStatusBadge'
 
 type Props = {
+  variant?: 'grid' | 'list'
   data: IDocument
   permission: string
   isMultiSelectMode?: boolean
@@ -51,6 +54,7 @@ const renderSnippet = (snippet: string) => {
 }
 
 const Document = ({
+  variant = 'grid',
   data,
   permission,
   isMultiSelectMode,
@@ -219,6 +223,99 @@ const Document = ({
     openSummarizeModal(data)
   }
 
+  const actions = (
+    <>
+      {loading ? (
+        <Spinner />
+      ) : data.deleted ? (
+        <EllipsisDropDownDeleted
+          handleDropdownToggle={handleDropdownToggle}
+          handleRestore={handleRestore}
+          handleHardDelete={handleHardDelete}
+        />
+      ) : isMultiSelectMode && selectedDocs && setSelectedDocs ? (
+        <Checkbox
+          className="border-2 border-black dark:border-white"
+          checked={selectedDocs.includes(data.id)}
+          onCheckedChange={handleToggleCheck}
+        />
+      ) : (
+        <EllipsisDropDown
+          type={'document'}
+          permission={permission}
+          handleDropdownToggle={handleDropdownToggle}
+          handleDownload={handleDownload}
+          handleViewDetail={handleViewDetail}
+          handleOpenEdit={handleOpenEdit}
+          handleSoftDelete={handleSoftDelete}
+          handleOpenShareUrl={handleOpenShareUrl}
+          handleOpenTransfer={handleOpenTransfer}
+          handleOpenShare={handleOpenShare}
+          handleOpenVersion={handleOpenVersion}
+          handlePreview={handlePreview}
+          handleOpenSummarize={handleOpenSummarize}
+        />
+      )}
+    </>
+  )
+
+  const showListCheckbox =
+    !data.deleted && !!isMultiSelectMode && !!selectedDocs && !!setSelectedDocs
+
+  if (variant === 'list') {
+    return (
+      <div
+        onDoubleClick={() => {
+          if (!isMultiSelectMode) handlePreview()
+        }}
+        onClick={handleToggleCheck}
+        className={cn(LIST_COLUMNS, LIST_ROW, isDropdownOpen && 'bg-input/40')}
+      >
+        <div className="flex min-w-0 items-center gap-3">
+          {showListCheckbox && (
+            <span className="flex shrink-0" onClick={(e) => e.stopPropagation()}>
+              <Checkbox
+                className="border-2 border-black dark:border-white"
+                checked={selectedDocs!.includes(data.id)}
+                onCheckedChange={handleToggleCheck}
+              />
+            </span>
+          )}
+          <Icon size={20} color={color} className="shrink-0" />
+          <div className="flex min-w-0 flex-col">
+            <div className="flex min-w-0 items-center gap-3">
+              <span
+                className="cursor-pointer truncate text-sm font-medium"
+                title={data.name}
+                onClick={() => {
+                  if (!isMultiSelectMode) handlePreview()
+                }}
+              >
+                {data.name}
+              </span>
+              <DocumentStatusBadge document={data} compact />
+            </div>
+            {snippet && (
+              <p className="line-clamp-2 text-xs leading-5 text-muted-foreground select-text">
+                {renderSnippet(snippet)}
+              </p>
+            )}
+          </div>
+        </div>
+        <span className="hidden truncate text-sm text-muted-foreground md:block">
+          {ownerName(data.createdBy)}
+        </span>
+        <span className="hidden text-sm text-muted-foreground md:block">
+          {formatTime(data.updatedAt ?? data.createdAt)}
+        </span>
+        <span className="text-sm text-muted-foreground">
+          {data.fileSize != null ? formatFileSize(data.fileSize) : '—'}
+        </span>
+        <div className="flex justify-end">{!showListCheckbox && actions}</div>
+      </div>
+    )
+  }
+
   return (
     <Card
       onDoubleClick={() => {
@@ -251,39 +348,7 @@ const Document = ({
           </Tooltip>
           <DocumentStatusBadge document={data} compact className="ml-auto" />
         </div>
-        <div className="shrink-0">
-          {loading ? (
-            <Spinner />
-          ) : data.deleted ? (
-            <EllipsisDropDownDeleted
-              handleDropdownToggle={handleDropdownToggle}
-              handleRestore={handleRestore}
-              handleHardDelete={handleHardDelete}
-            />
-          ) : isMultiSelectMode && selectedDocs && setSelectedDocs ? (
-            <Checkbox
-              className="border-2 border-black dark:border-white"
-              checked={selectedDocs.includes(data.id)}
-              onCheckedChange={handleToggleCheck}
-            />
-          ) : (
-            <EllipsisDropDown
-              type={'document'}
-              permission={permission}
-              handleDropdownToggle={handleDropdownToggle}
-              handleDownload={handleDownload}
-              handleViewDetail={handleViewDetail}
-              handleOpenEdit={handleOpenEdit}
-              handleSoftDelete={handleSoftDelete}
-              handleOpenShareUrl={handleOpenShareUrl}
-              handleOpenTransfer={handleOpenTransfer}
-              handleOpenShare={handleOpenShare}
-              handleOpenVersion={handleOpenVersion}
-              handlePreview={handlePreview}
-              handleOpenSummarize={handleOpenSummarize}
-            />
-          )}
-        </div>
+        <div className="shrink-0">{actions}</div>
       </CardHeader>
       <CardContent>
         {snippet ? (

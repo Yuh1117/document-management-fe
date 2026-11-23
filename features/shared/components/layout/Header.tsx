@@ -1,6 +1,6 @@
 ﻿'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { Menu, Shield } from 'lucide-react'
 import {
   Accordion,
@@ -169,7 +169,9 @@ const Header = () => {
           </div>
 
           <div className="flex min-w-0 justify-center">
-            <SearchBar />
+            <Suspense fallback={null}>
+              <SearchBar />
+            </Suspense>
           </div>
 
           <div className="flex justify-end gap-3">
@@ -207,7 +209,9 @@ const Header = () => {
             </Sheet>
           </div>
           <div className="mt-3">
-            <SearchBar />
+            <Suspense fallback={null}>
+              <SearchBar />
+            </Suspense>
           </div>
         </div>
       </div>

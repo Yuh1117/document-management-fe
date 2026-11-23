@@ -35,6 +35,7 @@ export const endpoints = {
   'document-delete-permanent': '/api/secure/documents/permanent',
   'files-delete-permanent': '/api/secure/files/permanent',
   'folder-detail': (folderId: string | number) => `/api/secure/folders/${folderId}`,
+  'folder-path': (folderId: string | number) => `/api/secure/folders/${folderId}/path`,
   'document-detail': (documentId: string | number) => `/api/secure/documents/${documentId}`,
   'document-processing-status': '/api/secure/documents/processing-status',
   'document-version': (documentId: string | number) =>
