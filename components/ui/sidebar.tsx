@@ -1,13 +1,12 @@
 ﻿'use client'
 
 import * as React from 'react'
-import { Slot } from '@radix-ui/react-slot'
+import { useRender } from '@base-ui/react/use-render'
 import { cva } from 'class-variance-authority'
 import type { VariantProps } from 'class-variance-authority'
 import { PanelLeftIcon } from 'lucide-react'
 import { useIsMobile } from '@/features/shared/hooks/useMobile'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import {
@@ -19,6 +18,14 @@ import {
 } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+
+function Slotted<T extends keyof React.JSX.IntrinsicElements>({
+  tag,
+  render,
+  ...props
+}: { tag: T; render?: useRender.RenderProp } & React.ComponentProps<T>) {
+  return useRender({ defaultTagName: tag, render, props: props as Record<string, unknown> })
+}
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state'
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -136,7 +143,7 @@ function SidebarProvider({
 
   return (
     <SidebarContext.Provider value={contextValue}>
-      <TooltipProvider delayDuration={0}>
+      <TooltipProvider delay={0}>
         <div
           data-slot="sidebar-wrapper"
           style={
@@ -261,7 +268,7 @@ function Sidebar({
   )
 }
 
-function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<typeof Button>) {
+function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<'button'>) {
   const { toggleSidebar } = useSidebar()
 
   return (
@@ -400,13 +407,15 @@ function SidebarGroup({ className, ...props }: React.ComponentProps<'div'>) {
 
 function SidebarGroupLabel({
   className,
-  asChild = false,
+  render,
   ...props
-}: React.ComponentProps<'div'> & { asChild?: boolean }) {
-  const Comp = asChild ? Slot : 'div'
+}: React.ComponentProps<'div'> & { render?: useRender.RenderProp }) {
+  const Comp = 'div'
 
   return (
-    <Comp
+    <Slotted
+      tag={Comp}
+      render={render}
       data-slot="sidebar-group-label"
       data-sidebar="group-label"
       className={cn(
@@ -421,13 +430,15 @@ function SidebarGroupLabel({
 
 function SidebarGroupAction({
   className,
-  asChild = false,
+  render,
   ...props
-}: React.ComponentProps<'button'> & { asChild?: boolean }) {
-  const Comp = asChild ? Slot : 'button'
+}: React.ComponentProps<'button'> & { render?: useRender.RenderProp }) {
+  const Comp = 'button'
 
   return (
-    <Comp
+    <Slotted
+      tag={Comp}
+      render={render}
       data-slot="sidebar-group-action"
       data-sidebar="group-action"
       className={cn(
@@ -476,7 +487,7 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<'li'>) {
 }
 
 const sidebarMenuButtonVariants = cva(
-  'peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-2xl p-2 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-3! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
+  'peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-2xl p-2 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-popup-open:hover:bg-sidebar-accent data-popup-open:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-3! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
   {
     variants: {
       variant: {
@@ -498,7 +509,7 @@ const sidebarMenuButtonVariants = cva(
 )
 
 function SidebarMenuButton({
-  asChild = false,
+  render,
   isActive = false,
   variant = 'default',
   size = 'default',
@@ -506,15 +517,17 @@ function SidebarMenuButton({
   className,
   ...props
 }: React.ComponentProps<'button'> & {
-  asChild?: boolean
+  render?: useRender.RenderProp
   isActive?: boolean
   tooltip?: string | React.ComponentProps<typeof TooltipContent>
 } & VariantProps<typeof sidebarMenuButtonVariants>) {
-  const Comp = asChild ? Slot : 'button'
+  const Comp = 'button'
   const { isMobile, state } = useSidebar()
 
   const button = (
-    <Comp
+    <Slotted
+      tag={Comp}
+      render={render}
       data-slot="sidebar-menu-button"
       data-sidebar="menu-button"
       data-size={size}
@@ -535,31 +548,28 @@ function SidebarMenuButton({
   }
 
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>{button}</TooltipTrigger>
-      <TooltipContent
-        side="right"
-        align="center"
-        hidden={state !== 'collapsed' || isMobile}
-        {...tooltip}
-      />
+    <Tooltip disabled={state !== 'collapsed' || isMobile}>
+      <TooltipTrigger render={button} />
+      <TooltipContent side="right" align="center" {...tooltip} />
     </Tooltip>
   )
 }
 
 function SidebarMenuAction({
   className,
-  asChild = false,
+  render,
   showOnHover = false,
   ...props
 }: React.ComponentProps<'button'> & {
-  asChild?: boolean
+  render?: useRender.RenderProp
   showOnHover?: boolean
 }) {
-  const Comp = asChild ? Slot : 'button'
+  const Comp = 'button'
 
   return (
-    <Comp
+    <Slotted
+      tag={Comp}
+      render={render}
       data-slot="sidebar-menu-action"
       data-sidebar="menu-action"
       className={cn(
@@ -571,7 +581,7 @@ function SidebarMenuAction({
         'peer-data-[size=lg]/menu-button:top-2.5',
         'group-data-[collapsible=icon]:hidden',
         showOnHover &&
-          'peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 md:opacity-0',
+          'peer-data-[active=true]/menu-button:text-sidebar-accent-foreground group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-popup-open:opacity-100 md:opacity-0',
         className
       )}
       {...props}
@@ -658,20 +668,22 @@ function SidebarMenuSubItem({ className, ...props }: React.ComponentProps<'li'>)
 }
 
 function SidebarMenuSubButton({
-  asChild = false,
+  render,
   size = 'md',
   isActive = false,
   className,
   ...props
 }: React.ComponentProps<'a'> & {
-  asChild?: boolean
+  render?: useRender.RenderProp
   size?: 'sm' | 'md'
   isActive?: boolean
 }) {
-  const Comp = asChild ? Slot : 'a'
+  const Comp = 'a'
 
   return (
-    <Comp
+    <Slotted
+      tag={Comp}
+      render={render}
       data-slot="sidebar-menu-sub-button"
       data-sidebar="menu-sub-button"
       data-size={size}

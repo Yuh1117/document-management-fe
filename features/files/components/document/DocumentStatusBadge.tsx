@@ -57,18 +57,20 @@ const DocumentStatusBadge = ({ document, className, compact = false }: Props) =>
 
     return (
       <Tooltip>
-        <TooltipTrigger asChild>
-          <span
-            className={cn(
-              'inline-flex size-5 shrink-0 items-center justify-center rounded-full border',
-              badge.variant === 'warning' && 'animate-pulse',
-              badgeClassByVariant[badge.variant] ?? badgeClassByVariant.neutral,
-              className
-            )}
-            aria-label={label}
-          >
-            <Icon className={cn('size-3', badge.variant === 'warning' && 'animate-spin')} />
-          </span>
+        <TooltipTrigger
+          render={
+            <span
+              className={cn(
+                'inline-flex size-5 shrink-0 items-center justify-center rounded-full border',
+                badge.variant === 'warning' && 'animate-pulse',
+                badgeClassByVariant[badge.variant] ?? badgeClassByVariant.neutral,
+                className
+              )}
+              aria-label={label}
+            />
+          }
+        >
+          <Icon className={cn('size-3', badge.variant === 'warning' && 'animate-spin')} />
         </TooltipTrigger>
         <TooltipContent>{label}</TooltipContent>
       </Tooltip>

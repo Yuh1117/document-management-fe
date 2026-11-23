@@ -51,7 +51,7 @@ Run in development mode
 npm run dev
 ```
 
-The dev server starts on port **5173** by default (`next dev -p 5173`).
+The dev server starts on port **3000** by default (`next dev -p 3000`).
 
 Build for production
 
@@ -65,7 +65,7 @@ Start production server
 npm start
 ```
 
-This also binds port **5173** (`next start -p 5173`).
+This also binds port **3000** (`next start -p 3000`).
 
 Format / lint code
 

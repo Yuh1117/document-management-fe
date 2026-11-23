@@ -25,10 +25,11 @@ const EllipsisDropDownDeleted = ({
 
   return (
     <DropdownMenu onOpenChange={handleDropdownToggle}>
-      <DropdownMenuTrigger asChild>
-        <div className="cursor-pointer hover:bg-background/90 p-1 rounded-xl">
-          <EllipsisVertical size={16} />
-        </div>
+      <DropdownMenuTrigger
+        nativeButton={false}
+        render={<div className="cursor-pointer hover:bg-background/90 p-1 rounded-xl" />}
+      >
+        <EllipsisVertical size={16} />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
         <DropdownMenuGroup>

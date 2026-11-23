@@ -3,11 +3,11 @@
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
-import { DropdownMenuGroup } from '@radix-ui/react-dropdown-menu'
 import { FileUp, FolderPlus, FolderUp, Plus } from 'lucide-react'
 import { useSidebar } from '@/components/ui/sidebar'
 import { useParams } from 'next/navigation'
@@ -139,21 +139,23 @@ const NewDropDown = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          className={`rounded-xl ${state !== 'collapsed' && 'w-30 h-13'}`}
-          size="icon"
-          disabled={isUploading}
-        >
-          {isUploading ? (
-            <Spinner />
-          ) : (
-            <>
-              <Plus strokeWidth={3} />
-              {state === 'collapsed' ? '' : t('upload.new_button')}
-            </>
-          )}
-        </Button>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            className={`rounded-xl ${state !== 'collapsed' && 'w-30 h-13'}`}
+            size="icon"
+            disabled={isUploading}
+          />
+        }
+      >
+        {isUploading ? (
+          <Spinner />
+        ) : (
+          <>
+            <Plus strokeWidth={3} />
+            {state === 'collapsed' ? '' : t('upload.new_button')}
+          </>
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-72 rounded-2xl p-3 shadow-lg" align="start">
         <DropdownMenuGroup className="grid grid-cols-3 gap-1.5">

@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 import { Label } from '@/components/ui/label'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import { Button } from '@/components/ui/button'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
   Select,
   SelectContent,
@@ -38,6 +38,27 @@ const SearchBar = () => {
   const [type, setType] = useState('any')
   const [size, setSize] = useState<number>()
   const [sizeType, setSizeType] = useState('minSize')
+  const searchParams = useSearchParams()
+
+  // Keep the inputs in sync with the URL so the current search stays visible
+  // (after submitting, on reload, or when opening a shared search link).
+  useEffect(() => {
+    const isBasic = pathname === '/search'
+    const isAdvanced = pathname.startsWith('/advanced-search')
+    if (!isBasic && !isAdvanced) return
+
+    const urlKw = searchParams.get('kw') ?? ''
+    setSearchValue(urlKw)
+
+    if (isAdvanced) {
+      const urlSize = parseFloat(searchParams.get('size') ?? '')
+      setKw(urlKw)
+      setKwType(searchParams.get('kwType') || 'hybrid')
+      setType(searchParams.get('type') || 'any')
+      setSize(Number.isNaN(urlSize) ? undefined : urlSize)
+      setSizeType(searchParams.get('sizeType') || 'minSize')
+    }
+  }, [pathname, searchParams])
 
   const handleSearch = (value: string) => {
     const trimmed = value.trim()
@@ -74,7 +95,6 @@ const SearchBar = () => {
     }
 
     nav.push(`/advanced-search/?${query.toString()}`)
-    setSearchValue('')
     setShowAdvanced(false)
   }
 
@@ -216,16 +236,15 @@ const SearchBar = () => {
         <SlidersHorizontal className="size-4" />
       </Button>
       <Button
-        asChild
         variant={pathname === '/ask' ? 'secondary' : 'outline'}
         size="icon"
         className="shrink-0 rounded-xl"
         title={t('nav.ask')}
         aria-label={t('nav.ask')}
+        nativeButton={false}
+        render={<Link href="/ask" />}
       >
-        <Link href="/ask">
-          <MessageSquareText className="size-4" />
-        </Link>
+        <MessageSquareText className="size-4" />
       </Button>
 
       <Dialog open={showAdvanced} onOpenChange={setShowAdvanced}>
@@ -237,7 +256,11 @@ const SearchBar = () => {
           <div className="grid grid-cols-4 gap-4 p-1">
             <Label className="col-span-1">{t('search.doc_type')}</Label>
             <div className="col-span-3">
-              <Select value={type} onValueChange={(s: string) => setType(s)}>
+              <Select
+                value={type}
+                onValueChange={(s: string) => setType(s)}
+                items={{ any: t('search.any'), pdf: 'PDF', word: 'DOC', image: t('search.image') }}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder={t('search.doc_type')} />
                 </SelectTrigger>
@@ -252,7 +275,11 @@ const SearchBar = () => {
 
             <Label className="col-span-1">{t('search.file_size')}</Label>
             <div className="col-span-3 flex items-center gap-4">
-              <Select value={sizeType} onValueChange={(s: string) => setSizeType(s)}>
+              <Select
+                value={sizeType}
+                onValueChange={(s: string) => setSizeType(s)}
+                items={{ minSize: t('search.larger_than'), maxSize: t('search.smaller_than') }}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -274,7 +301,15 @@ const SearchBar = () => {
 
             <Label className="col-span-4">{t('search.keyword')}</Label>
             <div className="col-span-1">
-              <Select value={kwType} onValueChange={(s: string) => setKwType(s)}>
+              <Select
+                value={kwType}
+                onValueChange={(s: string) => setKwType(s)}
+                items={{
+                  hybrid: t('search.hybrid'),
+                  full_text: t('search.full_text'),
+                  semantic: t('search.semantic'),
+                }}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>

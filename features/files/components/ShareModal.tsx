@@ -245,7 +245,11 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
               <div className="flex items-center gap-2">
                 <MultiEmailInput emails={emails} setEmails={setEmails} />
 
-                <Select value={shareType} onValueChange={setShareType}>
+                <Select
+                  value={shareType}
+                  onValueChange={setShareType}
+                  items={{ VIEW: t('share.permission_view'), EDIT: t('share.permission_edit') }}
+                >
                   <SelectTrigger className="w-[120px] h-8 text-sm">
                     <SelectValue />
                   </SelectTrigger>
@@ -320,6 +324,11 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
                         <div className="flex items-center gap-2">
                           <Select
                             value={person.shareType}
+                            items={{
+                              VIEW: t('share.permission_view'),
+                              EDIT: t('share.permission_edit'),
+                              remove: t('share.permission_remove'),
+                            }}
                             onValueChange={(value) => {
                               const updated = [...people]
                               if (value === 'remove') {
@@ -359,16 +368,18 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
           <TabsContent value="group">
             <div className="flex items-center gap-2">
               <Popover open={openSelect} onOpenChange={setOpenSelect} modal={true}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={openSelect}
-                    className="w-[200px] justify-between bg-transparent"
-                  >
-                    {value ? groups.find((g) => g.name === value)?.name : t('share.select_group')}
-                    <ChevronsUpDown className="opacity-50" />
-                  </Button>
+                <PopoverTrigger
+                  render={
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={openSelect}
+                      className="w-[200px] justify-between bg-transparent"
+                    />
+                  }
+                >
+                  {value ? groups.find((g) => g.name === value)?.name : t('share.select_group')}
+                  <ChevronsUpDown className="opacity-50" />
                 </PopoverTrigger>
                 <PopoverContent className="w-[200px] p-0 z-[60]" side="bottom" align="start">
                   <Command>
@@ -400,7 +411,11 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
                   </Command>
                 </PopoverContent>
               </Popover>
-              <Select value={shareType} onValueChange={setShareType}>
+              <Select
+                value={shareType}
+                onValueChange={setShareType}
+                items={{ VIEW: t('share.permission_view'), EDIT: t('share.permission_edit') }}
+              >
                 <SelectTrigger className="w-[120px] h-8 text-sm">
                   <SelectValue />
                 </SelectTrigger>
@@ -427,6 +442,10 @@ const ShareModal = ({ data, open, onOpenChange }: Props) => {
                       </div>
                       <Select
                         value={g.permission}
+                        items={{
+                          VIEW: t('share.permission_view'),
+                          EDIT: t('share.permission_edit'),
+                        }}
                         onValueChange={(value) => {
                           const updated = [...groups]
                           updated[index].permission = value

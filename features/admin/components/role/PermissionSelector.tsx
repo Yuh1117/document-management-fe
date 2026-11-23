@@ -60,7 +60,7 @@ const RolePermissionSelector = ({ value, onChange, listPermissions }: Props) => 
     <FormItem>
       <FormLabel>Quyền</FormLabel>
       <ScrollArea className="h-[300px] pr-4">
-        <Accordion type="multiple">
+        <Accordion multiple>
           {listPermissions.map((group) => (
             <AccordionItem key={group.module} value={group.module}>
               <FormControl>

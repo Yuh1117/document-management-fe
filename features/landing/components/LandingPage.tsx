@@ -87,8 +87,8 @@ const LandingPage = () => {
           <div className="flex items-center gap-2">
             <ChangeLanguage />
             <ModeToggle />
-            <Button variant="ghost" asChild>
-              <Link href="/login">{t('login.label')}</Link>
+            <Button variant="ghost" nativeButton={false} render={<Link href="/login" />}>
+              {t('login.label')}
             </Button>
           </div>
         </div>
@@ -105,14 +105,17 @@ const LandingPage = () => {
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button size="lg" asChild>
-                <Link href="/login">
-                  {t('landing.cta.start')}
-                  <ArrowRight className="size-4" />
-                </Link>
+              <Button size="lg" nativeButton={false} render={<Link href="/login" />}>
+                {t('landing.cta.start')}
+                <ArrowRight className="size-4" />
               </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link href="/signup">{t('landing.cta.signup')}</Link>
+              <Button
+                size="lg"
+                variant="outline"
+                nativeButton={false}
+                render={<Link href="/signup" />}
+              >
+                {t('landing.cta.signup')}
               </Button>
             </div>
           </div>
@@ -128,7 +131,7 @@ const LandingPage = () => {
                   <Button
                     aria-label={t('upload.new_button')}
                     title={t('upload.new_button')}
-                    className="mx-auto mb-5 flex size-10 justify-center rounded-2xl bg-stone-600 p-0 text-white hover:bg-stone-600/90 dark:text-black"
+                    className="mx-auto mb-5 flex size-10 justify-center rounded-2xl bg-neutral-600 p-0 text-white hover:bg-neutral-600/90 dark:text-black"
                   >
                     <Plus className="size-4" />
                   </Button>

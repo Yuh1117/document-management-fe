@@ -164,10 +164,11 @@ const DocumentVersionModal = ({ data, open, onOpenChange }: Props) => {
                 </div>
               </div>
               <DropdownMenu onOpenChange={() => handleDropdownChange('current')}>
-                <DropdownMenuTrigger asChild>
-                  <div className="cursor-pointer hover:bg-background/90 p-1 rounded-xl">
-                    <EllipsisVertical size={16} />
-                  </div>
+                <DropdownMenuTrigger
+                  nativeButton={false}
+                  render={<div className="cursor-pointer hover:bg-background/90 p-1 rounded-xl" />}
+                >
+                  <EllipsisVertical size={16} />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem onClick={() => handleDownload(null)}>
@@ -195,10 +196,13 @@ const DocumentVersionModal = ({ data, open, onOpenChange }: Props) => {
                     <div className="text-muted-foreground text-xs">{formatTime(d.createdAt)}</div>
                   </div>
                   <DropdownMenu onOpenChange={() => handleDropdownChange(d.id)}>
-                    <DropdownMenuTrigger asChild>
-                      <div className="cursor-pointer hover:bg-background/90 p-1 rounded-xl">
-                        <EllipsisVertical size={16} />
-                      </div>
+                    <DropdownMenuTrigger
+                      nativeButton={false}
+                      render={
+                        <div className="cursor-pointer hover:bg-background/90 p-1 rounded-xl" />
+                      }
+                    >
+                      <EllipsisVertical size={16} />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       <DropdownMenuItem onClick={() => handleDownload(d)}>

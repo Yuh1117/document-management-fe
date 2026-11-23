@@ -1,6 +1,6 @@
 ﻿'use client'
 
-import { useMemo, useState } from 'react'
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { Menu, Shield } from 'lucide-react'
 import {
   Accordion,
@@ -60,8 +60,8 @@ const Account = ({ user }: { user: IAccount | null }) => {
   if (user) {
     return (
       <DropdownMenu>
-        <DropdownMenuTrigger>
-          <Avatar className="w-10 h-10 cursor-pointer">
+        <DropdownMenuTrigger className="flex shrink-0 rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
+          <Avatar className="size-9 cursor-pointer">
             <AvatarImage src={user.avatar} alt="avatar" />
             <AvatarFallback className="rounded-lg">a</AvatarFallback>
           </Avatar>
@@ -80,7 +80,9 @@ const Account = ({ user }: { user: IAccount | null }) => {
                 {t('nav.admin')}
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem className="font-medium">{t('nav.account')}</DropdownMenuItem>
+            <DropdownMenuItem className="font-medium" onClick={() => nav.push('/account')}>
+              {t('nav.account')}
+            </DropdownMenuItem>
             <DropdownMenuItem className="font-medium">{t('nav.notifications')}</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
@@ -97,6 +99,19 @@ const Header = () => {
   const user = useAuthStore((s) => s.user)
   const [openModal, setOpenModal] = useState<boolean>(false)
   const { t } = useTranslation()
+  const headerRef = useRef<HTMLElement>(null)
+
+  // Expose the real header height so the fixed sidebar sits right below it on every screen size
+  useEffect(() => {
+    const el = headerRef.current
+    if (!el) return
+    const update = () =>
+      document.documentElement.style.setProperty('--header-height', `${el.offsetHeight}px`)
+    update()
+    const observer = new ResizeObserver(update)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
 
   const desktopMenu = useMemo(() => {
     return (
@@ -107,11 +122,9 @@ const Header = () => {
             <NavigationMenuContent>
               <ul className="grid w-[120px] gap-4">
                 <li onClick={() => setOpenModal(true)} className="cursor-pointer">
-                  <NavigationMenuLink asChild>
-                    <div className="flex-row items-center gap-2">
-                      <Shield className="text-black-900" />
-                      {t('nav.hide_data')}
-                    </div>
+                  <NavigationMenuLink render={<div className="flex-row items-center gap-2" />}>
+                    <Shield className="text-black-900" />
+                    {t('nav.hide_data')}
                   </NavigationMenuLink>
                 </li>
               </ul>
@@ -124,7 +137,7 @@ const Header = () => {
 
   const mobileMenu = useMemo(() => {
     return (
-      <Accordion type="single" collapsible className="flex w-full flex-col gap-4">
+      <Accordion className="flex w-full flex-col gap-4">
         <AccordionItem value="item-1" className="border-b-0">
           <AccordionTrigger className="text-md py-0 font-semibold hover:no-underline">
             {t('nav.other')}
@@ -145,7 +158,7 @@ const Header = () => {
   }, [t])
 
   return (
-    <section className="py-3 sticky top-0 z-50 bg-background">
+    <section ref={headerRef} className="py-3 sticky top-0 z-50 bg-background">
       <div className="mx-auto px-4">
         <nav className="hidden grid-cols-[minmax(180px,1fr)_minmax(320px,540px)_minmax(120px,1fr)] items-center gap-6 lg:grid">
           <div className="flex min-w-0 items-center gap-6">
@@ -158,10 +171,12 @@ const Header = () => {
           </div>
 
           <div className="flex min-w-0 justify-center">
-            <SearchBar />
+            <Suspense fallback={null}>
+              <SearchBar />
+            </Suspense>
           </div>
 
-          <div className="flex justify-end gap-3">
+          <div className="flex items-center justify-end gap-3">
             <Setting />
             <Account user={user} />
           </div>
@@ -173,10 +188,8 @@ const Header = () => {
               <span className="text-lg font-semibold tracking-tighter">{logo.title}</span>
             </a>
             <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <Menu className="size-4" />
-                </Button>
+              <SheetTrigger render={<Button variant="outline" size="icon" />}>
+                <Menu className="size-4" />
               </SheetTrigger>
               <SheetContent className="overflow-y-auto" aria-describedby={undefined}>
                 <SheetHeader>
@@ -189,7 +202,7 @@ const Header = () => {
                 <div className="flex flex-col gap-6 p-4">
                   {mobileMenu}
 
-                  <div className="flex gap-3">
+                  <div className="flex items-center gap-3">
                     <Setting />
                     <Account user={user} />
                   </div>
@@ -198,7 +211,9 @@ const Header = () => {
             </Sheet>
           </div>
           <div className="mt-3">
-            <SearchBar />
+            <Suspense fallback={null}>
+              <SearchBar />
+            </Suspense>
           </div>
         </div>
       </div>

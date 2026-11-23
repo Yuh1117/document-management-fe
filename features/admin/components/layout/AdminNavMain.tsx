@@ -21,15 +21,13 @@ export function NavMain({ items }: { items: NavItem[] }) {
             item.access && (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton
-                  asChild
                   tooltip={item.title}
                   isActive={pathname === item.url}
                   className="py-5"
+                  render={<Link href={item.url} />}
                 >
-                  <Link href={item.url}>
-                    <item.icon />
-                    <span>{item.title}</span>
-                  </Link>
+                  <item.icon />
+                  <span>{item.title}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             )

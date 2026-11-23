@@ -18,8 +18,11 @@ import EllipsisDropDownDeleted from '../EllipsisDropdownDeleted'
 import { Spinner } from '@/components/ui/spinner'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
+import { LIST_COLUMNS, LIST_ROW, ownerName } from '../listLayout'
+import { formatTime } from '@/lib/format'
 
 type Props = {
+  variant?: 'grid' | 'list'
   data: IFolder
   permission: string
   isMultiSelectMode?: boolean
@@ -29,6 +32,7 @@ type Props = {
 }
 
 const Folder = ({
+  variant = 'grid',
   data,
   permission,
   isMultiSelectMode,
@@ -172,6 +176,83 @@ const Folder = ({
     openTransferModal(data, mode)
   }
 
+  const actions = (
+    <>
+      {loading ? (
+        <Spinner />
+      ) : data.deleted ? (
+        <EllipsisDropDownDeleted
+          handleDropdownToggle={handleDropdownToggle}
+          handleRestore={handleRestore}
+          handleHardDelete={handleHardDelete}
+        />
+      ) : isMultiSelectMode && selectedFolders && setSelectedFolders ? (
+        <Checkbox
+          className="border-2 border-black dark:border-white"
+          checked={selectedFolders.includes(data.id)}
+          onCheckedChange={handleToggleCheck}
+        />
+      ) : (
+        <EllipsisDropDown
+          type={'folder'}
+          permission={permission}
+          handleDropdownToggle={handleDropdownToggle}
+          handleDownload={handleDownload}
+          handleViewDetail={handleViewDetail}
+          handleOpenEdit={handleOpenEdit}
+          handleSoftDelete={handleSoftDelete}
+          handleOpenTransfer={handleOpenTransfer}
+          handleOpenShare={handleOpenShare}
+        />
+      )}
+    </>
+  )
+
+  const showListCheckbox =
+    !data.deleted && !!isMultiSelectMode && !!selectedFolders && !!setSelectedFolders
+
+  if (variant === 'list') {
+    return (
+      <div
+        onDoubleClick={() => {
+          if (!isMultiSelectMode) nav.push(`/folders/${data.id}`)
+        }}
+        onClick={handleToggleCheck}
+        className={cn(LIST_COLUMNS, LIST_ROW, isDropdownOpen && 'bg-input/40')}
+      >
+        <div className="flex min-w-0 items-center gap-3">
+          {showListCheckbox && (
+            <span className="flex shrink-0" onClick={(e) => e.stopPropagation()}>
+              <Checkbox
+                className="border-2 border-black dark:border-white"
+                checked={selectedFolders!.includes(data.id)}
+                onCheckedChange={handleToggleCheck}
+              />
+            </span>
+          )}
+          <FolderIcon size={20} className="shrink-0" />
+          <span
+            className="cursor-pointer truncate text-sm font-medium"
+            title={data.name}
+            onClick={() => {
+              if (!isMultiSelectMode) nav.push(`/folders/${data.id}`)
+            }}
+          >
+            {data.name}
+          </span>
+        </div>
+        <span className="hidden truncate text-sm text-muted-foreground md:block">
+          {ownerName(data.createdBy)}
+        </span>
+        <span className="hidden text-sm text-muted-foreground md:block">
+          {formatTime(data.updatedAt ?? data.createdAt)}
+        </span>
+        <span className="text-sm text-muted-foreground">—</span>
+        <div className="flex justify-end">{!showListCheckbox && actions}</div>
+      </div>
+    )
+  }
+
   return (
     <Card
       onDoubleClick={() => {
@@ -179,7 +260,7 @@ const Folder = ({
       }}
       onClick={handleToggleCheck}
       className={cn(
-        'bg-background hover:bg-input/50 py-4 rounded-2xl border-1 transition-all duration-200',
+        'bg-background hover:bg-input/50 py-4 rounded-2xl transition-all duration-200',
         isDropdownOpen && 'bg-input/50'
       )}
     >
@@ -187,48 +268,22 @@ const Folder = ({
         <div className="flex items-center gap-3">
           <FolderIcon size={20} />
           <Tooltip>
-            <TooltipTrigger asChild>
-              <Label
-                className="max-w-[110px] cursor-pointer truncate"
-                onClick={() => {
-                  if (!isMultiSelectMode) nav.push(`/folders/${data.id}`)
-                }}
-              >
-                {data.name}
-              </Label>
+            <TooltipTrigger
+              render={
+                <Label
+                  className="max-w-[110px] cursor-pointer truncate"
+                  onClick={() => {
+                    if (!isMultiSelectMode) nav.push(`/folders/${data.id}`)
+                  }}
+                />
+              }
+            >
+              {data.name}
             </TooltipTrigger>
             <TooltipContent>{data.name}</TooltipContent>
           </Tooltip>
         </div>
-        <div>
-          {loading ? (
-            <Spinner />
-          ) : data.deleted ? (
-            <EllipsisDropDownDeleted
-              handleDropdownToggle={handleDropdownToggle}
-              handleRestore={handleRestore}
-              handleHardDelete={handleHardDelete}
-            />
-          ) : isMultiSelectMode && selectedFolders && setSelectedFolders ? (
-            <Checkbox
-              className="border-2 border-black dark:border-white"
-              checked={selectedFolders.includes(data.id)}
-              onCheckedChange={handleToggleCheck}
-            />
-          ) : (
-            <EllipsisDropDown
-              type={'folder'}
-              permission={permission}
-              handleDropdownToggle={handleDropdownToggle}
-              handleDownload={handleDownload}
-              handleViewDetail={handleViewDetail}
-              handleOpenEdit={handleOpenEdit}
-              handleSoftDelete={handleSoftDelete}
-              handleOpenTransfer={handleOpenTransfer}
-              handleOpenShare={handleOpenShare}
-            />
-          )}
-        </div>
+        <div>{actions}</div>
       </CardHeader>
       {withCardContent && (
         <CardContent>
