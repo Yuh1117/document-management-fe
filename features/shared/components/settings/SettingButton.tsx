@@ -5,16 +5,25 @@ import { ChangeLanguage } from './ChangeLanguage'
 import { ModeToggle } from './ThemeToggle'
 import { Settings } from 'lucide-react'
 import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
 import { useTranslation } from 'react-i18next'
 
 const Setting = () => {
   const { t } = useTranslation()
   return (
     <Popover>
-      <PopoverTrigger>
-        <div className="cursor-pointer p-2 rounded-2xl hover:bg-accent dark:hover:bg-input/50">
-          <Settings />
-        </div>
+      <PopoverTrigger
+        render={
+          <Button
+            variant="outline"
+            size="icon"
+            className="shrink-0 rounded-xl"
+            title={t('admin.settings')}
+            aria-label={t('admin.settings')}
+          />
+        }
+      >
+        <Settings className="size-4" />
       </PopoverTrigger>
       <PopoverContent className="w-auto max-w-sm max-h-60 overflow-auto">
         <div className="grid gap-4">

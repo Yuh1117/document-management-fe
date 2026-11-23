@@ -2,6 +2,7 @@ export const endpoints = {
   login: '/api/login',
   signup: '/api/signup',
   profile: '/api/secure/profile',
+  'profile-password': '/api/secure/profile/password',
   'google-login': '/api/auth/google',
   refresh: '/api/auth/refresh',
   logout: '/api/auth/logout',

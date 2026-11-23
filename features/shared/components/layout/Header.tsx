@@ -60,8 +60,8 @@ const Account = ({ user }: { user: IAccount | null }) => {
   if (user) {
     return (
       <DropdownMenu>
-        <DropdownMenuTrigger>
-          <Avatar className="w-10 h-10 cursor-pointer">
+        <DropdownMenuTrigger className="flex shrink-0 rounded-full outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
+          <Avatar className="size-9 cursor-pointer">
             <AvatarImage src={user.avatar} alt="avatar" />
             <AvatarFallback className="rounded-lg">a</AvatarFallback>
           </Avatar>
@@ -80,7 +80,9 @@ const Account = ({ user }: { user: IAccount | null }) => {
                 {t('nav.admin')}
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem className="font-medium">{t('nav.account')}</DropdownMenuItem>
+            <DropdownMenuItem className="font-medium" onClick={() => nav.push('/account')}>
+              {t('nav.account')}
+            </DropdownMenuItem>
             <DropdownMenuItem className="font-medium">{t('nav.notifications')}</DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
@@ -174,7 +176,7 @@ const Header = () => {
             </Suspense>
           </div>
 
-          <div className="flex justify-end gap-3">
+          <div className="flex items-center justify-end gap-3">
             <Setting />
             <Account user={user} />
           </div>
@@ -200,7 +202,7 @@ const Header = () => {
                 <div className="flex flex-col gap-6 p-4">
                   {mobileMenu}
 
-                  <div className="flex gap-3">
+                  <div className="flex items-center gap-3">
                     <Setting />
                     <Account user={user} />
                   </div>
