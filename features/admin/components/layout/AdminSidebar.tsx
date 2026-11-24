@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { ChartPie, Lock, MessageSquareMore, Settings2, Shield, User } from 'lucide-react'
+import { ChartPie, Gauge, Lock, MessageSquareMore, Settings2, Shield, User } from 'lucide-react'
 import { type LucideIcon } from 'lucide-react'
 
 import {
@@ -67,6 +67,12 @@ export function AdminSidebar(props: React.ComponentProps<typeof Sidebar>) {
       title: t('admin.summary_feedback'),
       url: '/admin/summary-feedback',
       icon: MessageSquareMore,
+      access: true,
+    },
+    {
+      title: t('admin.ai_usage'),
+      url: '/admin/ai-usage',
+      icon: Gauge,
       access: true,
     },
   ]

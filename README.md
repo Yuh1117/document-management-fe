@@ -28,7 +28,13 @@ advanced-search button in the header, and the home page has a box that opens the
 with the question already sent (`/ask?q=...`). Answers stream in token by token from
 the backend (Server-Sent Events read with `fetch`, not `EventSource`, so the auth header
 and the token refresh on `401` still work). Each answer lists the source
-documents it used; clicking one opens the document preview.
+documents it used; clicking one opens the document preview. While it works, the
+assistant shows what it is doing (searching, reading a document).
+
+Conversations are saved: the history panel (a sheet on mobile) lists them, and the open
+one is in the URL (`/ask?id=...`), so reload and back/forward keep it. Older messages load
+as you scroll up. Admins see the token usage of each answer by hovering the gauge icon,
+and totals per day, user and model on `/admin/ai-usage`.
 
 The code lives in `features/ask/`.
 
@@ -152,8 +158,8 @@ features/               # All feature logic lives here
   auth/
     components/         # Login, Signup, ProtectedRoute, etc.
   ask/
-    components/         # AskPage (chat UI), AnswerMarkdown
-    lib/                # streamAsk (SSE client), mimeFromName
+    components/         # AskPage (chat UI), ConversationList, MessageUsage, AnswerMarkdown
+    lib/                # streamAsk (SSE client), pricing (cost estimate), mimeFromName
   files/
     components/         # File/folder/document components
     hooks/              # useFilesLoader, useMultiSelect, useDownloadFiles

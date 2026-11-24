@@ -44,6 +44,9 @@ export const endpoints = {
   'document-preview': (documentId: string | number) =>
     `/api/secure/documents/${documentId}/preview`,
   'rag-ask': '/api/secure/rag/ask',
+  'rag-conversations': '/api/secure/rag/conversations',
+  'rag-conversation-detail': (id: string) => `/api/secure/rag/conversations/${id}`,
+  'rag-conversation-messages': (id: string) => `/api/secure/rag/conversations/${id}/messages`,
   'document-summarize': (documentId: string | number) =>
     `/api/secure/documents/${documentId}/summarize`,
 
@@ -78,5 +81,6 @@ export const endpoints = {
     `/api/secure/documents/${documentId}/summary-feedback`,
   'summary-feedback-stats': '/api/secure/documents/summary-feedback/stats',
   'summarize-models': '/api/admin/documents/summarize/models',
+  'admin-ai-usage': '/api/admin/ai-usage',
   'summarize-models-reload': '/api/admin/documents/summarize/models/reload',
 }

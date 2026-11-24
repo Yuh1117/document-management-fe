@@ -131,9 +131,10 @@ const LandingPage = () => {
                   <Button
                     aria-label={t('upload.new_button')}
                     title={t('upload.new_button')}
-                    className="mx-auto mb-5 flex size-10 justify-center rounded-2xl bg-neutral-600 p-0 text-white hover:bg-neutral-600/90 dark:text-black"
+                    size="icon"
+                    className="mx-auto mb-5 flex size-10 rounded-xl"
                   >
-                    <Plus className="size-4" />
+                    <Plus strokeWidth={3} />
                   </Button>
 
                   <nav className="grid justify-items-center gap-2">
