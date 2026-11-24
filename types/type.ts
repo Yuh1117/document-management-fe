@@ -86,6 +86,48 @@ export interface IChatConversation {
   updatedAt: string
 }
 
+/** What the assistant is doing while it prepares an answer. */
+export interface IRagStage {
+  stage: 'thinking' | 'searching' | 'finding' | 'reading' | 'answering'
+  query?: string
+  name?: string
+}
+
+/** Token and call counts of one answer. */
+export interface IChatUsage {
+  input_tokens: number
+  output_tokens: number
+  cached_tokens: number
+  llm_calls: number
+  tool_calls: number
+}
+
+/** Assistant token usage over a period (admin page); rows are split by model. */
+export interface IAiUsage {
+  days: number
+  daily: {
+    date: string
+    model: string
+    answers: number
+    inputTokens: number
+    cachedTokens: number
+    outputTokens: number
+    llmCalls: number
+    toolCalls: number
+  }[]
+  questions: { date: string; questions: number }[]
+  users: {
+    userId: string
+    email: string
+    name: string
+    model: string
+    answers: number
+    inputTokens: number
+    cachedTokens: number
+    outputTokens: number
+  }[]
+}
+
 export interface IChatMessage {
   id: string
   role: 'user' | 'assistant'
@@ -93,6 +135,7 @@ export interface IChatMessage {
   sources: IRagSource[] | null
   status: 'done' | 'error' | 'stopped' | null
   model: string | null
+  usage: IChatUsage | null
   createdAt: string
 }
 

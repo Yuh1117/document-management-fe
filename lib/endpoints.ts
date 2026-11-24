@@ -81,5 +81,6 @@ export const endpoints = {
     `/api/secure/documents/${documentId}/summary-feedback`,
   'summary-feedback-stats': '/api/secure/documents/summary-feedback/stats',
   'summarize-models': '/api/admin/documents/summarize/models',
+  'admin-ai-usage': '/api/admin/ai-usage',
   'summarize-models-reload': '/api/admin/documents/summarize/models/reload',
 }

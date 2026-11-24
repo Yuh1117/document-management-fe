@@ -16,6 +16,8 @@ import { useDocumentStore } from '@/store/documentStore'
 import DocumentPreviewModal from '@/features/files/components/document/DocumentPreviewModal'
 import AnswerMarkdown from '@/features/ask/components/AnswerMarkdown'
 import ConversationList from '@/features/ask/components/ConversationList'
+import MessageUsage from '@/features/ask/components/MessageUsage'
+import { useAuthStore } from '@/store/authStore'
 import { AskHttpError, streamAsk } from '@/features/ask/lib/streamAsk'
 import { mimeTypeFromName } from '@/features/ask/lib/mimeFromName'
 import { getIconComponentByMimeType } from '@/lib/fileIcons'
@@ -23,8 +25,10 @@ import type {
   IChatConversation,
   IChatMessage,
   IChatMessagePage,
+  IChatUsage,
   IDocument,
   IRagSource,
+  IRagStage,
 } from '@/types/type'
 
 type AnswerStatus = 'searching' | 'answering' | 'done' | 'error' | 'stopped'
@@ -38,6 +42,8 @@ interface ChatMessage {
   sources?: IRagSource[]
   status?: AnswerStatus
   model?: string | null
+  usage?: IChatUsage | null
+  stage?: IRagStage
   error?: string | null
 }
 
@@ -77,6 +83,8 @@ const groupSources = (sources: IRagSource[]): SourceGroup[] => {
 const AskPage = () => {
   const { t } = useTranslation()
   const router = useRouter()
+  // Token usage is shown to admins only, like cost data elsewhere.
+  const isAdmin = useAuthStore((s) => s.user?.role.name.startsWith('ROLE_ADMIN') ?? false)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
   const [streaming, setStreaming] = useState(false)
@@ -147,6 +155,7 @@ const AskPage = () => {
     sources: m.sources ?? undefined,
     status: m.role === 'assistant' ? (m.status ?? 'error') : undefined,
     model: m.model,
+    usage: m.usage,
   })
 
   const fetchMessagePage = async (id: string, before?: string) => {
@@ -302,10 +311,16 @@ const AskPage = () => {
               return [moved, ...prev.filter((c) => c.id !== id)]
             })
           },
-          onSources: (sources) => updateMessage(answerId, () => ({ sources, status: 'answering' })),
+          onStatus: (stage) => updateMessage(answerId, () => ({ stage })),
+          onSources: (sources) => updateMessage(answerId, () => ({ sources })),
           onToken: (text) =>
-            updateMessage(answerId, (m) => ({ content: m.content + text, status: 'answering' })),
-          onDone: (model) => updateMessage(answerId, () => ({ status: 'done', model })),
+            updateMessage(answerId, (m) => ({
+              content: m.content + text,
+              status: 'answering',
+              stage: { stage: 'answering' },
+            })),
+          onDone: (model, usage) =>
+            updateMessage(answerId, () => ({ status: 'done', model, usage, stage: undefined })),
           onError: (message) =>
             updateMessage(answerId, () => ({ status: 'error', error: message })),
         },
@@ -319,10 +334,13 @@ const AskPage = () => {
         updateMessage(answerId, () => ({ status: 'stopped' }))
       } else {
         console.error('Ask failed', err)
-        const unauthorized = err instanceof AskHttpError && err.status === 401
+        const httpError = err instanceof AskHttpError ? err : null
         updateMessage(answerId, () => ({
           status: 'error',
-          error: unauthorized ? t('ask.session_expired') : null,
+          error:
+            httpError?.status === 401
+              ? t('ask.session_expired')
+              : (httpError?.serverMessage ?? null),
         }))
       }
     } finally {
@@ -339,6 +357,25 @@ const AskPage = () => {
     setMessagesLoading(false)
     setHasOlder(false)
     setMessages([])
+  }
+
+  const stageText = (stage?: IRagStage) => {
+    switch (stage?.stage) {
+      case 'searching':
+        return stage.query
+          ? t('ask.stage_searching_for', { query: stage.query })
+          : t('ask.searching')
+      case 'finding':
+        return t('ask.stage_finding', { name: stage.name ?? '' })
+      case 'reading':
+        return stage.name
+          ? t('ask.stage_reading', { name: stage.name })
+          : t('ask.stage_reading_doc')
+      case 'answering':
+        return t('ask.answering')
+      default:
+        return t('ask.stage_thinking')
+    }
   }
 
   const openSource = async (documentId: string) => {
@@ -434,19 +471,14 @@ const AskPage = () => {
                 ) : (
                   <div key={m.id} className="flex flex-col items-start gap-2">
                     <div className="max-w-[95%] px-1 py-2">
-                      {m.status === 'searching' && (
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Spinner size={14} />
-                          {t('ask.searching')}
-                        </div>
-                      )}
                       {m.content && <AnswerMarkdown>{m.content}</AnswerMarkdown>}
-                      {m.status === 'answering' && !m.content && (
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Spinner size={14} />
-                          {t('ask.answering')}
-                        </div>
-                      )}
+                      {(m.status === 'searching' || m.status === 'answering') &&
+                        m.stage?.stage !== 'answering' && (
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Spinner size={14} />
+                            <span className="truncate">{stageText(m.stage)}</span>
+                          </div>
+                        )}
                       {m.status === 'stopped' && (
                         <p className="text-xs text-muted-foreground">{t('ask.stopped')}</p>
                       )}
@@ -486,8 +518,9 @@ const AskPage = () => {
                     )}
 
                     {m.status === 'done' && m.model && (
-                      <p className="text-xs text-muted-foreground">
+                      <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
                         {t('document.summary_model', { name: m.model })}
+                        {isAdmin && m.usage && <MessageUsage usage={m.usage} model={m.model} />}
                       </p>
                     )}
                   </div>

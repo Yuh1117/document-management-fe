@@ -2,24 +2,37 @@ import axios from 'axios'
 import { endpoints } from '@/lib/endpoints'
 import { getAcceptLanguage } from '@/lib/api'
 import { useAuthStore } from '@/store/authStore'
-import type { IRagSource } from '@/types/type'
+import type { IChatUsage, IRagSource, IRagStage } from '@/types/type'
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
 export interface AskHandlers {
   onConversation: (conversation: { id: string; title: string }) => void
+  onStatus: (stage: IRagStage) => void
   onSources: (sources: IRagSource[]) => void
   onToken: (text: string) => void
-  onDone: (model: string | null) => void
+  onDone: (model: string | null, usage: IChatUsage | null) => void
   onError: (message: string | null) => void
 }
 
 export class AskHttpError extends Error {
   status: number
+  /** Localized reason from the server, e.g. the daily limit message. */
+  serverMessage: string | null
 
-  constructor(status: number) {
+  constructor(status: number, serverMessage: string | null = null) {
     super(`Ask request failed with status ${status}`)
     this.status = status
+    this.serverMessage = serverMessage
+  }
+}
+
+async function readServerMessage(res: Response): Promise<string | null> {
+  try {
+    const body = await res.json()
+    return typeof body?.error === 'string' ? body.error : null
+  } catch {
+    return null
   }
 }
 
@@ -83,6 +96,9 @@ function dispatch(rawEvent: string, handlers: AskHandlers) {
     case 'conversation':
       handlers.onConversation({ id: String(payload.id), title: String(payload.title ?? '') })
       break
+    case 'status':
+      handlers.onStatus(payload as unknown as IRagStage)
+      break
     case 'sources':
       handlers.onSources((payload.sources as IRagSource[]) ?? [])
       break
@@ -90,7 +106,10 @@ function dispatch(rawEvent: string, handlers: AskHandlers) {
       handlers.onToken(String(payload.text ?? ''))
       break
     case 'done':
-      handlers.onDone((payload.model as string | null) ?? null)
+      handlers.onDone(
+        (payload.model as string | null) ?? null,
+        (payload.usage as IChatUsage | undefined) ?? null
+      )
       break
     case 'error':
       handlers.onError((payload.message as string | undefined) ?? null)
@@ -116,7 +135,7 @@ export async function streamAsk(
     res = await sendRequest(question, conversationId, signal)
   }
 
-  if (!res.ok || !res.body) throw new AskHttpError(res.status)
+  if (!res.ok || !res.body) throw new AskHttpError(res.status, await readServerMessage(res))
 
   const reader = res.body.getReader()
   const decoder = new TextDecoder()
