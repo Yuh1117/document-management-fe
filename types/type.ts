@@ -96,6 +96,11 @@ export interface IChatMessage {
   createdAt: string
 }
 
+export interface IChatMessagePage {
+  messages: IChatMessage[]
+  hasMore: boolean
+}
+
 export interface IDocumentSummarize {
   id: string
   summaryText: string

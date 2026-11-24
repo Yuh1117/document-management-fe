@@ -24,6 +24,7 @@ import { cn } from '@/lib/utils'
 import type { IChatConversation } from '@/types/type'
 
 interface ConversationListProps {
+  className?: string
   conversations: IChatConversation[]
   loading: boolean
   activeId: string | null
@@ -34,6 +35,7 @@ interface ConversationListProps {
 }
 
 const ConversationList = ({
+  className,
   conversations,
   loading,
   activeId,
@@ -74,7 +76,7 @@ const ConversationList = ({
   }
 
   return (
-    <aside className="hidden w-64 shrink-0 flex-col gap-2 rounded-xl bg-background/40 p-2 md:flex">
+    <aside className={cn('flex flex-col gap-2 p-2', className)}>
       <Button variant="outline" className="justify-start" onClick={onNew}>
         <Plus className="size-4" />
         {t('ask.new_chat')}
