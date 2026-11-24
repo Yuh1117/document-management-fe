@@ -7,6 +7,7 @@ import type { IRagSource } from '@/types/type'
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL
 
 export interface AskHandlers {
+  onConversation: (conversation: { id: string; title: string }) => void
   onSources: (sources: IRagSource[]) => void
   onToken: (text: string) => void
   onDone: (model: string | null) => void
@@ -40,7 +41,11 @@ async function refreshAccessToken(): Promise<string | null> {
   }
 }
 
-function sendRequest(question: string, signal: AbortSignal): Promise<Response> {
+function sendRequest(
+  question: string,
+  conversationId: string | null,
+  signal: AbortSignal
+): Promise<Response> {
   const token = useAuthStore.getState().accessToken
   return fetch(BASE_URL + endpoints['rag-ask'], {
     method: 'POST',
@@ -53,7 +58,7 @@ function sendRequest(question: string, signal: AbortSignal): Promise<Response> {
       'ngrok-skip-browser-warning': 'true',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
-    body: JSON.stringify({ question }),
+    body: JSON.stringify({ question, conversationId }),
   })
 }
 
@@ -75,6 +80,9 @@ function dispatch(rawEvent: string, handlers: AskHandlers) {
   }
 
   switch (event) {
+    case 'conversation':
+      handlers.onConversation({ id: String(payload.id), title: String(payload.title ?? '') })
+      break
     case 'sources':
       handlers.onSources((payload.sources as IRagSource[]) ?? [])
       break
@@ -90,8 +98,13 @@ function dispatch(rawEvent: string, handlers: AskHandlers) {
   }
 }
 
-export async function streamAsk(question: string, handlers: AskHandlers, signal: AbortSignal) {
-  let res = await sendRequest(question, signal)
+export async function streamAsk(
+  question: string,
+  conversationId: string | null,
+  handlers: AskHandlers,
+  signal: AbortSignal
+) {
+  let res = await sendRequest(question, conversationId, signal)
 
   if (res.status === 401) {
     const token = await refreshAccessToken()
@@ -100,7 +113,7 @@ export async function streamAsk(question: string, handlers: AskHandlers, signal:
       window.location.href = '/login'
       throw new AskHttpError(401)
     }
-    res = await sendRequest(question, signal)
+    res = await sendRequest(question, conversationId, signal)
   }
 
   if (!res.ok || !res.body) throw new AskHttpError(res.status)

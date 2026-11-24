@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -14,10 +14,11 @@ import api, { endpoints } from '@/lib/api'
 import { useDocumentStore } from '@/store/documentStore'
 import DocumentPreviewModal from '@/features/files/components/document/DocumentPreviewModal'
 import AnswerMarkdown from '@/features/ask/components/AnswerMarkdown'
+import ConversationList from '@/features/ask/components/ConversationList'
 import { AskHttpError, streamAsk } from '@/features/ask/lib/streamAsk'
 import { mimeTypeFromName } from '@/features/ask/lib/mimeFromName'
 import { getIconComponentByMimeType } from '@/lib/fileIcons'
-import type { IDocument, IRagSource } from '@/types/type'
+import type { IChatConversation, IChatMessage, IDocument, IRagSource } from '@/types/type'
 
 type AnswerStatus = 'searching' | 'answering' | 'done' | 'error' | 'stopped'
 
@@ -73,6 +74,32 @@ const AskPage = () => {
   const nextId = useRef(1)
   const bottomRef = useRef<HTMLDivElement>(null)
 
+  const [conversations, setConversations] = useState<IChatConversation[]>([])
+  const [conversationsLoading, setConversationsLoading] = useState(true)
+  const [activeId, setActiveId] = useState<string | null>(null)
+  const activeIdRef = useRef<string | null>(null)
+  const [messagesLoading, setMessagesLoading] = useState(false)
+
+  const changeActive = (id: string | null) => {
+    activeIdRef.current = id
+    setActiveId(id)
+  }
+
+  const loadConversations = useCallback(async () => {
+    try {
+      const res = await api.get(endpoints['rag-conversations'])
+      setConversations(res.data.data as IChatConversation[])
+    } catch (err) {
+      console.error('Failed to load conversations', err)
+    } finally {
+      setConversationsLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    void loadConversations()
+  }, [loadConversations])
+
   const previewModal = useDocumentStore((s) => s.previewModal)
   const openPreviewModal = useDocumentStore((s) => s.openPreviewModal)
   const closePreviewModal = useDocumentStore((s) => s.closePreviewModal)
@@ -82,6 +109,54 @@ const AskPage = () => {
   }, [messages])
 
   useEffect(() => () => abortRef.current?.abort(), [])
+
+  const toChatMessage = (m: IChatMessage): ChatMessage => ({
+    id: nextId.current++,
+    role: m.role,
+    content: m.content,
+    sources: m.sources ?? undefined,
+    status: m.role === 'assistant' ? (m.status ?? 'error') : undefined,
+    model: m.model,
+  })
+
+  const selectConversation = async (id: string) => {
+    if (id === activeIdRef.current) return
+    abortRef.current?.abort()
+    changeActive(id)
+    setMessages([])
+    setMessagesLoading(true)
+    try {
+      const res = await api.get(endpoints['rag-conversation-messages'](id))
+      if (activeIdRef.current !== id) return
+      setMessages((res.data.data as IChatMessage[]).map(toChatMessage))
+    } catch {
+      if (activeIdRef.current === id) toast.error(t('ask.load_failed'))
+    } finally {
+      if (activeIdRef.current === id) setMessagesLoading(false)
+    }
+  }
+
+  const renameConversation = async (id: string, title: string) => {
+    try {
+      const res = await api.patch(endpoints['rag-conversation-detail'](id), { title })
+      const updated = res.data.data as IChatConversation
+      setConversations((prev) =>
+        prev.map((c) => (c.id === id ? { ...c, title: updated.title } : c))
+      )
+    } catch {
+      toast.error(t('ask.rename_failed'))
+    }
+  }
+
+  const deleteConversation = async (id: string) => {
+    try {
+      await api.delete(endpoints['rag-conversation-detail'](id))
+      setConversations((prev) => prev.filter((c) => c.id !== id))
+      if (activeIdRef.current === id) reset()
+    } catch {
+      toast.error(t('ask.delete_failed'))
+    }
+  }
 
   useEffect(() => {
     const q = new URLSearchParams(window.location.search).get('q')?.trim()
@@ -116,7 +191,19 @@ const AskPage = () => {
     try {
       await streamAsk(
         question,
+        activeIdRef.current,
         {
+          onConversation: ({ id, title }) => {
+            changeActive(id)
+            setConversations((prev) => {
+              const existing = prev.find((c) => c.id === id)
+              const now = new Date().toISOString()
+              const moved = existing
+                ? { ...existing, updatedAt: now }
+                : { id, title, createdAt: now, updatedAt: now }
+              return [moved, ...prev.filter((c) => c.id !== id)]
+            })
+          },
           onSources: (sources) => updateMessage(answerId, () => ({ sources, status: 'answering' })),
           onToken: (text) =>
             updateMessage(answerId, (m) => ({ content: m.content + text, status: 'answering' })),
@@ -150,6 +237,8 @@ const AskPage = () => {
 
   const reset = () => {
     abortRef.current?.abort()
+    changeActive(null)
+    setMessagesLoading(false)
     setMessages([])
   }
 
@@ -170,125 +259,145 @@ const AskPage = () => {
           <h1 className="text-2xl font-semibold">{t('ask.title')}</h1>
         </div>
         {messages.length > 0 && (
-          <Button variant="ghost" size="sm" onClick={reset}>
+          <Button variant="ghost" size="sm" onClick={reset} className="md:hidden">
             <Plus className="size-4" />
             {t('ask.new_chat')}
           </Button>
         )}
       </div>
 
-      <ScrollArea className="min-h-0 w-full flex-1 [&>[data-slot=scroll-area-viewport]>div]:!block [&>[data-slot=scroll-area-viewport]>div]:h-full">
-        <div className="mx-auto h-full w-full max-w-5xl space-y-4 p-3">
-          {messages.length === 0 && (
-            <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-muted-foreground">
-              <MessageSquareText className="size-8" />
-              <p className="text-sm font-medium text-foreground">{t('ask.empty_title')}</p>
-              <p className="max-w-sm text-xs">{t('ask.empty_hint')}</p>
-            </div>
-          )}
+      <div className="flex min-h-0 flex-1 gap-2">
+        <ConversationList
+          conversations={conversations}
+          loading={conversationsLoading}
+          activeId={activeId}
+          onSelect={(id) => void selectConversation(id)}
+          onNew={reset}
+          onRename={renameConversation}
+          onDelete={deleteConversation}
+        />
 
-          {messages.map((m) =>
-            m.role === 'user' ? (
-              <div key={m.id} className="flex justify-end">
-                <div className="max-w-[85%] whitespace-pre-wrap rounded-2xl bg-primary px-3 py-2 text-sm text-primary-foreground">
-                  {m.content}
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+          <ScrollArea className="min-h-0 w-full flex-1 [&>[data-slot=scroll-area-viewport]>div]:!block [&>[data-slot=scroll-area-viewport]>div]:h-full">
+            <div className="mx-auto h-full w-full max-w-5xl space-y-4 p-3">
+              {messagesLoading && (
+                <div className="flex h-full items-center justify-center">
+                  <Spinner size={20} />
                 </div>
-              </div>
-            ) : (
-              <div key={m.id} className="flex flex-col items-start gap-2">
-                <div className="max-w-[95%] px-1 py-2">
-                  {m.status === 'searching' && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Spinner size={14} />
-                      {t('ask.searching')}
-                    </div>
-                  )}
-                  {m.content && <AnswerMarkdown>{m.content}</AnswerMarkdown>}
-                  {m.status === 'answering' && !m.content && (
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Spinner size={14} />
-                      {t('ask.answering')}
-                    </div>
-                  )}
-                  {m.status === 'stopped' && (
-                    <p className="text-xs text-muted-foreground">{t('ask.stopped')}</p>
-                  )}
-                  {m.status === 'error' && (
-                    <p className="text-sm text-destructive">{m.error || t('ask.error')}</p>
-                  )}
-                </div>
+              )}
 
-                {m.sources && m.sources.length > 0 && (
-                  <div className="w-full max-w-[95%] space-y-1">
-                    <p className="text-xs text-muted-foreground">{t('ask.sources')}</p>
-                    <div className="grid gap-2 sm:grid-cols-2">
-                      {groupSources(m.sources).map((g) => (
-                        <button
-                          key={g.documentId}
-                          type="button"
-                          onClick={() => openSource(g.documentId)}
-                          title={t('ask.open_source')}
-                          className="flex cursor-pointer flex-col gap-1.5 rounded-xl border bg-background/50 p-3 text-left transition hover:bg-accent hover:shadow-sm"
-                        >
-                          <span className="flex min-w-0 items-center gap-2">
-                            <SourceFileIcon name={g.name} />
-                            <span className="truncate text-sm font-medium">
-                              {g.name ?? g.documentId}
-                            </span>
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            ({t('ask.chunks', { count: g.indexes.length })})
-                          </span>
-                          <span className="line-clamp-2 text-xs text-muted-foreground">
-                            {g.snippet}
-                          </span>
-                        </button>
-                      ))}
+              {messages.length === 0 && !messagesLoading && (
+                <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-muted-foreground">
+                  <MessageSquareText className="size-8" />
+                  <p className="text-sm font-medium text-foreground">{t('ask.empty_title')}</p>
+                  <p className="max-w-sm text-xs">{t('ask.empty_hint')}</p>
+                </div>
+              )}
+
+              {messages.map((m) =>
+                m.role === 'user' ? (
+                  <div key={m.id} className="flex justify-end">
+                    <div className="max-w-[85%] whitespace-pre-wrap rounded-2xl bg-primary px-3 py-2 text-sm text-primary-foreground">
+                      {m.content}
                     </div>
                   </div>
-                )}
+                ) : (
+                  <div key={m.id} className="flex flex-col items-start gap-2">
+                    <div className="max-w-[95%] px-1 py-2">
+                      {m.status === 'searching' && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Spinner size={14} />
+                          {t('ask.searching')}
+                        </div>
+                      )}
+                      {m.content && <AnswerMarkdown>{m.content}</AnswerMarkdown>}
+                      {m.status === 'answering' && !m.content && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Spinner size={14} />
+                          {t('ask.answering')}
+                        </div>
+                      )}
+                      {m.status === 'stopped' && (
+                        <p className="text-xs text-muted-foreground">{t('ask.stopped')}</p>
+                      )}
+                      {m.status === 'error' && (
+                        <p className="text-sm text-destructive">{m.error || t('ask.error')}</p>
+                      )}
+                    </div>
 
-                {m.status === 'done' && m.model && (
-                  <p className="text-xs text-muted-foreground">
-                    {t('document.summary_model', { name: m.model })}
-                  </p>
-                )}
-              </div>
-            )
-          )}
-          <div ref={bottomRef} />
-        </div>
-      </ScrollArea>
+                    {m.sources && m.sources.length > 0 && (
+                      <div className="w-full max-w-[95%] space-y-1">
+                        <p className="text-xs text-muted-foreground">{t('ask.sources')}</p>
+                        <div className="grid gap-2 sm:grid-cols-2">
+                          {groupSources(m.sources).map((g) => (
+                            <button
+                              key={g.documentId}
+                              type="button"
+                              onClick={() => openSource(g.documentId)}
+                              title={t('ask.open_source')}
+                              className="flex cursor-pointer flex-col gap-1.5 rounded-xl border bg-background/50 p-3 text-left transition hover:bg-accent hover:shadow-sm"
+                            >
+                              <span className="flex min-w-0 items-center gap-2">
+                                <SourceFileIcon name={g.name} />
+                                <span className="truncate text-sm font-medium">
+                                  {g.name ?? g.documentId}
+                                </span>
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                ({t('ask.chunks', { count: g.indexes.length })})
+                              </span>
+                              <span className="line-clamp-2 text-xs text-muted-foreground">
+                                {g.snippet}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
-      <div className="mx-auto mt-2 w-full max-w-5xl space-y-1 px-3">
-        <div className="flex items-end gap-2">
-          <Textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
-                e.preventDefault()
-                void send()
-              }
-            }}
-            maxLength={MAX_QUESTION_LENGTH}
-            rows={2}
-            placeholder={t('ask.placeholder')}
-            className="min-h-0 resize-none text-sm"
-          />
-          {streaming ? (
-            <Button type="button" variant="outline" onClick={stop} aria-label={t('ask.stop')}>
-              <Square className="size-4" />
-              {t('ask.stop')}
-            </Button>
-          ) : (
-            <Button type="button" onClick={() => void send()} disabled={!input.trim()}>
-              <SendHorizontal className="size-4" />
-              {t('ask.send')}
-            </Button>
-          )}
+                    {m.status === 'done' && m.model && (
+                      <p className="text-xs text-muted-foreground">
+                        {t('document.summary_model', { name: m.model })}
+                      </p>
+                    )}
+                  </div>
+                )
+              )}
+              <div ref={bottomRef} />
+            </div>
+          </ScrollArea>
+
+          <div className="mx-auto mt-2 w-full max-w-5xl space-y-1 px-3">
+            <div className="flex items-end gap-2">
+              <Textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
+                    e.preventDefault()
+                    void send()
+                  }
+                }}
+                maxLength={MAX_QUESTION_LENGTH}
+                rows={2}
+                placeholder={t('ask.placeholder')}
+                className="min-h-0 resize-none text-sm"
+              />
+              {streaming ? (
+                <Button type="button" variant="outline" onClick={stop} aria-label={t('ask.stop')}>
+                  <Square className="size-4" />
+                  {t('ask.stop')}
+                </Button>
+              ) : (
+                <Button type="button" onClick={() => void send()} disabled={!input.trim()}>
+                  <SendHorizontal className="size-4" />
+                  {t('ask.send')}
+                </Button>
+              )}
+            </div>
+            <p className="text-center text-[11px] text-muted-foreground">{t('ask.disclaimer')}</p>
+          </div>
         </div>
-        <p className="text-center text-[11px] text-muted-foreground">{t('ask.disclaimer')}</p>
       </div>
 
       <DocumentPreviewModal

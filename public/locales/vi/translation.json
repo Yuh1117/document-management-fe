@@ -365,7 +365,18 @@
     "stopped": "(đã dừng)",
     "error": "Không thể trả lời lúc này. Vui lòng thử lại.",
     "session_expired": "Phiên đăng nhập đã hết hạn.",
-    "disclaimer": "AI có thể nhầm lẫn. Hãy kiểm tra lại nguồn trích dẫn."
+    "disclaimer": "AI có thể nhầm lẫn. Hãy kiểm tra lại nguồn trích dẫn.",
+    "history": "Lịch sử",
+    "history_empty": "Chưa có cuộc trò chuyện nào",
+    "conversation_actions": "Tùy chọn cuộc trò chuyện",
+    "rename": "Đổi tên",
+    "delete": "Xóa",
+    "cancel": "Hủy",
+    "delete_confirm_title": "Xóa cuộc trò chuyện?",
+    "delete_confirm_desc": "\"{{title}}\" và toàn bộ tin nhắn sẽ bị xóa vĩnh viễn.",
+    "load_failed": "Không tải được cuộc trò chuyện",
+    "rename_failed": "Không đổi tên được cuộc trò chuyện",
+    "delete_failed": "Không xóa được cuộc trò chuyện"
   },
   "browse": {
     "type": "Loại",

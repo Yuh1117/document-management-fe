@@ -79,6 +79,23 @@ export interface IRagSource {
   score: number
 }
 
+export interface IChatConversation {
+  id: string
+  title: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface IChatMessage {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
+  sources: IRagSource[] | null
+  status: 'done' | 'error' | 'stopped' | null
+  model: string | null
+  createdAt: string
+}
+
 export interface IDocumentSummarize {
   id: string
   summaryText: string

@@ -366,7 +366,18 @@
     "stopped": "(stopped)",
     "error": "Could not answer right now. Please try again.",
     "session_expired": "Your session has expired.",
-    "disclaimer": "AI can make mistakes. Check the cited sources."
+    "disclaimer": "AI can make mistakes. Check the cited sources.",
+    "history": "History",
+    "history_empty": "No conversations yet",
+    "conversation_actions": "Conversation actions",
+    "rename": "Rename",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "delete_confirm_title": "Delete conversation?",
+    "delete_confirm_desc": "\"{{title}}\" and all of its messages will be permanently deleted.",
+    "load_failed": "Could not load this conversation",
+    "rename_failed": "Could not rename the conversation",
+    "delete_failed": "Could not delete the conversation"
   },
   "browse": {
     "type": "Type",
