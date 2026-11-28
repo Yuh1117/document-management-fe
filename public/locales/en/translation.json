@@ -373,7 +373,17 @@
   "preview": {
     "error": "Cannot preview this document",
     "no_data": "No data to display",
-    "unsupported": "Preview not supported for this file type."
+    "unsupported": "Preview not supported for this file type.",
+    "rows_truncated": "Showing the first {{shown}} of {{total}} rows. Download the file to see everything.",
+    "prev_page": "Previous page",
+    "next_page": "Next page",
+    "zoom_in": "Zoom in",
+    "zoom_out": "Zoom out",
+    "search_placeholder": "Search in document",
+    "search_pages": "Page {{current}}/{{total}}",
+    "search_none": "No matches",
+    "prev_match": "Previous match",
+    "next_match": "Next match"
   },
   "ask": {
     "title": "Ask your documents",

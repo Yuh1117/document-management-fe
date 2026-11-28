@@ -144,3 +144,10 @@
     font-family: 'Geist', sans-serif;
   }
 }
+
+/* Shiki dual-theme code preview: light colors inline, dark colors via CSS variables. */
+.dark .shiki,
+.dark .shiki span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+}

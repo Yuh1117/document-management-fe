@@ -2,13 +2,21 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import type { IDocument } from '@/types/type'
-import { toast } from 'sonner'
 import api, { endpoints } from '@/lib/api'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Spinner } from '@/components/ui/spinner'
-import { renderAsync } from 'docx-preview'
-import * as XLSX from 'xlsx'
+import dynamic from 'next/dynamic'
+import { codeLanguageOf, extensionOf, normalizeMime, previewKindOf } from './preview/previewKind'
+import BlobMediaViewer from './preview/BlobMediaViewer'
+
+// Each viewer pulls in a heavy library; load it only when that file type is opened.
+const SpreadsheetViewer = dynamic(() => import('./preview/SpreadsheetViewer'), { ssr: false })
+const ImageViewer = dynamic(() => import('./preview/ImageViewer'), { ssr: false })
+const DocxViewer = dynamic(() => import('./preview/DocxViewer'), { ssr: false })
+const PdfViewer = dynamic(() => import('./preview/PdfViewer'), { ssr: false })
+const CodeViewer = dynamic(() => import('./preview/CodeViewer'), { ssr: false })
+const MarkdownViewer = dynamic(() => import('./preview/MarkdownViewer'), { ssr: false })
 
 interface Props {
   data: IDocument | null
@@ -16,183 +24,144 @@ interface Props {
   onOpenChange: (open: boolean) => void
 }
 
-const DOCX_MIME = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+type View =
+  | { view: 'pdf' | 'video' | 'audio' | 'docx' | 'spreadsheet' | 'image' | 'tiff'; blob: Blob }
+  | { view: 'markdown' | 'text'; text: string }
+  | { view: 'code'; text: string; lang: string }
+
+type State =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'error' }
+  | { status: 'unsupported' }
+  | ({ status: 'ready' } & View)
+
+const fetchBlob = async (url: string, signal: AbortSignal) =>
+  (await api.get<Blob>(url, { responseType: 'blob', signal })).data
+
+const decodeUtf8 = async (blob: Blob) => new TextDecoder('utf-8').decode(await blob.arrayBuffer())
 
 const DocumentPreviewModal = ({ data, open, onOpenChange }: Props) => {
   const { t } = useTranslation()
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const [loading, setLoading] = useState<boolean>(false)
-  const [xlsxHtml, setXlsxHtml] = useState<string | null>(null)
-  const [xlsxSheets, setXlsxSheets] = useState<string[]>([])
-  const [activeSheet, setActiveSheet] = useState<string>('')
-  const docxContainerRef = useRef<HTMLDivElement>(null)
-  const xlsxWorkbookRef = useRef<XLSX.WorkBook | null>(null)
+  const [state, setState] = useState<State>({ status: 'idle' })
 
-  const renderSheet = (workbook: XLSX.WorkBook, sheetName: string) => {
-    const sheet = workbook.Sheets[sheetName]
-    const html = XLSX.utils.sheet_to_html(sheet, { header: '', footer: '' })
-    setXlsxHtml(html)
-    setActiveSheet(sheetName)
-  }
-
-  const loadPreview = async () => {
-    if (!data) return
-
-    try {
-      setLoading(true)
-
-      const res = await api.get(endpoints['document-preview'](data.id), {
-        responseType: 'blob',
-      })
-
-      if (data.mimeType === DOCX_MIME) {
-        setPreviewUrl('docx-blob')
-        await renderAsync(res.data, docxContainerRef.current!, undefined, {
-          inWrapper: false,
-          ignoreWidth: true,
-        })
-      } else if (data.mimeType === XLSX_MIME) {
-        const arrayBuffer = await res.data.arrayBuffer()
-        const workbook = XLSX.read(arrayBuffer, { type: 'array' })
-        xlsxWorkbookRef.current = workbook
-        setXlsxSheets(workbook.SheetNames)
-        renderSheet(workbook, workbook.SheetNames[0])
-        setPreviewUrl('xlsx-blob')
-      } else {
-        const url = window.URL.createObjectURL(res.data)
-        setPreviewUrl(url)
-      }
-    } catch (err) {
-      toast.error(t('preview.error'))
-    } finally {
-      setLoading(false)
-    }
-  }
+  const documentId = data?.id
+  const mime = normalizeMime(data?.mimeType)
+  const name = data?.name
+  const kind = previewKindOf(mime, name)
 
   useEffect(() => {
-    if (open) {
-      loadPreview()
-    } else {
-      if (previewUrl) {
-        if (previewUrl !== 'docx-blob') window.URL.revokeObjectURL(previewUrl)
-        setPreviewUrl(null)
-      }
-      if (docxContainerRef.current) {
-        docxContainerRef.current.innerHTML = ''
-      }
-      setXlsxHtml(null)
-      setXlsxSheets([])
-      setActiveSheet('')
-      xlsxWorkbookRef.current = null
+    if (!open || !documentId) return
+    if (kind === 'unsupported') {
+      setState({ status: 'unsupported' })
+      return
     }
-  }, [open])
+
+    const controller = new AbortController()
+    const { signal } = controller
+    let cancelled = false
+
+    const load = async (): Promise<View> => {
+      const blob = await fetchBlob(endpoints['document-preview'](documentId), signal)
+      switch (kind) {
+        case 'markdown':
+        case 'text':
+          return { view: kind, text: await decodeUtf8(blob) }
+        case 'code':
+          return {
+            view: 'code',
+            text: await decodeUtf8(blob),
+            lang: codeLanguageOf(mime, name) ?? 'text',
+          }
+        default:
+          return { view: kind, blob }
+      }
+    }
+
+    setState({ status: 'loading' })
+    load()
+      .then((view) => !cancelled && setState({ status: 'ready', ...view }))
+      .catch(() => !cancelled && setState({ status: 'error' }))
+
+    return () => {
+      cancelled = true
+      controller.abort()
+      setState({ status: 'idle' })
+    }
+  }, [open, documentId, kind, mime, name])
+
+  const handleViewerError = useCallback(() => setState({ status: 'error' }), [])
+
+  const message = (text: string) => (
+    <div className="flex h-[60vh] items-center justify-center text-center text-muted-foreground">
+      {text}
+    </div>
+  )
 
   const renderContent = () => {
-    if (loading) {
-      return (
-        <div className="flex justify-center items-center h-full">
-          <Spinner />
-        </div>
-      )
+    switch (state.status) {
+      case 'idle':
+      case 'loading':
+        // Same height as the viewers, so the dialog doesn't jump when the content arrives.
+        return (
+          <div className="flex h-[80vh] items-center justify-center">
+            <Spinner />
+          </div>
+        )
+      case 'error':
+        return message(t('preview.error'))
+      case 'unsupported':
+        return message(t('preview.unsupported'))
     }
 
-    if (!previewUrl) {
-      return (
-        <div className="flex justify-center items-center h-full text-muted-foreground">
-          {t('preview.no_data')}
-        </div>
-      )
-    }
-
-    if (data?.mimeType.startsWith('image/')) {
-      return (
-        <div className="flex justify-center items-center h-full">
-          <img
-            src={previewUrl}
-            alt={data?.name}
-            className="max-h-full max-w-full rounded-xl shadow"
+    switch (state.view) {
+      case 'pdf':
+        return <PdfViewer blob={state.blob} onError={handleViewerError} />
+      case 'video':
+      case 'audio':
+        return <BlobMediaViewer blob={state.blob} kind={state.view} onError={handleViewerError} />
+      case 'docx':
+        return <DocxViewer blob={state.blob} onError={handleViewerError} />
+      case 'spreadsheet': {
+        const ext = extensionOf(name)
+        const isText = mime.startsWith('text/') || ext === 'csv' || ext === 'tsv'
+        return <SpreadsheetViewer blob={state.blob} isText={isText} onError={handleViewerError} />
+      }
+      case 'image':
+      case 'tiff':
+        return (
+          <ImageViewer
+            blob={state.blob}
+            alt={name}
+            isTiff={state.view === 'tiff'}
+            onError={handleViewerError}
           />
-        </div>
-      )
+        )
+      case 'markdown':
+        return <MarkdownViewer source={state.text} />
+      case 'code':
+        return <CodeViewer code={state.text} lang={state.lang} />
+      case 'text':
+        return (
+          <pre className="h-[80vh] overflow-auto whitespace-pre-wrap break-words rounded-xl border bg-muted/30 p-4 font-mono text-sm">
+            {state.text}
+          </pre>
+        )
     }
-
-    if (data?.mimeType === 'application/pdf') {
-      return <iframe src={previewUrl} className="w-full h-[80vh] rounded-xl" title={data?.name} />
-    }
-
-    if (data?.mimeType.startsWith('text/')) {
-      return <iframe src={previewUrl} className="w-full h-[80vh]" title={data?.name} />
-    }
-
-    if (data?.mimeType.startsWith('video/')) {
-      return (
-        <div className="flex justify-center items-center h-full">
-          <video controls className="w-full h-[80vh] rounded-xl shadow-md">
-            <source src={previewUrl} type={data?.mimeType} />
-          </video>
-        </div>
-      )
-    }
-
-    if (data?.mimeType.startsWith('audio/')) {
-      return (
-        <div className="flex justify-center items-center h-full">
-          <audio controls className="w-full h-full">
-            <source src={previewUrl} type={data?.mimeType} />
-          </audio>
-        </div>
-      )
-    }
-
-    return (
-      <div className="flex flex-col justify-center items-center h-full text-muted-foreground">
-        {t('preview.unsupported')}
-      </div>
-    )
   }
 
-  const isDocx = data?.mimeType === DOCX_MIME
-  const isXlsx = data?.mimeType === XLSX_MIME
-  const isWide = isDocx || isXlsx
+  const isWide = kind !== 'audio' && kind !== 'unsupported'
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className={`w-full flex flex-col ${isWide ? 'sm:max-w-5xl' : 'sm:max-w-2xl'}`}
+        className={`flex w-full flex-col ${isWide ? 'sm:max-w-5xl' : 'sm:max-w-2xl'}`}
         aria-describedby={undefined}
       >
         <DialogHeader>
-          <DialogTitle>{data?.name}</DialogTitle>
+          <DialogTitle className="truncate pr-6">{name}</DialogTitle>
         </DialogHeader>
-        <div className="flex-1 mt-2">
-          <div
-            ref={docxContainerRef}
-            className={`w-full h-[80vh] overflow-y-auto rounded-xl border bg-white p-6 text-black ${isDocx && !loading ? 'block' : 'hidden'}`}
-          />
-          {isXlsx && !loading && xlsxHtml && (
-            <div className="flex flex-col h-[80vh]">
-              {xlsxSheets.length > 1 && (
-                <div className="flex gap-1 mb-2 flex-wrap">
-                  {xlsxSheets.map((name) => (
-                    <button
-                      key={name}
-                      onClick={() => renderSheet(xlsxWorkbookRef.current!, name)}
-                      className={`px-3 py-1 text-sm rounded border ${activeSheet === name ? 'bg-primary text-primary-foreground' : 'bg-muted hover:bg-accent'}`}
-                    >
-                      {name}
-                    </button>
-                  ))}
-                </div>
-              )}
-              <div
-                className="flex-1 overflow-auto rounded-xl border bg-white text-black text-sm [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-gray-300 [&_td]:px-2 [&_td]:py-1 [&_th]:border [&_th]:border-gray-300 [&_th]:px-2 [&_th]:py-1 [&_th]:bg-gray-100"
-                dangerouslySetInnerHTML={{ __html: xlsxHtml }}
-              />
-            </div>
-          )}
-          {((!isDocx && !isXlsx) || loading) && renderContent()}
-        </div>
+        <div className="mt-2 flex-1">{renderContent()}</div>
       </DialogContent>
     </Dialog>
   )

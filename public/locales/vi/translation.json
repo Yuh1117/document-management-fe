@@ -373,7 +373,17 @@
   "preview": {
     "error": "Không thể xem trước tài liệu",
     "no_data": "Không có dữ liệu để hiển thị",
-    "unsupported": "Không hỗ trợ xem cho loại file này."
+    "unsupported": "Không hỗ trợ xem cho loại file này.",
+    "rows_truncated": "Đang hiển thị {{shown}} / {{total}} dòng đầu. Tải file về để xem đầy đủ.",
+    "prev_page": "Trang trước",
+    "next_page": "Trang sau",
+    "zoom_in": "Phóng to",
+    "zoom_out": "Thu nhỏ",
+    "search_placeholder": "Tìm trong tài liệu",
+    "search_pages": "Trang {{current}}/{{total}}",
+    "search_none": "Không tìm thấy",
+    "prev_match": "Kết quả trước",
+    "next_match": "Kết quả sau"
   },
   "ask": {
     "title": "Hỏi đáp tài liệu",
